@@ -1,0 +1,78 @@
+RELATÓRIO DE SUBSTITUIÇÕES DE ROTAS EM ARQUIVOS HTML - 04/14/2025 14:47:05
+
+=============================================================
+📝 ARQUIVO: cd_cadastro_bkp.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\cd_cadastro_bkp.html
+🔁 MODIFICAÇÕES:
+  ➤ '/login' → '/login' (1 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: cd_cadastro.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\cd_cadastro.html
+🔁 MODIFICAÇÕES:
+  ➤ '/login' → '/login' (1 ocorrência(s))
+  ➤ '/usuarios/cadastrar' → '/cadastrar-usuario' (1 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: cd_escolha_pos_login.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\cd_escolha_pos_login.html
+🔁 MODIFICAÇÕES:
+  ➤ '/painel' → '/painel-usuario' (2 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: cd_login.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\cd_login.html
+🔁 MODIFICAÇÕES:
+  ➤ '/login' → '/login' (1 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: cd_painel_usuario_comum.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\cd_painel_usuario_comum.html
+🔁 MODIFICAÇÕES:
+  ➤ '/menu/projeto' → '/cadastrar-projeto' (1 ocorrência(s))
+  ➤ '/menu/pf' → '/cadastrar-pessoa-fisica' (1 ocorrência(s))
+  ➤ '/menu/trechos' → '/cadastrar-trechos' (1 ocorrência(s))
+  ➤ '/painel' → '/painel-usuario' (5 ocorrência(s))
+  ➤ '/menu/pj' → '/cadastrar-pessoa-juridica' (1 ocorrência(s))
+  ➤ '/menu/usuario' → '/cadastrar-usuario' (1 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: cd_painel_usuario_master.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\cd_painel_usuario_master.html
+🔁 MODIFICAÇÕES:
+  ➤ '/menu/projeto' → '/cadastrar-projeto' (1 ocorrência(s))
+  ➤ '/menu/pf' → '/cadastrar-pessoa-fisica' (1 ocorrência(s))
+  ➤ '/menu/trechos' → '/cadastrar-trechos' (1 ocorrência(s))
+  ➤ '/painel' → '/painel-usuario' (5 ocorrência(s))
+  ➤ '/menu/pj' → '/cadastrar-pessoa-juridica' (1 ocorrência(s))
+  ➤ '/menu/usuario' → '/cadastrar-usuario' (1 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: home_backup.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\home_backup.html
+🔁 MODIFICAÇÕES:
+  ➤ '/login' → '/login' (2 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: home.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\home.html
+🔁 MODIFICAÇÕES:
+  ➤ '/login' → '/login' (2 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: pr_cadastro_projeto.html
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\templates\pr_cadastro_projeto.html
+🔁 MODIFICAÇÕES:
+  ➤ '/cadastro/trecho' → '/cadastrar-trechos' (1 ocorrência(s))
+  ➤ '/cadastro/pessoa-fisica' → '/cadastrar-pessoa-fisica' (1 ocorrência(s))
+  ➤ '/cadastro/pessoa-juridica' → '/cadastrar-pessoa-juridica' (1 ocorrência(s))
+=============================================================
+

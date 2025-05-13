@@ -1,0 +1,274 @@
+/* ==================== ESTRUTURA PRINCIPAL ==================== */
+body {
+  font-family: 'Segoe UI', sans-serif; /* Fonte principal do sistema */
+  margin: 0;                          /* Remove margens padrão */
+  padding: 0;                         /* Remove preenchimentos padrão */
+  background-color: #eef5f9;          /* Fundo azul claro */
+}
+
+/* ==================== CABEÇALHO PRINCIPAL ==================== */
+header.fad-header {
+  background-color: #003366;         /* Azul marinho escuro */
+  color: white;                      /* Texto branco */
+  padding: 20px 0;                   /* Espaço interno vertical */
+  border-bottom: 4px solid #006633;  /* Borda inferior verde */
+  text-align: center;                /* Centraliza conteúdo */
+  position: relative;               /* Referência para logout absoluto */
+}
+
+header.fad-header h1 {
+  font-size: 40px;                   /* Título grande */
+  margin: 0;                         /* Remove margens */
+}
+
+header.fad-header h2 {
+  font-size: 18px;                   /* Subtítulo menor */
+  margin: 4px 0 0;                   /* Margem reduzida */
+  font-weight: bold;                 /* Texto em negrito */
+}
+
+/* ==================== BOTÃO DE LOGOUT ==================== */
+.logout {
+  position: absolute;               /* Fixa no canto do header */
+  top: 10px;                        /* Distância do topo */
+  right: 20px;                      /* Distância da borda direita */
+  z-index: 1000;                    /* Sobreposição garantida */
+}
+
+.logout form button {
+  background-color: transparent;    /* Sem fundo */
+  color: white;                     /* Texto branco */
+  border: 1px solid white;          /* Borda branca */
+  padding: 6px 12px;                /* Espaço interno */
+  border-radius: 4px;               /* Bordas arredondadas */
+  cursor: pointer;                  /* Cursor pointer */
+  font-size: 13px;                  /* Fonte pequena */
+}
+
+.logout form button:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Fundo translúcido no hover */
+}
+
+/* ==================== CONTAINER PRINCIPAL ==================== */
+.box-container {
+  max-width: 720px;                  /* Largura máxima do conteúdo */
+  margin: 30px auto;                 /* Centraliza horizontalmente */
+  padding: 2rem 2.5%;                /* Espaço interno */
+  background-color: #fff;            /* Fundo branco */
+  border-radius: 10px;               /* Bordas arredondadas */
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1); /* Sombra sutil */
+}
+
+/* ==================== TÍTULO DO FORMULÁRIO ==================== */
+.form-title {
+  text-align: center;                /* Centraliza o título */
+  font-size: 24px;                   /* Tamanho grande */
+  margin-bottom: 20px;               /* Espaço abaixo do título */
+  color: #003366;                    /* Azul escuro */
+}
+
+/* ==================== SEÇÕES DO FORMULÁRIO ==================== */
+.form-section {
+  margin-bottom: 30px;               /* Espaço entre seções */
+  padding: 20px;                     /* Espaço interno */
+  border: 1px solid #ccc;            /* Borda leve */
+  border-radius: 8px;                /* Bordas arredondadas */
+  background-color: #fdfdfd;         /* Fundo quase branco */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); /* Sombra suave */
+}
+
+/* ==================== LAYOUT DOS CAMPOS ==================== */
+.form-row {
+  align-items: flex-end; 
+  margin-bottom: 25px;
+  display: flex;                     /* Layout flexível */
+  justify-content: center;          /* Centraliza os filhos */
+  flex-wrap: wrap;                   /* Permite quebra de linha */
+  gap: 16px;                         /* Espaço entre elementos */
+}
+
+.form-field {
+  display: flex;                     /* Flexbox */
+  flex-direction: column;           /* Empilha os filhos */
+  margin-bottom: 20px;             /* Espaço abaixo */
+}
+
+.form-field.half {
+  width: 48%;                        /* Metade da linha */
+}
+
+.form-field.full {
+  width: 100%;
+  margin-bottom: 0;                       /* Linha completa */
+}
+
+/* ==================== CAMPOS DE FORMULÁRIO ==================== */
+label {
+  font-weight: bold;                /* Negrito */
+  margin-bottom: 6px;               /* Espaço abaixo */
+}
+
+input, select {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 0.6rem;                  /* Espaço interno */
+  font-size: 1rem;                  /* Tamanho da fonte */
+  border-radius: 6px;               /* Bordas arredondadas */
+  border: 1px solid #ccc;           /* Borda clara */
+}
+
+/* ==================== CENTRALIZAÇÃO DE BOTÕES CONFIRMAR ==================== */
+.confirmar-container {
+  display: flex;                    /* Flexbox */
+  justify-content: center;         /* Centraliza botão */
+  margin-top: 30px;                /* Espaço acima */
+  width: 100%;                     /* Ocupa toda a largura */
+}
+
+/* ==================== BOTÃO PADRÃO DE CONFIRMAÇÃO ==================== */
+.confirmar-btn {
+  display: block;                   /* Exibe em bloco */
+  background-color: #007bff;        /* Azul padrão */
+  color: white;                     /* Texto branco */
+  padding: 12px 24px;               /* Espaço interno */
+  font-size: 16px;                  /* Tamanho da fonte */
+  border: none;                     /* Sem borda */
+  border-radius: 6px;               /* Bordas arredondadas */
+  font-weight: bold;                /* Negrito */
+  cursor: pointer;                  /* Cursor pointer */
+  min-width: 200px;                 /* Largura mínima */
+  text-align: center;               /* Centraliza texto */
+  transition: background-color 0.3s ease; /* Efeito hover */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);   /* Sombra leve */
+}
+
+.confirmar-btn:hover {
+  background-color: #0056b3;        /* Azul escuro no hover */
+}
+
+.confirmar-btn:disabled {
+  background-color: #999;           /* Cinza para botão inativo */
+  cursor: not-allowed;              /* Cursor bloqueado */
+}
+
+/* ==================== BOTÕES DE EDIÇÃO (Editável) ==================== */
+.btn-editar {
+  font-size: 12px;                  /* Tamanho pequeno */
+  padding: 4px 8px;                 /* Espaço compacto */
+  background-color: #cce5ff;        /* Azul claro */
+  color: #004085;                   /* Texto azul escuro */
+  border: 1px solid #004085;        /* Borda azul escura */
+  border-radius: 4px;               /* Bordas arredondadas */
+  cursor: pointer;                  /* Cursor pointer */
+  float: right;                     /* Alinha à direita */
+}
+
+
+/* ==================== SELECT COM BOTÃO DE ATUALIZAÇÃO LATERAL COM ÍCONES ==================== */
+.select-with-button {
+  display: flex;                    /* Usa flexbox para alinhar select e botão lado a lado */
+  align-items: center;              /* Alinha verticalmente o select e o botão */
+  gap: 8px;                         /* Espaçamento entre o select e o botão */
+}
+
+.select-with-button select {
+  flex: 1;                          /* Faz o select expandir para ocupar o espaço disponível */
+}
+
+.select-with-button .botao-icon {
+  margin-left: -44px;               /* Ajusta posição do botão para dentro do campo select */
+  background: none;                 /* Remove fundo do botão */
+  border: none;                     /* Remove borda do botão */
+  cursor: pointer;                  /* Cursor em formato de mão ao passar o mouse */
+  font-size: 20px;                  /* Tamanho maior para o ícone */
+  color: #007bff;                   /* Cor azul padrão FAD */
+  padding: 4px;                     /* Pequeno preenchimento para área de clique */
+  z-index: 2;                       /* Garante sobreposição acima do select */
+}
+
+.select-with-button .botao-icon:hover {
+  color: #0056b3;                   /* Muda para azul mais escuro ao passar o mouse */
+}
+
+
+/* ==================== SEÇÃO DE RESUMO (após confirmação) ==================== */
+.resumo {
+  margin-top: 15px;                 /* Espaço acima */
+  padding: 10px;                    /* Espaço interno */
+  background-color: #f2f2f2;        /* Fundo cinza claro */
+  border-radius: 6px;               /* Bordas arredondadas */
+  border: 1px solid #ccc;           /* Borda sutil */
+  font-size: 14px;                  /* Fonte menor */
+}
+
+/* ==================== CLASSE UTILITÁRIA PARA ESCONDER ==================== */
+.hidden {
+  display: none;                    /* Oculta o elemento */
+}
+
+
+
+/* ==================== SELECT COM BOTÃO LATERAL ==================== */
+.select-with-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.select-with-button select {
+  flex: 1;
+}
+
+.select-with-button .botao-icon {
+  margin-left: -34px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #007bff;
+  padding: 4px;
+  z-index: 2;
+}
+
+.select-with-button .botao-icon:hover {
+  color: #0056b3;
+}
+
+
+/* ==================== BOTÃO PADRÃO EDITAR FAD ==================== */
+.btn-editar-fad {
+  position: absolute;               /* Fixa no canto superior direito */
+  top: 8px;                         /* Distância do topo do container de resumo */
+  right: 10px;                      /* Distância da lateral direita */
+  background-color: #e0e0e0;        /* Fundo cinza claro */
+  color: #444;                      /* Ícone cinza escuro */
+  border: 1px solid #888;           /* Borda cinza intermediária */
+  border-radius: 4px;               /* Bordas arredondadas */
+  padding: 6px;                     /* Espaço interno compacto */
+  font-size: 16px;                  /* Tamanho do ícone */
+  cursor: pointer;                  /* Cursor pointer */
+  transition: background-color 0.3s ease;
+}
+
+.btn-editar-fad:hover {
+  background-color: #d4d4d4;        /* Fundo ligeiramente mais escuro no hover */
+  color: #222;                      /* Ícone um tom mais escuro no hover */
+}
+
+/* BOTÃO PADRÃO ATUALIZAR FAD - alinhado ao botão editar */
+.botao-icon {
+  background-color: #e0e0e0;  /* mesmo fundo */
+  color: #444;                /* mesma cor de ícone */
+  border: 1px solid #888;     /* mesma borda */
+  border-radius: 4px;         /* mesmo raio */
+  font-size: 16px;            /* mesmo tamanho de fonte */
+  padding: 6px;               /* mesmo preenchimento */
+  cursor: pointer;
+  z-index: 2;
+  margin-left: 0;             /* evita desalinhamento lateral */
+}
+
+.botao-icon:hover {
+  background-color: #d4d4d4;
+  color: #222;
+}

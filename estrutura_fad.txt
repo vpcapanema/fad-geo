@@ -1,0 +1,1330 @@
+Listagem de caminhos de pasta para o volume OS
+O número de série do volume é FC06-5060
+C:.
+|   .env
+|   .gitignore
+|   api_endpoints.zip
+|   atualizar_endpoints.ps1
+|   atualizar_mapa_rotas.py
+|   atualizar_rotas_html.ps1
+|   atualizar_rotas_js_html.ps1
+|   auditoria_rotas_fad_ATUALIZADA.xlsx
+|   auditoria_rotas_fad_ATUALIZADA_result.xlsx
+|   backup_models_endpoints.zip
+|   estrutura_fad.txt
+|   html_templates.zip
+|   main.py
+|   README.md
+|   requirements.txt
+|   requirements_fixed.txt
+|   start.ps1
+|   tree.py
+|   verifica_rotas.py
+|   
++---.vscode
+|       launch.json
+|       settings.json
+|       
++---app
+|   |   test.db
+|   |   __init__.py
+|   |   
+|   +---api
+|   |   |   dependencies.py
+|   |   |   
+|   |   +---endpoints
+|   |   |   |   au_autenticacao.py
+|   |   |   |   ca_endpoint.py
+|   |   |   |   cd_aprovar_usuario.py
+|   |   |   |   cd_cadastro_pessoa_fisica.py
+|   |   |   |   cd_cadastro_pessoa_juridica.py
+|   |   |   |   cd_cadastro_trechos_estadualizacao.py
+|   |   |   |   cd_cadastro_usuario_sistema.py
+|   |   |   |   cd_consultas_auxiliares.py
+|   |   |   |   endpoints.zip
+|   |   |   |   pn_menu_navegacao.py
+|   |   |   |   pn_painel_usuario_administrador.py
+|   |   |   |   pn_painel_usuario_comum.py
+|   |   |   |   pn_painel_usuario_master.py
+|   |   |   |   pr_debug_log_projeto.py
+|   |   |   |   pr_delete_upload.py
+|   |   |   |   pr_gravar_projeto.py
+|   |   |   |   pr_relatorio_upload.py
+|   |   |   |   pr_relatorio_validacao.py
+|   |   |   |   pr_salvar_geometria_validada.py
+|   |   |   |   pr_salvar_projeto.py
+|   |   |   |   pr_salvar_temp_validacao.py
+|   |   |   |   pr_status_projeto.py
+|   |   |   |   pr_upload_zip.py
+|   |   |   |   pr_validacao_geometria.py
+|   |   |   |   vw_painel_administrador.py
+|   |   |   |   vw_painel_analista_projetos.py
+|   |   |   |   vw_painel_coordenador_projetos.py
+|   |   |   |   vw_painel_master_projetos.py
+|   |   |   |   vw_projetos_usuario_comum.py
+|   |   |   |   vw_usuarios_painel.py
+|   |   |   |   
+|   |   |   +---templates
+|   |   |   |       1pr_cadastro_projeto.html
+|   |   |   |       au_login.html
+|   |   |   |       ca_interface.html
+|   |   |   |       ca_laudo_sintetico_template.html
+|   |   |   |       ca_laudo_template.html
+|   |   |   |       ca_processamento_template.html
+|   |   |   |       ca_relatorio_processamento.html
+|   |   |   |       cd_cadastro_usuario.html
+|   |   |   |       cd_interessado_pf.html
+|   |   |   |       cd_interessado_pj.html
+|   |   |   |       cd_interessado_trecho.html
+|   |   |   |       home.html
+|   |   |   |       iv_interface.html
+|   |   |   |       pagina_em_construcao.html
+|   |   |   |       pn_painel_usuario_adm.html
+|   |   |   |       pn_painel_usuario_comum.html
+|   |   |   |       pn_painel_usuario_master.html
+|   |   |   |       pr_cadastro_projeto.html
+|   |   |   |       templates.zip
+|   |   |   |       
+|   |   |   \---__pycache__
+|   |   |           au_autenticacao.cpython-311.pyc
+|   |   |           au_redirecionamento_login_cd_usuario.cpython-311.pyc
+|   |   |           ca_endpoint.cpython-311.pyc
+|   |   |           cd_aprovar_usuario.cpython-311.pyc
+|   |   |           cd_autenticacao.cpython-311.pyc
+|   |   |           cd_cadastro.cpython-311.pyc
+|   |   |           cd_cadastro_pessoa_fisica.cpython-311.pyc
+|   |   |           cd_cadastro_pessoa_juridica.cpython-311.pyc
+|   |   |           cd_cadastro_trechos_estadualizacao.cpython-311.pyc
+|   |   |           cd_cadastro_usuario_sistema.cpython-311.pyc
+|   |   |           cd_consultas_auxiliares.cpython-311.pyc
+|   |   |           cd_interessado.cpython-311.pyc
+|   |   |           cd_painel_usuario_administrador.cpython-311.pyc
+|   |   |           cd_painel_usuario_comum.cpython-311.pyc
+|   |   |           cd_painel_usuario_master.cpython-311.pyc
+|   |   |           cd_redirecionamento_login_cd_usuario.cpython-311.pyc
+|   |   |           menu_navegacao.cpython-311.pyc
+|   |   |           pn_menu_navegacao.cpython-311.pyc
+|   |   |           pn_painel_usuario_administrador.cpython-311.pyc
+|   |   |           pn_painel_usuario_comum.cpython-311.pyc
+|   |   |           pn_painel_usuario_master.cpython-311.pyc
+|   |   |           pr_debug_log_projeto.cpython-311.pyc
+|   |   |           pr_delete_upload.cpython-311.pyc
+|   |   |           pr_gravar_projeto.cpython-311.pyc
+|   |   |           pr_relatorio_upload.cpython-311.pyc
+|   |   |           pr_relatorio_validacao.cpython-311.pyc
+|   |   |           pr_salvar_geometria_validada.cpython-311.pyc
+|   |   |           pr_salvar_projeto.cpython-311.pyc
+|   |   |           pr_salvar_temp_validacao.cpython-311.pyc
+|   |   |           pr_status_projeto.cpython-311.pyc
+|   |   |           pr_upload_zip.cpython-311.pyc
+|   |   |           pr_validacao_geometria.cpython-311.pyc
+|   |   |           vw_painel_administrador.cpython-311.pyc
+|   |   |           vw_painel_analista_projetos.cpython-311.pyc
+|   |   |           vw_painel_coordenador_projetos.cpython-311.pyc
+|   |   |           vw_painel_master_projetos.cpython-311.pyc
+|   |   |           vw_projetos_usuario_comum.cpython-311.pyc
+|   |   |           vw_usuarios_painel.cpython-311.pyc
+|   |   |           
+|   |   \---__pycache__
+|   |           dependencies.cpython-311.pyc
+|   |           
+|   +---core
+|   |   |   jinja.py
+|   |   |   security.py
+|   |   |   
+|   |   \---__pycache__
+|   |           jinja.cpython-311.pyc
+|   |           security.cpython-311.pyc
+|   |           
+|   +---database
+|   |   |   base.py
+|   |   |   session.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           base.cpython-311.pyc
+|   |           session.cpython-311.pyc
+|   |           __init__.cpython-311.pyc
+|   |           
+|   +---models
+|   |   |   cd_pessoa_fisica.py
+|   |   |   cd_pessoa_juridica.py
+|   |   |   cd_trecho.py
+|   |   |   cd_usuario_sistema.py
+|   |   |   models.zip
+|   |   |   painel_administrador.py
+|   |   |   pr_geometrias_upload.py
+|   |   |   pr_geometrias_validadas.py
+|   |   |   pr_projeto.py
+|   |   |   pr_temp_validacao_geometria.py
+|   |   |   pr_zip_uploads.py
+|   |   |   vw_projetos_usuario_comum.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           cd_interessado.cpython-311.pyc
+|   |           cd_pessoa_fisica.cpython-311.pyc
+|   |           cd_pessoa_juridica.cpython-311.pyc
+|   |           cd_trecho.cpython-311.pyc
+|   |           cd_usuario.cpython-311.pyc
+|   |           cd_usuario_sistema.cpython-311.pyc
+|   |           painel_administrador.cpython-311.pyc
+|   |           pr_geometrias_upload.cpython-311.pyc
+|   |           pr_geometrias_validadas.cpython-311.pyc
+|   |           pr_geometrias_validas.cpython-311.pyc
+|   |           pr_projeto.cpython-311.pyc
+|   |           pr_temp_validacao_geometria.cpython-311.pyc
+|   |           pr_upload_zip.cpython-311.pyc
+|   |           pr_validacao_geometria.cpython-311.pyc
+|   |           pr_zip_uploads.cpython-311.pyc
+|   |           vw_projetos_usuario_comum.cpython-311.pyc
+|   |           __init__.cpython-311.pyc
+|   |           
+|   +---modules
+|   |   \---conformidade_ambiental
+|   |       |   ca_laudo.py
+|   |       |   ca_laudo_sintetico.py
+|   |       |   ca_mapa.py
+|   |       |   ca_processador.py
+|   |       |   ca_processamento.py
+|   |       |   ca_shapefile.py
+|   |       |   __init__.py
+|   |       |   
+|   |       \---__pycache__
+|   |               ca_processador.cpython-311.pyc
+|   |               __init__.cpython-311.pyc
+|   |               
+|   +---relatorios
+|   |   |   iv_relatorio_upload.py
+|   |   |   iv_relatorio_validacao.py
+|   |   |   pr_relatorio_upload.py
+|   |   |   pr_relatorio_validacao.py
+|   |   |   
+|   |   \---__pycache__
+|   |           iv_relatorio_validacao.cpython-311.pyc
+|   |           pr_relatorio_upload.cpython-311.pyc
+|   |           
+|   +---routes
+|   |       upload_routes
+|   |       
+|   +---schemas
+|   |   |   geometrias_validas.py
+|   |   |   pr_geometrias_upload.py
+|   |   |   temp_validacao_geometria.py
+|   |   |   usuario.py
+|   |   |   
+|   |   \---__pycache__
+|   |           geometrias_validas.cpython-311.pyc
+|   |           temp_validacao_geometria.cpython-311.pyc
+|   |           usuario.cpython-311.pyc
+|   |           
+|   +---security
+|   |   |   hashing.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           hashing.cpython-311.pyc
+|   |           __init__.cpython-311.pyc
+|   |           
+|   +---static
+|   |   |   mapa_rotas_fad.html
+|   |   |   
+|   |   +---css
+|   |   |   +---cadastro_projeto
+|   |   |   |   +---cadastro
+|   |   |   |   +---croqui_projeto
+|   |   |   |   +---finalizacao_projeto
+|   |   |   |   +---selecao_modulos
+|   |   |   |   \---validacao_geometria
+|   |   |   +---infraestrutura
+|   |   |   +---multicriterio
+|   |   |   \---socioeconomico
+|   |   +---images
+|   |   |       a321-1.png
+|   |   |       arcabouco_teorico.png
+|   |   |       conformidade_ambiental.png
+|   |   |       favicon.ico
+|   |   |       modulo_cadastro.png
+|   |   |       modulo_conformidade_ambiental.png
+|   |   |       modulo_infraestrutura.png
+|   |   |       modulo_multicriterio.png
+|   |   |       modulo_socioeconomico.png
+|   |   |       modulo_validacao.png
+|   |   |       
+|   |   +---js
+|   |   |   +---cadastro_projeto
+|   |   |   |   +---cadastro
+|   |   |   |   +---croqui_projeto
+|   |   |   |   +---finalizacao_projeto
+|   |   |   |   +---selecao_modulos
+|   |   |   |   \---validacao_geometria
+|   |   |   +---infraestrutura
+|   |   |   +---multicriterio
+|   |   |   \---socioeconomico
+|   |   \---relatorios
+|   +---templates
+|   |       1pr_cadastro_projeto.html
+|   |       au_login.html
+|   |       ca_interface.html
+|   |       ca_laudo_sintetico_template.html
+|   |       ca_laudo_template.html
+|   |       ca_processamento_template.html
+|   |       ca_relatorio_processamento.html
+|   |       cd_cadastro_usuario.html
+|   |       cd_interessado_pf.html
+|   |       cd_interessado_pj.html
+|   |       cd_interessado_trecho.html
+|   |       home.html
+|   |       iv_interface.html
+|   |       pagina_em_construcao.html
+|   |       pn_painel_usuario_adm.html
+|   |       pn_painel_usuario_comum.html
+|   |       pn_painel_usuario_master.html
+|   |       pr_cadastro_projeto.html
+|   |       templates.zip
+|   |       
+|   +---templates_backup
+|   |       au_login.html
+|   |       ca_interface.html
+|   |       ca_interface.html.bak
+|   |       ca_laudo_sintetico_template.html
+|   |       ca_laudo_sintetico_template.html.bak
+|   |       ca_laudo_template.html
+|   |       ca_laudo_template.html.bak
+|   |       ca_processamento_template.html
+|   |       ca_processamento_template.html.bak
+|   |       ca_relatorio_processamento.html
+|   |       ca_relatorio_processamento.html.bak
+|   |       cd_cadastro.html
+|   |       cd_cadastro.html.bak
+|   |       cd_cadastro_bkp.html
+|   |       cd_cadastro_bkp.html.bak
+|   |       cd_cadastro_usuario.html
+|   |       cd_escolha_pos_login.html
+|   |       cd_escolha_pos_login.html.bak
+|   |       cd_interessado_pf.html
+|   |       cd_interessado_pf.html.bak
+|   |       cd_interessado_pj.html
+|   |       cd_interessado_pj.html.bak
+|   |       cd_interessado_trecho.html
+|   |       cd_interessado_trecho.html.bak
+|   |       cd_login.html
+|   |       cd_login.html.bak
+|   |       cd_painel_aprovacao.html
+|   |       cd_painel_aprovacao.html.bak
+|   |       cd_painel_usuario_adm.html
+|   |       cd_painel_usuario_adm.html.bak
+|   |       cd_painel_usuario_comum.html
+|   |       cd_painel_usuario_comum.html.bak
+|   |       cd_painel_usuario_master.html
+|   |       cd_painel_usuario_master.html.bak
+|   |       home.html
+|   |       home.html.bak
+|   |       home.html.bkp
+|   |       home_backup.html
+|   |       home_backup.html.bak
+|   |       index_backup.html
+|   |       index_backup.html.bak
+|   |       iv_interface.html
+|   |       iv_interface.html.bak
+|   |       pagina_em_construcao.html
+|   |       pn_painel_usuario_adm.html
+|   |       pn_painel_usuario_comum.html
+|   |       pn_painel_usuario_master.html
+|   |       pr_cadastro_projeto copy.html
+|   |       pr_cadastro_projeto.html
+|   |       pr_cadastro_projeto.html.bak
+|   |       templates.zip
+|   |       
+|   +---utils
+|   |   |   utils_gerar_relatorio_validacao.py
+|   |   |   
+|   |   \---__pycache__
+|   |           utils_gerar_relatorio_validacao.cpython-311.pyc
+|   |           
+|   +---venv
+|   |   |   pyvenv.cfg
+|   |   |   
+|   |   +---Include
+|   |   +---Lib
+|   |   |   \---site-packages
+|   |   |       |   distutils-precedence.pth
+|   |   |       |   
+|   |   |       +---pip
+|   |   |       |   |   py.typed
+|   |   |       |   |   __init__.py
+|   |   |       |   |   __main__.py
+|   |   |       |   |   __pip-runner__.py
+|   |   |       |   |   
+|   |   |       |   +---_internal
+|   |   |       |   |   |   build_env.py
+|   |   |       |   |   |   cache.py
+|   |   |       |   |   |   configuration.py
+|   |   |       |   |   |   exceptions.py
+|   |   |       |   |   |   main.py
+|   |   |       |   |   |   pyproject.py
+|   |   |       |   |   |   self_outdated_check.py
+|   |   |       |   |   |   wheel_builder.py
+|   |   |       |   |   |   __init__.py
+|   |   |       |   |   |   
+|   |   |       |   |   +---cli
+|   |   |       |   |   |       autocompletion.py
+|   |   |       |   |   |       base_command.py
+|   |   |       |   |   |       cmdoptions.py
+|   |   |       |   |   |       command_context.py
+|   |   |       |   |   |       index_command.py
+|   |   |       |   |   |       main.py
+|   |   |       |   |   |       main_parser.py
+|   |   |       |   |   |       parser.py
+|   |   |       |   |   |       progress_bars.py
+|   |   |       |   |   |       req_command.py
+|   |   |       |   |   |       spinners.py
+|   |   |       |   |   |       status_codes.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---commands
+|   |   |       |   |   |       cache.py
+|   |   |       |   |   |       check.py
+|   |   |       |   |   |       completion.py
+|   |   |       |   |   |       configuration.py
+|   |   |       |   |   |       debug.py
+|   |   |       |   |   |       download.py
+|   |   |       |   |   |       freeze.py
+|   |   |       |   |   |       hash.py
+|   |   |       |   |   |       help.py
+|   |   |       |   |   |       index.py
+|   |   |       |   |   |       inspect.py
+|   |   |       |   |   |       install.py
+|   |   |       |   |   |       list.py
+|   |   |       |   |   |       search.py
+|   |   |       |   |   |       show.py
+|   |   |       |   |   |       uninstall.py
+|   |   |       |   |   |       wheel.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---distributions
+|   |   |       |   |   |       base.py
+|   |   |       |   |   |       installed.py
+|   |   |       |   |   |       sdist.py
+|   |   |       |   |   |       wheel.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---index
+|   |   |       |   |   |       collector.py
+|   |   |       |   |   |       package_finder.py
+|   |   |       |   |   |       sources.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---locations
+|   |   |       |   |   |       base.py
+|   |   |       |   |   |       _distutils.py
+|   |   |       |   |   |       _sysconfig.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---metadata
+|   |   |       |   |   |   |   base.py
+|   |   |       |   |   |   |   pkg_resources.py
+|   |   |       |   |   |   |   _json.py
+|   |   |       |   |   |   |   __init__.py
+|   |   |       |   |   |   |   
+|   |   |       |   |   |   \---importlib
+|   |   |       |   |   |           _compat.py
+|   |   |       |   |   |           _dists.py
+|   |   |       |   |   |           _envs.py
+|   |   |       |   |   |           __init__.py
+|   |   |       |   |   |           
+|   |   |       |   |   +---models
+|   |   |       |   |   |       candidate.py
+|   |   |       |   |   |       direct_url.py
+|   |   |       |   |   |       format_control.py
+|   |   |       |   |   |       index.py
+|   |   |       |   |   |       installation_report.py
+|   |   |       |   |   |       link.py
+|   |   |       |   |   |       scheme.py
+|   |   |       |   |   |       search_scope.py
+|   |   |       |   |   |       selection_prefs.py
+|   |   |       |   |   |       target_python.py
+|   |   |       |   |   |       wheel.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---network
+|   |   |       |   |   |       auth.py
+|   |   |       |   |   |       cache.py
+|   |   |       |   |   |       download.py
+|   |   |       |   |   |       lazy_wheel.py
+|   |   |       |   |   |       session.py
+|   |   |       |   |   |       utils.py
+|   |   |       |   |   |       xmlrpc.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---operations
+|   |   |       |   |   |   |   check.py
+|   |   |       |   |   |   |   freeze.py
+|   |   |       |   |   |   |   prepare.py
+|   |   |       |   |   |   |   __init__.py
+|   |   |       |   |   |   |   
+|   |   |       |   |   |   +---build
+|   |   |       |   |   |   |       build_tracker.py
+|   |   |       |   |   |   |       metadata.py
+|   |   |       |   |   |   |       metadata_editable.py
+|   |   |       |   |   |   |       metadata_legacy.py
+|   |   |       |   |   |   |       wheel.py
+|   |   |       |   |   |   |       wheel_editable.py
+|   |   |       |   |   |   |       wheel_legacy.py
+|   |   |       |   |   |   |       __init__.py
+|   |   |       |   |   |   |       
+|   |   |       |   |   |   \---install
+|   |   |       |   |   |           editable_legacy.py
+|   |   |       |   |   |           wheel.py
+|   |   |       |   |   |           __init__.py
+|   |   |       |   |   |           
+|   |   |       |   |   +---req
+|   |   |       |   |   |       constructors.py
+|   |   |       |   |   |       req_file.py
+|   |   |       |   |   |       req_install.py
+|   |   |       |   |   |       req_set.py
+|   |   |       |   |   |       req_uninstall.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   +---resolution
+|   |   |       |   |   |   |   base.py
+|   |   |       |   |   |   |   __init__.py
+|   |   |       |   |   |   |   
+|   |   |       |   |   |   +---legacy
+|   |   |       |   |   |   |       resolver.py
+|   |   |       |   |   |   |       __init__.py
+|   |   |       |   |   |   |       
+|   |   |       |   |   |   \---resolvelib
+|   |   |       |   |   |           base.py
+|   |   |       |   |   |           candidates.py
+|   |   |       |   |   |           factory.py
+|   |   |       |   |   |           found_candidates.py
+|   |   |       |   |   |           provider.py
+|   |   |       |   |   |           reporter.py
+|   |   |       |   |   |           requirements.py
+|   |   |       |   |   |           resolver.py
+|   |   |       |   |   |           __init__.py
+|   |   |       |   |   |           
+|   |   |       |   |   +---utils
+|   |   |       |   |   |       appdirs.py
+|   |   |       |   |   |       compat.py
+|   |   |       |   |   |       compatibility_tags.py
+|   |   |       |   |   |       datetime.py
+|   |   |       |   |   |       deprecation.py
+|   |   |       |   |   |       direct_url_helpers.py
+|   |   |       |   |   |       egg_link.py
+|   |   |       |   |   |       entrypoints.py
+|   |   |       |   |   |       filesystem.py
+|   |   |       |   |   |       filetypes.py
+|   |   |       |   |   |       glibc.py
+|   |   |       |   |   |       hashes.py
+|   |   |       |   |   |       logging.py
+|   |   |       |   |   |       misc.py
+|   |   |       |   |   |       packaging.py
+|   |   |       |   |   |       retry.py
+|   |   |       |   |   |       setuptools_build.py
+|   |   |       |   |   |       subprocess.py
+|   |   |       |   |   |       temp_dir.py
+|   |   |       |   |   |       unpacking.py
+|   |   |       |   |   |       urls.py
+|   |   |       |   |   |       virtualenv.py
+|   |   |       |   |   |       wheel.py
+|   |   |       |   |   |       _jaraco_text.py
+|   |   |       |   |   |       _log.py
+|   |   |       |   |   |       __init__.py
+|   |   |       |   |   |       
+|   |   |       |   |   \---vcs
+|   |   |       |   |           bazaar.py
+|   |   |       |   |           git.py
+|   |   |       |   |           mercurial.py
+|   |   |       |   |           subversion.py
+|   |   |       |   |           versioncontrol.py
+|   |   |       |   |           __init__.py
+|   |   |       |   |           
+|   |   |       |   \---_vendor
+|   |   |       |       |   typing_extensions.py
+|   |   |       |       |   vendor.txt
+|   |   |       |       |   __init__.py
+|   |   |       |       |   
+|   |   |       |       +---cachecontrol
+|   |   |       |       |   |   adapter.py
+|   |   |       |       |   |   cache.py
+|   |   |       |       |   |   controller.py
+|   |   |       |       |   |   filewrapper.py
+|   |   |       |       |   |   heuristics.py
+|   |   |       |       |   |   py.typed
+|   |   |       |       |   |   serialize.py
+|   |   |       |       |   |   wrapper.py
+|   |   |       |       |   |   _cmd.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   
+|   |   |       |       |   \---caches
+|   |   |       |       |           file_cache.py
+|   |   |       |       |           redis_cache.py
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       +---certifi
+|   |   |       |       |       cacert.pem
+|   |   |       |       |       core.py
+|   |   |       |       |       py.typed
+|   |   |       |       |       __init__.py
+|   |   |       |       |       __main__.py
+|   |   |       |       |       
+|   |   |       |       +---distlib
+|   |   |       |       |       compat.py
+|   |   |       |       |       database.py
+|   |   |       |       |       index.py
+|   |   |       |       |       locators.py
+|   |   |       |       |       manifest.py
+|   |   |       |       |       markers.py
+|   |   |       |       |       metadata.py
+|   |   |       |       |       resources.py
+|   |   |       |       |       scripts.py
+|   |   |       |       |       t32.exe
+|   |   |       |       |       t64-arm.exe
+|   |   |       |       |       t64.exe
+|   |   |       |       |       util.py
+|   |   |       |       |       version.py
+|   |   |       |       |       w32.exe
+|   |   |       |       |       w64-arm.exe
+|   |   |       |       |       w64.exe
+|   |   |       |       |       wheel.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---distro
+|   |   |       |       |       distro.py
+|   |   |       |       |       py.typed
+|   |   |       |       |       __init__.py
+|   |   |       |       |       __main__.py
+|   |   |       |       |       
+|   |   |       |       +---idna
+|   |   |       |       |       codec.py
+|   |   |       |       |       compat.py
+|   |   |       |       |       core.py
+|   |   |       |       |       idnadata.py
+|   |   |       |       |       intranges.py
+|   |   |       |       |       package_data.py
+|   |   |       |       |       py.typed
+|   |   |       |       |       uts46data.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---msgpack
+|   |   |       |       |       exceptions.py
+|   |   |       |       |       ext.py
+|   |   |       |       |       fallback.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---packaging
+|   |   |       |       |   |   markers.py
+|   |   |       |       |   |   metadata.py
+|   |   |       |       |   |   py.typed
+|   |   |       |       |   |   requirements.py
+|   |   |       |       |   |   specifiers.py
+|   |   |       |       |   |   tags.py
+|   |   |       |       |   |   utils.py
+|   |   |       |       |   |   version.py
+|   |   |       |       |   |   _elffile.py
+|   |   |       |       |   |   _manylinux.py
+|   |   |       |       |   |   _musllinux.py
+|   |   |       |       |   |   _parser.py
+|   |   |       |       |   |   _structures.py
+|   |   |       |       |   |   _tokenizer.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   
+|   |   |       |       |   \---licenses
+|   |   |       |       |           _spdx.py
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       +---pkg_resources
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---platformdirs
+|   |   |       |       |       android.py
+|   |   |       |       |       api.py
+|   |   |       |       |       macos.py
+|   |   |       |       |       py.typed
+|   |   |       |       |       unix.py
+|   |   |       |       |       version.py
+|   |   |       |       |       windows.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       __main__.py
+|   |   |       |       |       
+|   |   |       |       +---pygments
+|   |   |       |       |   |   cmdline.py
+|   |   |       |       |   |   console.py
+|   |   |       |       |   |   filter.py
+|   |   |       |       |   |   formatter.py
+|   |   |       |       |   |   lexer.py
+|   |   |       |       |   |   modeline.py
+|   |   |       |       |   |   plugin.py
+|   |   |       |       |   |   regexopt.py
+|   |   |       |       |   |   scanner.py
+|   |   |       |       |   |   sphinxext.py
+|   |   |       |       |   |   style.py
+|   |   |       |       |   |   token.py
+|   |   |       |       |   |   unistring.py
+|   |   |       |       |   |   util.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   __main__.py
+|   |   |       |       |   |   
+|   |   |       |       |   +---filters
+|   |   |       |       |   |       __init__.py
+|   |   |       |       |   |       
+|   |   |       |       |   +---formatters
+|   |   |       |       |   |       bbcode.py
+|   |   |       |       |   |       groff.py
+|   |   |       |       |   |       html.py
+|   |   |       |       |   |       img.py
+|   |   |       |       |   |       irc.py
+|   |   |       |       |   |       latex.py
+|   |   |       |       |   |       other.py
+|   |   |       |       |   |       pangomarkup.py
+|   |   |       |       |   |       rtf.py
+|   |   |       |       |   |       svg.py
+|   |   |       |       |   |       terminal.py
+|   |   |       |       |   |       terminal256.py
+|   |   |       |       |   |       _mapping.py
+|   |   |       |       |   |       __init__.py
+|   |   |       |       |   |       
+|   |   |       |       |   +---lexers
+|   |   |       |       |   |       python.py
+|   |   |       |       |   |       _mapping.py
+|   |   |       |       |   |       __init__.py
+|   |   |       |       |   |       
+|   |   |       |       |   \---styles
+|   |   |       |       |           _mapping.py
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       +---pyproject_hooks
+|   |   |       |       |   |   py.typed
+|   |   |       |       |   |   _impl.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   
+|   |   |       |       |   \---_in_process
+|   |   |       |       |           _in_process.py
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       +---requests
+|   |   |       |       |       adapters.py
+|   |   |       |       |       api.py
+|   |   |       |       |       auth.py
+|   |   |       |       |       certs.py
+|   |   |       |       |       compat.py
+|   |   |       |       |       cookies.py
+|   |   |       |       |       exceptions.py
+|   |   |       |       |       help.py
+|   |   |       |       |       hooks.py
+|   |   |       |       |       models.py
+|   |   |       |       |       packages.py
+|   |   |       |       |       sessions.py
+|   |   |       |       |       status_codes.py
+|   |   |       |       |       structures.py
+|   |   |       |       |       utils.py
+|   |   |       |       |       _internal_utils.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       __version__.py
+|   |   |       |       |       
+|   |   |       |       +---resolvelib
+|   |   |       |       |   |   providers.py
+|   |   |       |       |   |   py.typed
+|   |   |       |       |   |   reporters.py
+|   |   |       |       |   |   resolvers.py
+|   |   |       |       |   |   structs.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   
+|   |   |       |       |   \---compat
+|   |   |       |       |           collections_abc.py
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       +---rich
+|   |   |       |       |       abc.py
+|   |   |       |       |       align.py
+|   |   |       |       |       ansi.py
+|   |   |       |       |       bar.py
+|   |   |       |       |       box.py
+|   |   |       |       |       cells.py
+|   |   |       |       |       color.py
+|   |   |       |       |       color_triplet.py
+|   |   |       |       |       columns.py
+|   |   |       |       |       console.py
+|   |   |       |       |       constrain.py
+|   |   |       |       |       containers.py
+|   |   |       |       |       control.py
+|   |   |       |       |       default_styles.py
+|   |   |       |       |       diagnose.py
+|   |   |       |       |       emoji.py
+|   |   |       |       |       errors.py
+|   |   |       |       |       filesize.py
+|   |   |       |       |       file_proxy.py
+|   |   |       |       |       highlighter.py
+|   |   |       |       |       json.py
+|   |   |       |       |       jupyter.py
+|   |   |       |       |       layout.py
+|   |   |       |       |       live.py
+|   |   |       |       |       live_render.py
+|   |   |       |       |       logging.py
+|   |   |       |       |       markup.py
+|   |   |       |       |       measure.py
+|   |   |       |       |       padding.py
+|   |   |       |       |       pager.py
+|   |   |       |       |       palette.py
+|   |   |       |       |       panel.py
+|   |   |       |       |       pretty.py
+|   |   |       |       |       progress.py
+|   |   |       |       |       progress_bar.py
+|   |   |       |       |       prompt.py
+|   |   |       |       |       protocol.py
+|   |   |       |       |       py.typed
+|   |   |       |       |       region.py
+|   |   |       |       |       repr.py
+|   |   |       |       |       rule.py
+|   |   |       |       |       scope.py
+|   |   |       |       |       screen.py
+|   |   |       |       |       segment.py
+|   |   |       |       |       spinner.py
+|   |   |       |       |       status.py
+|   |   |       |       |       style.py
+|   |   |       |       |       styled.py
+|   |   |       |       |       syntax.py
+|   |   |       |       |       table.py
+|   |   |       |       |       terminal_theme.py
+|   |   |       |       |       text.py
+|   |   |       |       |       theme.py
+|   |   |       |       |       themes.py
+|   |   |       |       |       traceback.py
+|   |   |       |       |       tree.py
+|   |   |       |       |       _cell_widths.py
+|   |   |       |       |       _emoji_codes.py
+|   |   |       |       |       _emoji_replace.py
+|   |   |       |       |       _export_format.py
+|   |   |       |       |       _extension.py
+|   |   |       |       |       _fileno.py
+|   |   |       |       |       _inspect.py
+|   |   |       |       |       _log_render.py
+|   |   |       |       |       _loop.py
+|   |   |       |       |       _null_file.py
+|   |   |       |       |       _palettes.py
+|   |   |       |       |       _pick.py
+|   |   |       |       |       _ratio.py
+|   |   |       |       |       _spinners.py
+|   |   |       |       |       _stack.py
+|   |   |       |       |       _timer.py
+|   |   |       |       |       _win32_console.py
+|   |   |       |       |       _windows.py
+|   |   |       |       |       _windows_renderer.py
+|   |   |       |       |       _wrap.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       __main__.py
+|   |   |       |       |       
+|   |   |       |       +---tomli
+|   |   |       |       |       py.typed
+|   |   |       |       |       _parser.py
+|   |   |       |       |       _re.py
+|   |   |       |       |       _types.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---truststore
+|   |   |       |       |       py.typed
+|   |   |       |       |       _api.py
+|   |   |       |       |       _macos.py
+|   |   |       |       |       _openssl.py
+|   |   |       |       |       _ssl_constants.py
+|   |   |       |       |       _windows.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       \---urllib3
+|   |   |       |           |   connection.py
+|   |   |       |           |   connectionpool.py
+|   |   |       |           |   exceptions.py
+|   |   |       |           |   fields.py
+|   |   |       |           |   filepost.py
+|   |   |       |           |   poolmanager.py
+|   |   |       |           |   request.py
+|   |   |       |           |   response.py
+|   |   |       |           |   _collections.py
+|   |   |       |           |   _version.py
+|   |   |       |           |   __init__.py
+|   |   |       |           |   
+|   |   |       |           +---contrib
+|   |   |       |           |   |   appengine.py
+|   |   |       |           |   |   ntlmpool.py
+|   |   |       |           |   |   pyopenssl.py
+|   |   |       |           |   |   securetransport.py
+|   |   |       |           |   |   socks.py
+|   |   |       |           |   |   _appengine_environ.py
+|   |   |       |           |   |   __init__.py
+|   |   |       |           |   |   
+|   |   |       |           |   \---_securetransport
+|   |   |       |           |           bindings.py
+|   |   |       |           |           low_level.py
+|   |   |       |           |           __init__.py
+|   |   |       |           |           
+|   |   |       |           +---packages
+|   |   |       |           |   |   six.py
+|   |   |       |           |   |   __init__.py
+|   |   |       |           |   |   
+|   |   |       |           |   \---backports
+|   |   |       |           |           makefile.py
+|   |   |       |           |           weakref_finalize.py
+|   |   |       |           |           __init__.py
+|   |   |       |           |           
+|   |   |       |           \---util
+|   |   |       |                   connection.py
+|   |   |       |                   proxy.py
+|   |   |       |                   queue.py
+|   |   |       |                   request.py
+|   |   |       |                   response.py
+|   |   |       |                   retry.py
+|   |   |       |                   ssltransport.py
+|   |   |       |                   ssl_.py
+|   |   |       |                   ssl_match_hostname.py
+|   |   |       |                   timeout.py
+|   |   |       |                   url.py
+|   |   |       |                   wait.py
+|   |   |       |                   __init__.py
+|   |   |       |                   
+|   |   |       +---pip-25.0.1.dist-info
+|   |   |       |       AUTHORS.txt
+|   |   |       |       entry_points.txt
+|   |   |       |       INSTALLER
+|   |   |       |       LICENSE.txt
+|   |   |       |       METADATA
+|   |   |       |       RECORD
+|   |   |       |       REQUESTED
+|   |   |       |       top_level.txt
+|   |   |       |       WHEEL
+|   |   |       |       
+|   |   |       +---pkg_resources
+|   |   |       |   |   __init__.py
+|   |   |       |   |   
+|   |   |       |   +---extern
+|   |   |       |   |       __init__.py
+|   |   |       |   |       
+|   |   |       |   \---_vendor
+|   |   |       |       |   appdirs.py
+|   |   |       |       |   zipp.py
+|   |   |       |       |   __init__.py
+|   |   |       |       |   
+|   |   |       |       +---importlib_resources
+|   |   |       |       |       abc.py
+|   |   |       |       |       readers.py
+|   |   |       |       |       simple.py
+|   |   |       |       |       _adapters.py
+|   |   |       |       |       _common.py
+|   |   |       |       |       _compat.py
+|   |   |       |       |       _itertools.py
+|   |   |       |       |       _legacy.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---jaraco
+|   |   |       |       |   |   context.py
+|   |   |       |       |   |   functools.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   
+|   |   |       |       |   \---text
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       +---more_itertools
+|   |   |       |       |       more.py
+|   |   |       |       |       recipes.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---packaging
+|   |   |       |       |       markers.py
+|   |   |       |       |       requirements.py
+|   |   |       |       |       specifiers.py
+|   |   |       |       |       tags.py
+|   |   |       |       |       utils.py
+|   |   |       |       |       version.py
+|   |   |       |       |       _manylinux.py
+|   |   |       |       |       _musllinux.py
+|   |   |       |       |       _structures.py
+|   |   |       |       |       __about__.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       \---pyparsing
+|   |   |       |           |   actions.py
+|   |   |       |           |   common.py
+|   |   |       |           |   core.py
+|   |   |       |           |   exceptions.py
+|   |   |       |           |   helpers.py
+|   |   |       |           |   results.py
+|   |   |       |           |   testing.py
+|   |   |       |           |   unicode.py
+|   |   |       |           |   util.py
+|   |   |       |           |   __init__.py
+|   |   |       |           |   
+|   |   |       |           \---diagram
+|   |   |       |                   __init__.py
+|   |   |       |                   
+|   |   |       +---setuptools
+|   |   |       |   |   archive_util.py
+|   |   |       |   |   build_meta.py
+|   |   |       |   |   cli-32.exe
+|   |   |       |   |   cli-64.exe
+|   |   |       |   |   cli-arm64.exe
+|   |   |       |   |   cli.exe
+|   |   |       |   |   depends.py
+|   |   |       |   |   dep_util.py
+|   |   |       |   |   discovery.py
+|   |   |       |   |   dist.py
+|   |   |       |   |   errors.py
+|   |   |       |   |   extension.py
+|   |   |       |   |   glob.py
+|   |   |       |   |   gui-32.exe
+|   |   |       |   |   gui-64.exe
+|   |   |       |   |   gui-arm64.exe
+|   |   |       |   |   gui.exe
+|   |   |       |   |   installer.py
+|   |   |       |   |   launch.py
+|   |   |       |   |   logging.py
+|   |   |       |   |   monkey.py
+|   |   |       |   |   msvc.py
+|   |   |       |   |   namespaces.py
+|   |   |       |   |   package_index.py
+|   |   |       |   |   py34compat.py
+|   |   |       |   |   sandbox.py
+|   |   |       |   |   script (dev).tmpl
+|   |   |       |   |   script.tmpl
+|   |   |       |   |   unicode_utils.py
+|   |   |       |   |   version.py
+|   |   |       |   |   wheel.py
+|   |   |       |   |   windows_support.py
+|   |   |       |   |   _deprecation_warning.py
+|   |   |       |   |   _entry_points.py
+|   |   |       |   |   _imp.py
+|   |   |       |   |   _importlib.py
+|   |   |       |   |   _itertools.py
+|   |   |       |   |   _path.py
+|   |   |       |   |   _reqs.py
+|   |   |       |   |   __init__.py
+|   |   |       |   |   
+|   |   |       |   +---command
+|   |   |       |   |       alias.py
+|   |   |       |   |       bdist_egg.py
+|   |   |       |   |       bdist_rpm.py
+|   |   |       |   |       build.py
+|   |   |       |   |       build_clib.py
+|   |   |       |   |       build_ext.py
+|   |   |       |   |       build_py.py
+|   |   |       |   |       develop.py
+|   |   |       |   |       dist_info.py
+|   |   |       |   |       easy_install.py
+|   |   |       |   |       editable_wheel.py
+|   |   |       |   |       egg_info.py
+|   |   |       |   |       install.py
+|   |   |       |   |       install_egg_info.py
+|   |   |       |   |       install_lib.py
+|   |   |       |   |       install_scripts.py
+|   |   |       |   |       launcher manifest.xml
+|   |   |       |   |       py36compat.py
+|   |   |       |   |       register.py
+|   |   |       |   |       rotate.py
+|   |   |       |   |       saveopts.py
+|   |   |       |   |       sdist.py
+|   |   |       |   |       setopt.py
+|   |   |       |   |       test.py
+|   |   |       |   |       upload.py
+|   |   |       |   |       upload_docs.py
+|   |   |       |   |       __init__.py
+|   |   |       |   |       
+|   |   |       |   +---config
+|   |   |       |   |   |   expand.py
+|   |   |       |   |   |   pyprojecttoml.py
+|   |   |       |   |   |   setupcfg.py
+|   |   |       |   |   |   _apply_pyprojecttoml.py
+|   |   |       |   |   |   __init__.py
+|   |   |       |   |   |   
+|   |   |       |   |   \---_validate_pyproject
+|   |   |       |   |           error_reporting.py
+|   |   |       |   |           extra_validations.py
+|   |   |       |   |           fastjsonschema_exceptions.py
+|   |   |       |   |           fastjsonschema_validations.py
+|   |   |       |   |           formats.py
+|   |   |       |   |           __init__.py
+|   |   |       |   |           
+|   |   |       |   +---extern
+|   |   |       |   |       __init__.py
+|   |   |       |   |       
+|   |   |       |   +---_distutils
+|   |   |       |   |   |   archive_util.py
+|   |   |       |   |   |   bcppcompiler.py
+|   |   |       |   |   |   ccompiler.py
+|   |   |       |   |   |   cmd.py
+|   |   |       |   |   |   config.py
+|   |   |       |   |   |   core.py
+|   |   |       |   |   |   cygwinccompiler.py
+|   |   |       |   |   |   debug.py
+|   |   |       |   |   |   dep_util.py
+|   |   |       |   |   |   dir_util.py
+|   |   |       |   |   |   dist.py
+|   |   |       |   |   |   errors.py
+|   |   |       |   |   |   extension.py
+|   |   |       |   |   |   fancy_getopt.py
+|   |   |       |   |   |   filelist.py
+|   |   |       |   |   |   file_util.py
+|   |   |       |   |   |   log.py
+|   |   |       |   |   |   msvc9compiler.py
+|   |   |       |   |   |   msvccompiler.py
+|   |   |       |   |   |   py38compat.py
+|   |   |       |   |   |   py39compat.py
+|   |   |       |   |   |   spawn.py
+|   |   |       |   |   |   sysconfig.py
+|   |   |       |   |   |   text_file.py
+|   |   |       |   |   |   unixccompiler.py
+|   |   |       |   |   |   util.py
+|   |   |       |   |   |   version.py
+|   |   |       |   |   |   versionpredicate.py
+|   |   |       |   |   |   _collections.py
+|   |   |       |   |   |   _functools.py
+|   |   |       |   |   |   _macos_compat.py
+|   |   |       |   |   |   _msvccompiler.py
+|   |   |       |   |   |   __init__.py
+|   |   |       |   |   |   
+|   |   |       |   |   \---command
+|   |   |       |   |           bdist.py
+|   |   |       |   |           bdist_dumb.py
+|   |   |       |   |           bdist_rpm.py
+|   |   |       |   |           build.py
+|   |   |       |   |           build_clib.py
+|   |   |       |   |           build_ext.py
+|   |   |       |   |           build_py.py
+|   |   |       |   |           build_scripts.py
+|   |   |       |   |           check.py
+|   |   |       |   |           clean.py
+|   |   |       |   |           config.py
+|   |   |       |   |           install.py
+|   |   |       |   |           install_data.py
+|   |   |       |   |           install_egg_info.py
+|   |   |       |   |           install_headers.py
+|   |   |       |   |           install_lib.py
+|   |   |       |   |           install_scripts.py
+|   |   |       |   |           py37compat.py
+|   |   |       |   |           register.py
+|   |   |       |   |           sdist.py
+|   |   |       |   |           upload.py
+|   |   |       |   |           _framework_compat.py
+|   |   |       |   |           __init__.py
+|   |   |       |   |           
+|   |   |       |   \---_vendor
+|   |   |       |       |   ordered_set.py
+|   |   |       |       |   typing_extensions.py
+|   |   |       |       |   zipp.py
+|   |   |       |       |   __init__.py
+|   |   |       |       |   
+|   |   |       |       +---importlib_metadata
+|   |   |       |       |       _adapters.py
+|   |   |       |       |       _collections.py
+|   |   |       |       |       _compat.py
+|   |   |       |       |       _functools.py
+|   |   |       |       |       _itertools.py
+|   |   |       |       |       _meta.py
+|   |   |       |       |       _text.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---importlib_resources
+|   |   |       |       |       abc.py
+|   |   |       |       |       readers.py
+|   |   |       |       |       simple.py
+|   |   |       |       |       _adapters.py
+|   |   |       |       |       _common.py
+|   |   |       |       |       _compat.py
+|   |   |       |       |       _itertools.py
+|   |   |       |       |       _legacy.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---jaraco
+|   |   |       |       |   |   context.py
+|   |   |       |       |   |   functools.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   
+|   |   |       |       |   \---text
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       +---more_itertools
+|   |   |       |       |       more.py
+|   |   |       |       |       recipes.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---packaging
+|   |   |       |       |       markers.py
+|   |   |       |       |       requirements.py
+|   |   |       |       |       specifiers.py
+|   |   |       |       |       tags.py
+|   |   |       |       |       utils.py
+|   |   |       |       |       version.py
+|   |   |       |       |       _manylinux.py
+|   |   |       |       |       _musllinux.py
+|   |   |       |       |       _structures.py
+|   |   |       |       |       __about__.py
+|   |   |       |       |       __init__.py
+|   |   |       |       |       
+|   |   |       |       +---pyparsing
+|   |   |       |       |   |   actions.py
+|   |   |       |       |   |   common.py
+|   |   |       |       |   |   core.py
+|   |   |       |       |   |   exceptions.py
+|   |   |       |       |   |   helpers.py
+|   |   |       |       |   |   results.py
+|   |   |       |       |   |   testing.py
+|   |   |       |       |   |   unicode.py
+|   |   |       |       |   |   util.py
+|   |   |       |       |   |   __init__.py
+|   |   |       |       |   |   
+|   |   |       |       |   \---diagram
+|   |   |       |       |           __init__.py
+|   |   |       |       |           
+|   |   |       |       \---tomli
+|   |   |       |               _parser.py
+|   |   |       |               _re.py
+|   |   |       |               _types.py
+|   |   |       |               __init__.py
+|   |   |       |               
+|   |   |       +---setuptools-65.5.0.dist-info
+|   |   |       |       entry_points.txt
+|   |   |       |       INSTALLER
+|   |   |       |       LICENSE
+|   |   |       |       METADATA
+|   |   |       |       RECORD
+|   |   |       |       REQUESTED
+|   |   |       |       top_level.txt
+|   |   |       |       WHEEL
+|   |   |       |       
+|   |   |       \---_distutils_hack
+|   |   |               override.py
+|   |   |               __init__.py
+|   |   |               
+|   |   \---Scripts
+|   |           activate
+|   |           activate.bat
+|   |           Activate.ps1
+|   |           deactivate.bat
+|   |           pip.exe
+|   |           pip3.11.exe
+|   |           pip3.exe
+|   |           python.exe
+|   |           pythonw.exe
+|   |           
+|   \---__pycache__
+|           main.cpython-311.pyc
+|           __init__.cpython-311.pyc
+|           
++---backups
+|       cd_autenticacao_backup_20250325_141438.py
+|       cd_cadastro_backup_20250325_141712.html
+|       cd_login_backup_20250325_141438.html
+|       cd_login_backup_20250325_141712.html
+|       cd_login_backup_20250325_181808.html
+|       
++---docs
+|   |   index.html
+|   |   
+|   \---static
+|       +---images
+|       |       a321-1.png
+|       |       arcabouco_teorico.png
+|       |       conformidade_ambiental.png
+|       |       favicon.ico
+|       |       modulo_cadastro.png
+|       |       modulo_conformidade_ambiental.png
+|       |       modulo_infraestrutura.png
+|       |       modulo_multicriterio.png
+|       |       modulo_socioeconomico.png
+|       |       modulo_validacao.png
+|       |       
+|       \---relatorios
++---fad_linux
+|       greenlet-3.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+|       psycopg2_binary-2.9.10-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+|       sqlalchemy-2.0.40-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+|       typing_extensions-4.13.1-py3-none-any.whl
+|       
++---logs
+|       relatorio_substituicoes_html.txt
+|       relatorio_substituicoes_rotas_py.txt
+|       
++---static
+|   +---images
+|   \---relatorios
++---temp
+|   +---ARQUIVO_SHAPEFILE_MODELO
+|   |       Arquivo_Shapefile_Modelo.cpg
+|   |       Arquivo_Shapefile_Modelo.dbf
+|   |       Arquivo_Shapefile_Modelo.prj
+|   |       Arquivo_Shapefile_Modelo.sbn
+|   |       Arquivo_Shapefile_Modelo.sbx
+|   |       Arquivo_Shapefile_Modelo.shp
+|   |       Arquivo_Shapefile_Modelo.shp.xml
+|   |       Arquivo_Shapefile_Modelo.shx
+|   |       ARQUIVO_SHAPEFILE_MODELO.zip
+|   |       
+|   +---erro_cod_ausente
+|   |       erro_cod_ausente.cpg
+|   |       erro_cod_ausente.dbf
+|   |       erro_cod_ausente.prj
+|   |       erro_cod_ausente.shp
+|   |       erro_cod_ausente.shx
+|   |       erro_cod_ausente.zip
+|   |       
+|   +---erro_cod_em_branco
+|   |       erro_cod_em_branco.cpg
+|   |       erro_cod_em_branco.dbf
+|   |       erro_cod_em_branco.prj
+|   |       erro_cod_em_branco.shp
+|   |       erro_cod_em_branco.shx
+|   |       erro_cod_em_branco.zip
+|   |       
+|   \---teste_valido2
+|           teste_valido.cpg
+|           teste_valido.dbf
+|           teste_valido.prj
+|           teste_valido.shp
+|           teste_valido.shx
+|           teste_valido2.zip
+|           
++---testes_shapefile
+|   +---erro_cod_ausente
+|   |       erro_cod_ausente.cpg
+|   |       erro_cod_ausente.dbf
+|   |       erro_cod_ausente.prj
+|   |       erro_cod_ausente.shp
+|   |       erro_cod_ausente.shx
+|   |       
+|   +---erro_cod_em_branco
+|   |       erro_cod_em_branco.cpg
+|   |       erro_cod_em_branco.dbf
+|   |       erro_cod_em_branco.prj
+|   |       erro_cod_em_branco.shp
+|   |       erro_cod_em_branco.shx
+|   |       
+|   +---erro_epsg_invalido
+|   |       erro_epsg_invalido.cpg
+|   |       erro_epsg_invalido.dbf
+|   |       erro_epsg_invalido.prj
+|   |       erro_epsg_invalido.shp
+|   |       erro_epsg_invalido.shx
+|   |       
+|   +---erro_geometria_nula
+|   |       erro_geometria_nula.cpg
+|   |       erro_geometria_nula.dbf
+|   |       erro_geometria_nula.prj
+|   |       erro_geometria_nula.shp
+|   |       erro_geometria_nula.shx
+|   |       
+|   +---erro_tipo_geometria
+|   |       erro_tipo_geometria.cpg
+|   |       erro_tipo_geometria.dbf
+|   |       erro_tipo_geometria.prj
+|   |       erro_tipo_geometria.shp
+|   |       erro_tipo_geometria.shx
+|   |       
+|   \---teste_valido
+|           teste_valido.cpg
+|           teste_valido.dbf
+|           teste_valido.prj
+|           teste_valido.shp
+|           teste_valido.shx
+|           
+\---__pycache__
+        main.cpython-311.pyc
+        

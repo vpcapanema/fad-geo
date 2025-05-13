@@ -1,0 +1,19 @@
+#btnGravarProjeto {
+  background-color: #004080;
+  color: white;
+  font-weight: bold;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#btnGravarProjeto:hover:not(:disabled) {
+  background-color: #0066cc;
+}
+
+#btnGravarProjeto:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<title>Painel Master - FAD</title>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Carregar Usuários Comuns
+      fetch("/painel/analista/usuarios")
+        .then(res => res.json())
+        .then(usuarios => {
+          const tabelaUsuarios = document.getElementById("tabela-usuarios");
+          tabelaUsuarios.innerHTML = "";
+          usuarios.forEach(usuario => {
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
+              <td>${usuario.id}</td>
+              <td>${usuario.nome}</td>
+              <td>${usuario.cpf}</td>
+              <td>${usuario.email}</td>
+              <td>${usuario.telefone || ''}</td>
+              <td>${usuario.criado_em || ''}</td>
+              <td>${usuario.aprovado_em || ''}</td>
+              <td>${usuario.aprovado_por || ''}</td>
+              <td>${usuario.tipo_usuario}</td>
+              <td>${usuario.status}</td>
+              <td>${usuario.ativo ? "Sim" : "Não"}</td>
+              <td>
+                <button class="btn-acao" onclick="gerenciarCadastro(${usuario.id})">Gerenciar Cadastro</button>
+                <button class="btn-acao" onclick="gerenciarAcesso(${usuario.id})">Gerenciar Acesso</button>
+                <button class="btn-acao" onclick="ativarUsuario(${usuario.id})">Ativar</button>
+              </td>
+            `;
+            tabelaUsuarios.appendChild(linha);
+          });
+        })
+        .catch(error => console.error("Erro ao carregar usuários:", error));
+
+      // Carregar Administradores
+      fetch("/painel/coordenador/usuarios")
+        .then(res => res.json())
+        .then(admins => {
+          const tabelaAdmins = document.getElementById("tabela-admins");
+          tabelaAdmins.innerHTML = "";
+          admins.forEach(usuario => {
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
+              <td>${usuario.id}</td>
+              <td>${usuario.nome}</td>
+              <td>${usuario.cpf}</td>
+              <td>${usuario.email}</td>
+              <td>${usuario.telefone || ''}</td>
+              <td>${usuario.criado_em || ''}</td>
+              <td>${usuario.aprovado_em || ''}</td>
+              <td>${usuario.aprovado_por || ''}</td>
+              <td>${usuario.tipo_usuario}</td>
+              <td>${usuario.status}</td>
+              <td>${usuario.ativo ? "Sim" : "Não"}</td>
+              <td>
+                <button class="btn-acao" onclick="aprovarUsuario(${usuario.id})">Aprovar</button>
+                <button class="btn-acao" onclick="reprovarUsuario(${usuario.id})">Reprovar</button>
+                <button class="btn-acao" onclick="ativarUsuario(${usuario.id})">Ativar</button>
+              </td>
+            `;
+            tabelaAdmins.appendChild(linha);
+          });
+        })
+        .catch(error => console.error("Erro ao carregar administradores:", error));
+
+      // Carregar Projetos do Painel Master
+      fetch("/painel/projetos")
+        .then(res => res.json())
+        .then(projetos => {
+          const tabela = document.getElementById("tabela-projetos");
+          tabela.innerHTML = "";
+          projetos.forEach(p => {
+            const linha = document.createElement("tr");
+            linha.onclick = () => selecionarLinhaProjeto(linha, p["Id"]);
+            linha.innerHTML = `
+              <td>${p["Id"]}</td>
+              <td>${p["Nome"]}</td>
+              <td>${p["Interessado"]}</td>
+              <td>${p["CNPJ"]}</td>
+              <td>${p["Representante legal"]}</td>
+              <td>${p["CPF"]}</td>
+              <td>${p["E-mail"]}</td>
+              <td>${p["Telefone"]}</td>
+              <td>${p["Trecho"]}</td>
+              <td>${p["Município/UF"]}</td>
+              <td>${p["Extensão"]}</td>
+              <td>${p["Extensão calculada"]}</td>
+              <td>${p["Analista responsável"]}</td>
+              <td>${p["Criado em"]}</td>
+              <td>${p["Situação do projeto"]}</td>
+              <td>${p["Situação do upload"]}</td>
+              <td>${p["Situaçao da geometria"]}</td>
+              <td>${p["Validada em"]}</td>
+              <td>${p["Situaçao da conformidade ambiental"]}</td>
+              <td>${p["CA aprovada em"]}</td>
+              <td>${p["Situação do IFM"]}</td>
+              <td>${p["IFM trecho"]}</td>
+              <td>${p["IFM aprovado em"]}</td>
+              <td>${p["Situação do IFS"]}</td>
+              <td>${p["IFS trecho"]}</td>
+              <td>${p["IFS aprovado em"]}</td>
+              <td>${p["Situação do IQI"]}</td>
+              <td>${p["IQI trecho"]}</td>
+              <td>${p["IQI aprovado em"]}</td>
+            `;
+            tabela.appendChild(linha);
+          });
+        })
+        .catch(error => console.error("Erro ao carregar projetos:", error));
+
+
+      const hoje = new Date();
+      const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const formatado = hoje.toLocaleDateString('pt-BR', opcoes);
+      const elementoData = document.getElementById("data-hoje");
+      if (elementoData) elementoData.textContent = `Hoje é ${formatado}`;
+    });
+
+    let projetoSelecionadoId = null;
+
+    function selecionarLinhaProjeto(linha, id) {
+      document.querySelectorAll("#tabela-projetos tr").forEach(tr => tr.classList.remove("projeto-selecionado"));
+      linha.classList.add("projeto-selecionado");
+      projetoSelecionadoId = id;
+    }
+
+    document.getElementById("acao-visualizar").onclick = () => {
+      if (projetoSelecionadoId) alert(`🔍 Visualizar projeto ID ${projetoSelecionadoId}`);
+      else alert("Selecione um projeto primeiro.");
+    };
+
+    document.getElementById("acao-inspecionar").onclick = () => {
+      if (projetoSelecionadoId) alert(`🧪 Inspecionar projeto ID ${projetoSelecionadoId}`);
+      else alert("Selecione um projeto primeiro.");
+    };
+
+    document.getElementById("acao-gerenciar").onclick = () => {
+  if (projetoSelecionadoId) alert(`⚙️ Gerenciar projeto ID ${projetoSelecionadoId}`);
+  else alert("Selecione um projeto primeiro.");
+};
+
+    function gerenciarCadastro(id) {
+      alert(`Abrir editor de cadastro do usuário ID ${id}`);
+    }
+
+    function gerenciarAcesso(id) {
+      alert(`Abrir painel de acesso do usuário ID ${id}`);
+    }
+
+    function aprovarUsuario(id) {
+      fetch(`/painel/coordenador/usuarios/aprovar/${id}`, { method: "POST" })
+        .then(res => res.json())
+        .then(() => {
+          alert("Administrador aprovado com sucesso!");
+          location.reload();
+        })
+        .catch(() => alert("Erro ao aprovar o administrador."));
+    }
+
+    function reprovarUsuario(id) {
+      fetch(`/painel/coordenador/usuarios/reprovar/${id}`, { method: "POST" })
+        .then(res => res.json())
+        .then(() => {
+          alert("Administrador reprovado com sucesso!");
+          location.reload();
+        })
+        .catch(() => alert("Erro ao reprovar o administrador."));
+    }
+
+    function ativarUsuario(id) {
+      fetch(`/painel-usuario/ativar/${id}`, { method: "POST" })
+        .then(res => res.json())
+        .then(() => {
+          alert("Usuário ativado com sucesso!");
+          location.reload();
+        })
+        .catch(() => alert("Erro ao ativar o usuário."));
+    }
+  </script>
+<style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      overflow-y: auto;
+    }
+
+    header.fad-header {
+      text-align: center;
+      background-color: #003366;
+      padding: 10px;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    header.fad-header h1 {
+      font-size: 40px;
+      margin: 0;
+      text-shadow: 1px 1px 2px #00000060;
+    }
+
+    header.fad-header h2 {
+      font-size: 18px;
+      margin-top: 4px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #00000050;
+      color: white;
+    }
+
+    .logout {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+
+    .logout form button {
+      background-color: transparent;
+      color: white;
+      border: 1px solid white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .logout form button:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .boas-vindas {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+
+    .boas-vindas h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .boas-vindas h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .menu-horizontal {
+      margin-top: 10px;
+      text-align: center;
+      background-color: #006699;
+      padding: 10px 0;
+    }
+
+    .menu-principal {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: inline-flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .menu-principal > li {
+      position: relative;
+    }
+
+    .menu-principal > li > a {
+      display: inline-block;
+      padding: 10px 16px;
+      background-color: transparent;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .menu-principal > li > a:hover {
+      border: 1px solid white;
+      background-color: rgba(255,255,255,0.1);
+    }
+
+    .submenu, .submenu-lateral {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-radius: 6px;
+      z-index: 1000;
+    }
+
+    .submenu {
+      top: 100%;
+      left: 0;
+      min-width: 220px;
+    }
+
+    .submenu-lateral {
+      top: 0;
+      left: 100%;
+      min-width: 220px;
+    }
+
+    .submenu li a, .submenu-lateral li a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: #003366;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .submenu li:last-child a, .submenu-lateral li:last-child a {
+      border-bottom: none;
+    }
+
+    .submenu li a:hover, .submenu-lateral li a:hover {
+      background-color: #eef5ff;
+    }
+
+    .menu-dropdown:hover .submenu,
+    .menu-subdropdown:hover .submenu-lateral {
+      display: block;
+    }
+
+    .painel-container {
+      display: block;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 0;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #003366;
+      text-align: center;
+      font-size: 22px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #003366;
+      color: white;
+    }
+
+    .btn-acao {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: 1px solid black;
+      background-color: rgba(0, 0, 0, 0.03);
+      cursor: pointer;
+      margin: 2px;
+      width: 120px;
+      transition: background 0.3s ease;
+    }
+
+    .btn-acao:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    .projeto-selecionado {
+  background-color: #cbe4f9 !important;
+  font-weight: bold;
+  color: #003366 !important;
+  border: 2px solid #003366 !important;
+  }
+
+  </style>
+<style>
+   html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      overflow-y: auto;
+    }
+
+    .painel-container {
+      display: block;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 0;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #003366;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 9px;
+    }
+
+    th {
+      background-color: #003366;
+      color: white;
+    }
+
+    .tabela-scroll {
+      overflow-x: auto;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .tabela-scroll table {
+      min-width: 1600px;
+    }
+
+    .projeto-selecionado {
+      background-color: #cbe4f9 !important;
+      font-weight: bold;
+      color: #003366 !important;
+      border: 2px solid #003366 !important;
+    }
+
+    #voltar-topo {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 999;
+      font-size: 14px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 50%;
+      background-color: #003366;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: background 0.3s ease;
+    }
+
+    #voltar-topo:hover {
+      background-color: #cce6f6; color: #003366;
+    }
+  
+td, th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+  
+.botao-icone {
+  display: inline-block;
+  width: 42px;
+  height: 42px;
+  margin: 10px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 28px 28px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  position: relative;
+}
+.botao-icone:hover {
+  background-color: #f0f0f0;
+  border-color: #888;
+}
+.botao-icone::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  display: none;
+  z-index: 10;
+}
+.botao-icone:hover::after {
+  display: block;
+}
+  
+.botao-icone {
+  display: inline-block;
+  width: 42px;
+  height: 42px;
+  margin: 10px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 28px 28px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  position: relative;
+  background-color: #ffffff;
+}
+.botao-icone:hover {
+  background-color: #f0f0f0;
+  border-color: #888;
+}
+.botao-icone::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  display: none;
+  z-index: 10;
+}
+.botao-icone:hover::after {
+  display: block;
+}
+
+.botao-grupo {
+  background-color: #e0e0e0;
+  padding: 6px 10px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  margin: 2px;
+  cursor: pointer;
+}
+.botao-grupo.ativo {
+  background-color: #bbb;
+}
+  
+button[onclick^="alternarGrupo"] {
+  transition: background 0.3s ease;
+}
+button[onclick^="alternarGrupo"].ativo {
+  filter: brightness(85%);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+  </style></head>
+<body>
+<header class="fad-header">
+<div class="logout">
+<form action="/login/logout" method="post">
+<button type="submit">Sair</button>
+</form>
+</div>
+<h1>FAD</h1>
+<h2>FERRAMENTA DE ANÁLISE DINAMIZADA</h2>
+</header>
+<div class="boas-vindas">
+<h2>Bem-vindo(a), {{ usuario.nome }}</h2>
+<h3 id="data-hoje"></h3>
+</div>
+<nav class="menu-horizontal">
+<ul class="menu-principal">
+<li class="menu-dropdown">
+<a href="#">Cadastrar ▼</a>
+<ul class="submenu">
+<li class="menu-subdropdown">
+<a href="#">Elemento Rodoviário ▸</a>
+<ul class="submenu-lateral">
+<li><a href="/geo-de-obra" rel="noopener noreferrer" target="_blank">Geo de Obra</a></li>
+<li><a href="/cadastrar-trechos" rel="noopener noreferrer" target="_blank">Trechos Estadualização</a></li>
+</ul>
+</li>
+<li><a href="/pessoa-fisica" rel="noopener noreferrer" target="_blank">Pessoa Física</a></li>
+<li><a href="/pessoa-juridica" rel="noopener noreferrer" target="_blank">Pessoa Jurídica</a></li>
+<li><a href="/projeto" rel="noopener noreferrer" target="_blank">Projeto</a></li>
+<li><a href="/usuario" rel="noopener noreferrer" target="_blank">Usuário</a></li>
+</ul>
+</li>
+<li class="menu-dropdown">
+<a href="#">Ferramentas ▼</a>
+<ul class="submenu">
+<li><a href="https://vinicapanema.github.io/AHP_tool/" rel="noopener noreferrer" target="_blank">Calculadora AHP</a></li>
+<li><a href="/conformidade" rel="noopener noreferrer" target="_blank">Conformidade Ambiental</a></li>
+<li><a href="/geo-de-obra" rel="noopener noreferrer" target="_blank">Geo de Obra</a></li>
+<li class="menu-subdropdown">
+<a href="#">Estadualização ▸</a>
+<ul class="submenu-lateral">
+<li><a href="/favorabilidade-multicriterio" rel="noopener noreferrer" target="_blank">Favorabilidade Multicritério</a></li>
+<li><a href="/favorabilidade-socioeconomica" rel="noopener noreferrer" target="_blank">Favorabilidade Socioeconômica</a></li>
+<li><a href="/favorabilidade-infraestrutural" rel="noopener noreferrer" target="_blank">Favorabilidade Infraestrutural</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="link-scroll"><a href="#container-admin">Administradores</a></li>
+<li class="link-scroll"><a href="#container-usuarios">Usuários</a></li>
+<li class="link-scroll"><a href="#container-projetos">Projetos</a></li>
+</ul>
+</nav>
+<div class="painel-container" id="container-admin">
+<h2>Administradores</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Nome</th>
+<th>CPF</th>
+<th>Email</th>
+<th>Telefone</th>
+<th>Enviado em</th>
+<th>Aprovado em</th>
+<th>Aprovado por</th>
+<th>Tipo</th>
+<th>Status</th>
+<th>Ativo</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody id="tabela-admins"></tbody>
+</table>
+</div>
+<div class="painel-container" id="container-usuarios">
+<h2>Usuários Comuns</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Nome</th>
+<th>CPF</th>
+<th>Email</th>
+<th>Telefone</th>
+<th>Enviado em</th>
+<th>Aprovado em</th>
+<th>Aprovado por</th>
+<th>Tipo</th>
+<th>Status</th>
+<th>Ativo</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody id="tabela-usuarios"></tbody>
+</table>
+</div>
+<div class="painel-container" id="container-projetos">
+<div id="abas-projetos" style="text-align:center;margin:20px 0;">
+<button id="btn-mostrar-tudo" onclick="mostrarTudo()" style="background:#dcdcdc;color:#222;border:none;padding:6px 10px;margin:4px;border-radius:4px;cursor:pointer;font-size:12px;">
+     Mostrar Tudo
+    </button>
+<button onclick="alternarGrupo('geometria')" style="background:#006699;color:white;border:none;padding:6px 10px;margin:4px;border-radius:4px;cursor:pointer;font-size:12px;">
+     Geometria
+    </button>
+<button onclick="alternarGrupo('ca')" style="background:#009933;color:white;border:none;padding:6px 10px;margin:4px;border-radius:4px;cursor:pointer;font-size:12px;">
+     Conformidade Ambiental (CA)
+    </button>
+<button onclick="alternarGrupo('ifm')" style="background:#996600;color:white;border:none;padding:6px 10px;margin:4px;border-radius:4px;cursor:pointer;font-size:12px;">
+     Multicritério (IFM)
+    </button>
+<button onclick="alternarGrupo('ifs')" style="background:#8a2be2;color:white;border:none;padding:6px 10px;margin:4px;border-radius:4px;cursor:pointer;font-size:12px;">
+     Socioeconômico (IFS)
+    </button>
+<button onclick="alternarGrupo('iqi')" style="background:#339999;color:white;border:none;padding:6px 10px;margin:4px;border-radius:4px;cursor:pointer;font-size:12px;">
+     Infraestrutural (IQI)
+    </button>
+<button id="btn-esconder-tudo" onclick="esconderTudo()" style="background:#dcdcdc;color:#222;border:none;padding:6px 10px;margin:4px;border-radius:4px;cursor:pointer;font-size:12px;">
+     Esconder Tudo
+    </button>
+</div>
+<h2>
+    Projetos
+   </h2>
+<div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+<select id="filtro-situacao" onchange="filtrarProjetos()" style="padding: 4px; font-size: 12px;">
+<option value="">
+      Filtrar por Situação do Projeto
+     </option>
+<option value="Em análise">
+      Em análise
+     </option>
+<option value="Aprovado">
+      Aprovado
+     </option>
+<option value="Reprovado">
+      Reprovado
+     </option>
+</select>
+<select id="filtro-municipio" onchange="filtrarProjetos()" style="padding: 4px; font-size: 12px;">
+<option value="">
+      Filtrar por Município
+     </option>
+</select>
+</div>
+<div class="tabela-scroll">
+<table>
+<thead>
+<tr>
+<th colspan="15" style="background-color: #003366; color: white;">
+        Informações Gerais do Projeto
+       </th>
+<th class="grupo-header grupo-geometria" colspan="3" id="grupo-geometria" style="background:#e0f7fa; font-weight:bold; color:#003;">
+        Geometria
+       </th>
+<th class="grupo-header grupo-ca" colspan="2" id="grupo-ca" style="background:#e8f5e9; font-weight:bold; color:#003;">
+        Conformidade Ambiental (CA)
+       </th>
+<th class="grupo-header grupo-ifm" colspan="3" id="grupo-ifm" style="background:#fff8e1; font-weight:bold; color:#003;">
+        Favorabilidade Multicritério (IFM)
+       </th>
+<th class="grupo-header grupo-ifs" colspan="3" id="grupo-ifs" style="background:#f3e5f5; font-weight:bold; color:#003;">
+        Favorabilidade Socioeconômica (IFS)
+       </th>
+<th class="grupo-header grupo-iqi" colspan="3" id="grupo-iqi" style="background:#e0f2f1; font-weight:bold; color:#003;">
+        Favorabilidade Infraestrutural (IQI)
+       </th>
+</tr>
+<tr>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Id
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Nome
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Interessado
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        CNPJ
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Representante legal
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        CPF
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        E-mail
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Telefone
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Trecho
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Município / UF
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Extensão
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Extensão calculada
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Analista responsável
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Criado em
+       </th>
+<th style="background-color: #e3f2fd; color: #003366;">
+        Situação do projeto
+       </th>
+<th style="background:#e0f7fa; color:#003;">
+        Situação do upload
+       </th>
+<th style="background:#e0f7fa; color:#003;">
+        Situação da geometria
+       </th>
+<th style="background:#e0f7fa; color:#003;">
+        Validada em
+       </th>
+<th style="background:#e8f5e9; color:#003;">
+        Situação da CA
+       </th>
+<th style="background:#e8f5e9; color:#003;">
+        CA aprovada em
+       </th>
+<th style="background:#fff8e1; color:#003;">
+        Situação do IFM
+       </th>
+<th style="background:#fff8e1; color:#003;">
+        IFM trecho
+       </th>
+<th style="background:#fff8e1; color:#003;">
+        IFM aprovado em
+       </th>
+<th style="background:#f3e5f5; color:#003;">
+        Situação do IFS
+       </th>
+<th style="background:#f3e5f5; color:#003;">
+        IFS trecho
+       </th>
+<th style="background:#f3e5f5; color:#003;">
+        IFS aprovado em
+       </th>
+<th style="background:#e0f2f1; color:#003;">
+        Situação do IQI
+       </th>
+<th style="background:#e0f2f1; color:#003;">
+        IQI trecho
+       </th>
+<th style="background:#e0f2f1; color:#003;">
+        IQI aprovado em
+       </th>
+</tr>
+</thead>
+<tbody id="tabela-projetos">
+</tbody>
+</table>
+</div>
+<!-- 🔘 Ícones de ação abaixo da tabela -->
+<div id="acoes-projeto" style="text-align:center; margin-top: 20px;">
+<button class="botao-icone" data-tooltip="Visualizar Projeto" id="acao-visualizar" onclick="alert('Visualizar Projeto')" style="background-image: url('/static/images/visualizar.ico'); background-repeat: no-repeat; background-position: center center; background-size: 28px 28px; width: 42px; height: 42px; margin: 10px; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; display: inline-block; position: relative; background-color: white;">
+</button>
+<button class="botao-icone" data-tooltip="Inspecionar Projeto" id="acao-inspecionar" onclick="alert('Inspecionar Projeto')" style="background-image: url('/static/images/inspecionar.ico'); background-repeat: no-repeat; background-position: center center; background-size: 28px 28px; width: 42px; height: 42px; margin: 10px; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; display: inline-block; position: relative; background-color: white;">
+</button>
+<button class="botao-icone" data-tooltip="Gerenciar Projeto" id="acao-gerenciar" onclick="alert('Gerenciar Projeto')" style="background-image: url('/static/images/gerenciar.ico'); background-repeat: no-repeat; background-position: center center; background-size: 28px 28px; width: 42px; height: 42px; margin: 10px; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; display: inline-block; position: relative; background-color: white;">
+</button>
+</div>
+</div>
+<script>
+   function alternarGrupo(grupo) {
+  const mapa = {
+    'geometria': { cols: [15,16,17], headerId: 'grupo-geometria' },
+    'ca': { cols: [18,19], headerId: 'grupo-ca' },
+    'ifm': { cols: [20,21,22], headerId: 'grupo-ifm' },
+    'ifs': { cols: [23,24,25], headerId: 'grupo-ifs' },
+    'iqi': { cols: [26,27,28], headerId: 'grupo-iqi' }
+  };
+
+  const grupoInfo = mapa[grupo];
+  const botao = document.querySelector(`button[onclick="alternarGrupo('${grupo}')"]`);
+  botao.classList.toggle("ativo");
+
+  const primeiraColuna = document.querySelector(`thead tr:nth-child(2) th:nth-child(${grupoInfo.cols[0] + 1})`);
+  const visivel = primeiraColuna && primeiraColuna.style.display === "none";
+
+  grupoInfo.cols.forEach(i => {
+    document.querySelectorAll(`th:nth-child(${i + 1}), td:nth-child(${i + 1})`).forEach(el => {
+      el.style.display = visivel ? "" : "none";
+    });
+  });
+
+  const thGrupo = document.getElementById(grupoInfo.headerId);
+  if (thGrupo) thGrupo.style.display = visivel ? "" : "none";
+}
+
+function mostrarTudo() {
+  document.querySelectorAll('th, td').forEach(el => el.style.display = "");
+  document.querySelectorAll('button[onclick^="alternarGrupo"]').forEach(b => b.classList.remove("ativo"));
+}
+
+function esconderTudo() {
+  const cols = [15,16,17,18,19,20,21,22,23,24,25,26,27,28];
+  cols.forEach(i => {
+    document.querySelectorAll(`th:nth-child(${i + 1}), td:nth-child(${i + 1})`).forEach(el => {
+      el.style.display = "none";
+    });
+  });
+  document.querySelectorAll('button[onclick^="alternarGrupo"]').forEach(b => b.classList.add("ativo"));
+}
+  </script></body>
+</html>

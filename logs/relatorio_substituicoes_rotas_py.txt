@@ -1,0 +1,61 @@
+RELATÓRIO DE SUBSTITUIÇÕES DE ROTAS EM ENDPOINTS .PY - 04/14/2025 14:52:38
+
+=============================================================
+📝 ARQUIVO: au_autenticacao.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\au_autenticacao.py
+🔁 MODIFICAÇÕES:
+  ➤ '/painel' → '/painel-usuario' (3 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: cd_aprovar_usuario.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\cd_aprovar_usuario.py
+🔁 MODIFICAÇÕES:
+  ➤ '/painel' → '/painel-usuario' (3 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: cd_cadastro_usuario_sistema.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\cd_cadastro_usuario_sistema.py
+🔁 MODIFICAÇÕES:
+  ➤ '/usuarios/cadastrar' → '/cadastrar-usuario' (1 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: pn_menu_navegacao.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\pn_menu_navegacao.py
+🔁 MODIFICAÇÕES:
+  ➤ '/menu/projeto' → '/cadastrar-projeto' (1 ocorrência(s))
+  ➤ '/menu/pj' → '/cadastrar-pessoa-juridica' (1 ocorrência(s))
+  ➤ '/menu/pf' → '/cadastrar-pessoa-fisica' (1 ocorrência(s))
+  ➤ '/menu/trechos' → '/cadastrar-trechos' (1 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: pn_painel_usuario_administrador.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\pn_painel_usuario_administrador.py
+🔁 MODIFICAÇÕES:
+  ➤ '/painel' → '/painel-usuario' (5 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: pn_painel_usuario_comum.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\pn_painel_usuario_comum.py
+🔁 MODIFICAÇÕES:
+  ➤ '/painel' → '/painel-usuario' (3 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: pn_painel_usuario_master.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\pn_painel_usuario_master.py
+🔁 MODIFICAÇÕES:
+  ➤ '/painel' → '/painel-usuario' (5 ocorrência(s))
+=============================================================
+
+=============================================================
+📝 ARQUIVO: vw_painel_administrador.py
+📍 CAMINHO: C:\Users\vinic\fad_espacial\app\api\endpoints\vw_painel_administrador.py
+🔁 MODIFICAÇÕES:
+  ➤ '/painel' → '/painel-usuario' (1 ocorrência(s))
+=============================================================
+
