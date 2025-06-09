@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from app.database.base import get_db
+from app.database.session import get_db
 from app.services.fluxo_modular_service import FluxoModularService
 from app.models.pr_projeto import Projeto
 from app.models.pr_relatorio_modulo import RelatorioModulo

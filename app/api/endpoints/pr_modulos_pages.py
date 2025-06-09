@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from app.database.base import get_db
+from app.database.session import get_db
 from app.models.pr_projeto import Projeto
 from app.models.pr_modulo_configuracao import ModuloConfiguracao
 from app.services.fluxo_modular_service import FluxoModularService
