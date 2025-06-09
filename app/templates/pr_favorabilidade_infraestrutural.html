@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAD-GEO - Módulo 5: Favorabilidade Infraestrutural</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    
+    <style>
+        :root {
+            --cor-primaria: #2E7D32;
+            --cor-secundaria: #4CAF50;
+            --cor-destaque: #FFC107;
+            --cor-perigo: #DC3545;
+            --cor-sucesso: #28A745;
+            --cor-info: #007BFF;
+            --cor-infraestrutura: #FF6F00;
+            --cor-cinza-claro: #F8F9FA;
+            --cor-cinza-medio: #6C757D;
+            --cor-cinza-escuro: #343A40;
+        }
+
+        body {
+            background-color: var(--cor-cinza-claro);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header-modulo {
+            background: linear-gradient(135deg, var(--cor-infraestrutura) 0%, #FF8F00 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header-modulo h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-modulo .lead {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card-infraestrutura {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-infraestrutura:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header-infraestrutura {
+            background: linear-gradient(45deg, var(--cor-infraestrutura), #FF8F00);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .infraestrutura-counter {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--cor-infraestrutura);
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .infraestrutura-tipo {
+            color: var(--cor-cinza-medio);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .mapa-infraestrutura {
+            height: 500px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+
+        .score-infraestrutura {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--cor-infraestrutura), #FF8F00);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .score-valor {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .analise-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .btn-mapear {
+            background: linear-gradient(45deg, var(--cor-infraestrutura), #FF8F00);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-mapear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 111, 0, 0.4);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-pendente {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-processando {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status-concluido {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .infraestrutura-item {
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--cor-infraestrutura);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-nome {
+            font-weight: 600;
+            color: var(--cor-infraestrutura);
+        }
+
+        .item-distancia {
+            background: #FFF3E0;
+            color: #E65100;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        .buffer-container {
+            margin-bottom: 2rem;
+        }
+
+        .buffer-slider {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .buffer-valor {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--cor-infraestrutura);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .legend-infraestrutura {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .densidade-alta {
+            background: #1B5E20;
+        }
+
+        .densidade-media {
+            background: #4CAF50;
+        }
+
+        .densidade-baixa {
+            background: #FFB74D;
+        }
+
+        .densidade-muito-baixa {
+            background: #F44336;
+        }
+
+        .infraestrutura-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .finalizar-container {
+            background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .finalizar-container h3 {
+            margin-bottom: 1rem;
+        }
+
+        .btn-finalizar {
+            background: linear-gradient(45deg, var(--cor-destaque), #e0a800);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 3rem;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            margin: 0 0.5rem;
+        }
+
+        .btn-gerar-pdf {
+            background: linear-gradient(45deg, var(--cor-sucesso), #20c928);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 3rem;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegação Modular -->
+    {% include 'componentes/navegacao_modular.html' %}
+
+    <!-- Header do Módulo -->
+    <div class="header-modulo">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-road me-3"></i>Módulo 5: Favorabilidade Infraestrutural</h1>
+                    <p class="lead">Análise da densidade e proximidade de infraestruturas existentes</p>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="status-badge status-pendente" id="status-modulo">
+                        <i class="fas fa-clock me-2"></i>Aguardando Análise
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Painel de Tipos de Infraestrutura -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-layer-group me-2"></i>Infraestruturas Mapeadas</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Rodovias -->
+                        <div class="card card-infraestrutura">
+                            <div class="card-header card-header-infraestrutura">
+                                <i class="fas fa-road me-2"></i>Rodovias
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="infraestrutura-counter" id="contador-rodovias">--</div>
+                                <div class="infraestrutura-tipo">Federais, Estaduais e Municipais</div>
+                            </div>
+                        </div>
+
+                        <!-- Ferrovias -->
+                        <div class="card card-infraestrutura">
+                            <div class="card-header card-header-infraestrutura">
+                                <i class="fas fa-train me-2"></i>Ferrovias
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="infraestrutura-counter" id="contador-ferrovias">--</div>
+                                <div class="infraestrutura-tipo">Linhas de carga e passageiros</div>
+                            </div>
+                        </div>
+
+                        <!-- Energia -->
+                        <div class="card card-infraestrutura">
+                            <div class="card-header card-header-infraestrutura">
+                                <i class="fas fa-bolt me-2"></i>Energia
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="infraestrutura-counter" id="contador-energia">--</div>
+                                <div class="infraestrutura-tipo">Linhas de transmissão e subestações</div>
+                            </div>
+                        </div>
+
+                        <!-- Telecomunicações -->
+                        <div class="card card-infraestrutura">
+                            <div class="card-header card-header-infraestrutura">
+                                <i class="fas fa-broadcast-tower me-2"></i>Telecomunicações
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="infraestrutura-counter" id="contador-telecom">--</div>
+                                <div class="infraestrutura-tipo">Torres e fibra óptica</div>
+                            </div>
+                        </div>
+
+                        <!-- Controle de Buffer -->
+                        <div class="p-3 buffer-container">
+                            <h6><i class="fas fa-arrows-alt me-2"></i>Raio de Análise</h6>
+                            <label for="buffer-analise" class="form-label">Distância (metros):</label>
+                            <input type="range" class="form-range buffer-slider" id="buffer-analise" min="500" max="5000" value="2000" step="250" oninput="atualizarBuffer(this.value)">
+                            <div class="buffer-valor" id="valor-buffer">2.000m</div>
+                        </div>
+
+                        <div class="p-3">
+                            <button class="btn btn-mapear btn-block" onclick="mapearInfraestruturas()">
+                                <i class="fas fa-map me-2"></i>Mapear Infraestruturas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área de Visualização de Resultados -->
+            <div class="col-md-8">
+                <!-- Resultado da Análise Infraestrutural -->
+                <div id="resultado-container" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="score-infraestrutura">
+                                <div class="score-valor" id="score-infraestrutura">0.0</div>
+                                <div class="score-label">Índice Infraestrutural</div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="analise-container">
+                                <h5><i class="fas fa-chart-area me-2"></i>Densidade de Infraestruturas</h5>
+                                <canvas id="chart-densidade" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mapa de Infraestruturas -->
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="analise-container">
+                                <h5><i class="fas fa-map me-2"></i>Mapa de Infraestruturas</h5>
+                                <div id="mapa-infraestrutura" class="mapa-infraestrutura"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="legend-infraestrutura">
+                                <h6><i class="fas fa-list me-2"></i>Legenda</h6>
+                                <div class="legend-item">
+                                    <div class="legend-icon densidade-alta"><i class="fas fa-road"></i></div>
+                                    <span>Rodovias</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-icon densidade-media"><i class="fas fa-train"></i></div>
+                                    <span>Ferrovias</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-icon densidade-baixa"><i class="fas fa-bolt"></i></div>
+                                    <span>Energia</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-icon densidade-muito-baixa"><i class="fas fa-broadcast-tower"></i></div>
+                                    <span>Telecomunicações</span>
+                                </div>
+                            </div>
+
+                            <!-- Resumo de Distâncias -->
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <h6><i class="fas fa-ruler me-2"></i>Distâncias Médias</h6>
+                                <div style="font-size: 0.9rem;">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Rodovias:</span>
+                                        <span id="dist-rodovias">--</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Ferrovias:</span>
+                                        <span id="dist-ferrovias">--</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Energia:</span>
+                                        <span id="dist-energia">--</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Telecom:</span>
+                                        <span id="dist-telecom">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista Detalhada de Infraestruturas Próximas -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="analise-container">
+                                <h5><i class="fas fa-list-ul me-2"></i>Infraestruturas Próximas (raio de <span id="raio-atual">2.000m</span>)</h5>
+                                <div class="infraestrutura-list" id="lista-infraestruturas">
+                                    <!-- Lista será preenchida dinamicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Área de Status Inicial -->
+                <div id="status-inicial" class="text-center py-5">
+                    <i class="fas fa-road fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Execute o mapeamento de infraestruturas</h3>
+                    <p class="text-muted">Configure o raio de análise e clique em "Mapear Infraestruturas"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel de Finalização do Projeto -->
+        <div class="row" id="painel-finalizacao" style="display: none;">
+            <div class="col-12">
+                <div class="finalizar-container">
+                    <h3><i class="fas fa-flag-checkered me-3"></i>Análise Completa!</h3>
+                    <p class="mb-4">Todos os 5 módulos foram concluídos com sucesso. O projeto está pronto para finalização.</p>
+                    <div>
+                        <button class="btn btn-finalizar" onclick="finalizarProjeto()">
+                            <i class="fas fa-check-double me-2"></i>Finalizar Projeto
+                        </button>
+                        <button class="btn btn-gerar-pdf" onclick="gerarRelatorioFinal()">
+                            <i class="fas fa-file-pdf me-2"></i>Gerar Relatório PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel de Ações -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">Ações do Módulo</h5>
+                                <small class="text-muted">Salvar análise e finalizar o projeto</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary me-2" onclick="salvarRascunho()">
+                                    <i class="fas fa-save me-2"></i>Salvar Rascunho
+                                </button>
+                                <button class="btn btn-success" onclick="concluirModulo()" id="btn-concluir" disabled>
+                                    <i class="fas fa-check me-2"></i>Concluir Módulo 5
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Variáveis globais
+        const projetoId = {{ projeto.id if projeto else 'null' }};
+        let mapaInfraestrutura;
+        let chartDensidade;
+        let bufferRadius = 2000;
+
+        // Inicialização
+        $(document).ready(function() {
+            inicializarMapa();
+            verificarStatusModulo();
+            verificarStatusProjeto();
+        });
+
+        // Função para atualizar buffer
+        function atualizarBuffer(valor) {
+            bufferRadius = parseInt(valor);
+            $('#valor-buffer').text((bufferRadius / 1000).toFixed(1) + 'km');
+            $('#raio-atual').text((bufferRadius / 1000).toFixed(1) + 'km');
+        }
+
+        // Função para mapear infraestruturas
+        async function mapearInfraestruturas() {
+            if (!projetoId) {
+                alert('Erro: Projeto não identificado!');
+                return;
+            }
+
+            // Mostrar loading
+            $('#status-modulo').removeClass('status-pendente').addClass('status-processando').html('<i class="fas fa-spinner fa-spin me-2"></i>Mapeando...');
+
+            try {
+                const response = await fetch('/api/modulos/5/processar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        projeto_id: projetoId,
+                        buffer_radius: bufferRadius
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    exibirResultados(data.resultado);
+                    $('#status-modulo').removeClass('status-processando').addClass('status-concluido').html('<i class="fas fa-check me-2"></i>Mapeamento Concluído');
+                    $('#btn-concluir').prop('disabled', false);
+                } else {
+                    throw new Error(data.erro || 'Erro no mapeamento');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao mapear infraestruturas: ' + error.message);
+                $('#status-modulo').removeClass('status-processando').addClass('status-pendente').html('<i class="fas fa-exclamation-triangle me-2"></i>Erro no Mapeamento');
+            }
+        }
+
+        // Função para exibir resultados
+        function exibirResultados(resultado) {
+            $('#status-inicial').hide();
+            $('#resultado-container').show();
+
+            // Atualizar contadores
+            $('#contador-rodovias').text(resultado.contadores.rodovias);
+            $('#contador-ferrovias').text(resultado.contadores.ferrovias);
+            $('#contador-energia').text(resultado.contadores.energia);
+            $('#contador-telecom').text(resultado.contadores.telecomunicacoes);
+
+            // Atualizar score
+            $('#score-infraestrutura').text(resultado.indice_infraestrutural.toFixed(2));
+
+            // Atualizar distâncias médias
+            $('#dist-rodovias').text((resultado.distancias_medias.rodovias / 1000).toFixed(1) + 'km');
+            $('#dist-ferrovias').text((resultado.distancias_medias.ferrovias / 1000).toFixed(1) + 'km');
+            $('#dist-energia').text((resultado.distancias_medias.energia / 1000).toFixed(1) + 'km');
+            $('#dist-telecom').text((resultado.distancias_medias.telecomunicacoes / 1000).toFixed(1) + 'km');
+
+            // Atualizar mapa
+            atualizarMapaInfraestrutura(resultado.infraestruturas_geojson);
+
+            // Criar gráfico de densidade
+            criarGraficoDensidade(resultado);
+
+            // Atualizar lista de infraestruturas
+            atualizarListaInfraestruturas(resultado.infraestruturas_proximas);
+        }
+
+        // Função para inicializar mapa
+        function inicializarMapa() {
+            mapaInfraestrutura = L.map('mapa-infraestrutura').setView([-23.5505, -46.6333], 8);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(mapaInfraestrutura);
+        }
+
+        // Função para atualizar mapa
+        function atualizarMapaInfraestrutura(infraestruturas) {
+            if (infraestruturas) {
+                // Cores por tipo de infraestrutura
+                const cores = {
+                    'rodovia': '#1B5E20',
+                    'ferrovia': '#4CAF50',
+                    'energia': '#FFB74D',
+                    'telecomunicacao': '#F44336'
+                };
+
+                infraestruturas.forEach(infra => {
+                    L.geoJSON(infra.geometry, {
+                        style: {
+                            color: cores[infra.tipo] || '#666666',
+                            weight: 3,
+                            opacity: 0.8
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer.bindPopup(`
+                                <strong>${infra.nome}</strong><br>
+                                Tipo: ${infra.tipo}<br>
+                                Distância: ${(infra.distancia / 1000).toFixed(2)}km
+                            `);
+                        }
+                    }).addTo(mapaInfraestrutura);
+                });
+            }
+        }
+
+        // Função para criar gráfico de densidade
+        function criarGraficoDensidade(resultado) {
+            const ctx = document.getElementById('chart-densidade').getContext('2d');
+            
+            if (chartDensidade) {
+                chartDensidade.destroy();
+            }
+
+            chartDensidade = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Rodovias', 'Ferrovias', 'Energia', 'Telecomunicações'],
+                    datasets: [{
+                        label: 'Quantidade',
+                        data: [
+                            resultado.contadores.rodovias,
+                            resultado.contadores.ferrovias,
+                            resultado.contadores.energia,
+                            resultado.contadores.telecomunicacoes
+                        ],
+                        backgroundColor: ['#1B5E20', '#4CAF50', '#FFB74D', '#F44336'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Função para atualizar lista de infraestruturas
+        function atualizarListaInfraestruturas(infraestruturas) {
+            const container = $('#lista-infraestruturas');
+            container.empty();
+
+            if (infraestruturas.length === 0) {
+                container.html('<div class="text-center text-muted py-3">Nenhuma infraestrutura encontrada no raio especificado</div>');
+                return;
+            }
+
+            infraestruturas.forEach(infra => {
+                const item = $(`
+                    <div class="infraestrutura-item">
+                        <div class="item-header">
+                            <div class="item-nome">
+                                <i class="fas fa-${getIconeInfraestrutura(infra.tipo)} me-2"></i>
+                                ${infra.nome}
+                            </div>
+                            <div class="item-distancia">${(infra.distancia / 1000).toFixed(2)}km</div>
+                        </div>
+                        <div class="text-muted small">
+                            Tipo: ${getTipoLabel(infra.tipo)} | 
+                            Responsável: ${infra.responsavel || 'N/A'}
+                        </div>
+                    </div>
+                `);
+                container.append(item);
+            });
+        }
+
+        // Funções auxiliares
+        function getIconeInfraestrutura(tipo) {
+            const icones = {
+                'rodovia': 'road',
+                'ferrovia': 'train',
+                'energia': 'bolt',
+                'telecomunicacao': 'broadcast-tower'
+            };
+            return icones[tipo] || 'question';
+        }
+
+        function getTipoLabel(tipo) {
+            const labels = {
+                'rodovia': 'Rodovia',
+                'ferrovia': 'Ferrovia',
+                'energia': 'Linha de Transmissão',
+                'telecomunicacao': 'Telecomunicação'
+            };
+            return labels[tipo] || tipo;
+        }
+
+        // Função para verificar status do módulo
+        async function verificarStatusModulo() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/modulos/5/status`);
+                const data = await response.json();
+
+                if (data.concluido) {
+                    $('#status-modulo').removeClass('status-pendente').addClass('status-concluido').html('<i class="fas fa-check me-2"></i>Módulo Concluído');
+                    $('#btn-concluir').prop('disabled', false);
+                    
+                    if (data.resultado) {
+                        exibirResultados(data.resultado);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
+            }
+        }
+
+        // Função para verificar se todos os módulos estão concluídos
+        async function verificarStatusProjeto() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/status-completo`);
+                const data = await response.json();
+
+                if (data.modulo_atual === 5 && data.todos_modulos_concluidos) {
+                    $('#painel-finalizacao').show();
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status do projeto:', error);
+            }
+        }
+
+        // Função para salvar rascunho
+        async function salvarRascunho() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch('/api/modulos/5/salvar-rascunho', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        projeto_id: projetoId,
+                        buffer_radius: bufferRadius
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.sucesso) {
+                    alert('Rascunho salvo com sucesso!');
+                } else {
+                    throw new Error(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar rascunho: ' + error.message);
+            }
+        }
+
+        // Função para concluir módulo
+        async function concluirModulo() {
+            if (!projetoId) return;
+
+            if (!confirm('Tem certeza que deseja concluir este módulo? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/modulos/5/concluir`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        buffer_radius: bufferRadius
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    alert('Módulo 5 concluído com sucesso! Projeto pronto para finalização.');
+                    $('#painel-finalizacao').show();
+                    verificarStatusProjeto();
+                } else {
+                    throw new Error(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao concluir módulo: ' + error.message);
+            }
+        }
+
+        // Função para finalizar projeto
+        async function finalizarProjeto() {
+            if (!projetoId) return;
+
+            if (!confirm('Tem certeza que deseja finalizar este projeto? Todos os dados serão consolidados.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/finalizar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    alert('Projeto finalizado com sucesso!');
+                    window.location.href = `/projetos/${projetoId}/dashboard`;
+                } else {
+                    throw new Error(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao finalizar projeto: ' + error.message);
+            }
+        }
+
+        // Função para gerar relatório PDF final
+        async function gerarRelatorioFinal() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/gerar-pdf-final`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `FAD-GEO_Projeto_${projetoId}_Relatorio_Final.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    throw new Error('Erro ao gerar PDF');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao gerar relatório PDF: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

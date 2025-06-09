@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<!-- filepath: c:\Users\vinic\fad-geo\app\templates\pr_conformidade_ambiental.html -->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAD-GEO - Conformidade Ambiental</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CSS específico da FAD -->
+    <link rel="stylesheet" href="/static/css/modulos/02.Conformidade_Ambiental/conformidade_ambiental.css">
+</head>
+<body>
+    <!-- Header FAD -->
+    <header class="fad-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <img src="/static/img/logo_fad.png" alt="FAD-GEO" class="logo-fad">
+                </div>
+                <div class="col-md-8 text-center">
+                    <h2 class="mb-0">Módulo 2: Conformidade Ambiental</h2>
+                    <p class="text-muted mb-0">Análise de conformidade com legislação ambiental e áreas protegidas</p>
+                </div>
+                <div class="col-md-2 text-right">
+                    <span class="badge badge-info">Projeto: {{ projeto.id }}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid mt-4">
+        <!-- Incluir navegação modular -->
+        {% include 'componentes/navegacao_modular.html' %}
+
+        <!-- Conteúdo principal do módulo -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-leaf mr-2"></i>
+                            Análise de Conformidade Ambiental
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Status do módulo -->
+                        <div class="alert alert-info" id="statusModulo">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <span id="statusTexto">Carregando status do módulo...</span>
+                        </div>
+
+                        <!-- Seção de análise ambiental -->
+                        <div class="row">
+                            <!-- Painel de análise -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-tree mr-2"></i>Análises Ambientais</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label>Geometria do Projeto:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" 
+                                                       value="Geometria carregada do módulo anterior" readonly>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button">
+                                                        <i class="fas fa-eye"></i> Visualizar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Análises a realizar:</label>
+                                            <div class="list-group">
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>
+                                                        <i class="fas fa-check-circle text-success mr-2"></i>
+                                                        Unidades de Conservação
+                                                    </span>
+                                                    <span class="badge badge-success badge-pill">Concluído</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>
+                                                        <i class="fas fa-clock text-warning mr-2"></i>
+                                                        Áreas de Preservação Permanente
+                                                    </span>
+                                                    <span class="badge badge-warning badge-pill">Em análise</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>
+                                                        <i class="fas fa-hourglass-half text-secondary mr-2"></i>
+                                                        Terra Indígena
+                                                    </span>
+                                                    <span class="badge badge-secondary badge-pill">Pendente</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>
+                                                        <i class="fas fa-hourglass-half text-secondary mr-2"></i>
+                                                        Quilombolas
+                                                    </span>
+                                                    <span class="badge badge-secondary badge-pill">Pendente</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-block" id="btnExecutarAnalise">
+                                                <i class="fas fa-play mr-2"></i>
+                                                Executar Análises Pendentes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Painel de resultados -->
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-bar mr-2"></i>Resultados das Análises</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="resultadosAnalise">
+                                            <div class="text-center text-muted py-4">
+                                                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                                                <p>Execute as análises para ver os resultados</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Painel de observações -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-comments mr-2"></i>Observações</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <textarea class="form-control" rows="4" id="observacoes" 
+                                                placeholder="Adicione observações sobre a análise ambiental..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seção de relatório -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-file-alt mr-2"></i>Relatório de Conformidade</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="previewRelatorio" class="border p-3 bg-light">
+                                            <p class="text-muted text-center">
+                                                O relatório será gerado automaticamente após a conclusão das análises
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botões de ação -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <button class="btn btn-secondary" onclick="history.back()">
+                                            <i class="fas fa-arrow-left mr-2"></i>
+                                            Voltar
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-success mr-2" id="btnSalvarRascunho">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Salvar Rascunho
+                                        </button>
+                                        <button class="btn btn-primary" id="btnConcluirModulo" disabled>
+                                            <i class="fas fa-check mr-2"></i>
+                                            Concluir Módulo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de progresso -->
+    <div class="modal fade" id="modalProgresso" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Executando Análises</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="progress mb-3">
+                        <div id="progressoAnalise" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p id="textoProgresso">Preparando análises...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script específico do módulo -->
+    <script>
+        class ConformidadeAmbiental {
+            constructor(projetoId) {
+                this.projetoId = projetoId;
+                this.moduloNumero = 2;
+                this.analisesConcluidas = false;
+                this.init();
+            }
+
+            async init() {
+                await this.carregarStatusModulo();
+                this.bindEvents();
+                
+                // Inicializa navegação modular
+                if (typeof inicializarNavegacaoModular === 'function') {
+                    this.navegacao = inicializarNavegacaoModular(this.projetoId, 'Projeto {{ projeto.nome }}');
+                }
+            }
+
+            async carregarStatusModulo() {
+                try {
+                    const response = await fetch(`/api/pr/fluxo/modulo/${this.projetoId}/${this.moduloNumero}/relatorio`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.atualizarStatusInterface(data);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar status:', error);
+                }
+            }
+
+            atualizarStatusInterface(data) {
+                const statusTexto = document.getElementById('statusTexto');
+                const statusModulo = document.getElementById('statusModulo');
+                
+                if (data.status === 'em_execucao') {
+                    statusTexto.textContent = 'Módulo em execução. Continue as análises ambientais.';
+                    statusModulo.className = 'alert alert-warning';
+                } else if (data.status === 'concluido') {
+                    statusTexto.textContent = 'Módulo concluído. Aguardando validação do coordenador.';
+                    statusModulo.className = 'alert alert-success';
+                } else {
+                    statusTexto.textContent = 'Módulo pronto para execução. Inicie as análises ambientais.';
+                    statusModulo.className = 'alert alert-info';
+                }
+            }
+
+            bindEvents() {
+                document.getElementById('btnExecutarAnalise')?.addEventListener('click', () => {
+                    this.executarAnalises();
+                });
+
+                document.getElementById('btnSalvarRascunho')?.addEventListener('click', () => {
+                    this.salvarRascunho();
+                });
+
+                document.getElementById('btnConcluirModulo')?.addEventListener('click', () => {
+                    this.concluirModulo();
+                });
+            }
+
+            async executarAnalises() {
+                try {
+                    // Inicia o módulo se ainda não foi iniciado
+                    await this.iniciarModulo();
+                    
+                    // Mostra modal de progresso
+                    $('#modalProgresso').modal('show');
+                    
+                    // Simula execução das análises
+                    await this.simularAnalises();
+                    
+                    this.analisesConcluidas = true;
+                    document.getElementById('btnConcluirModulo').disabled = false;
+                    
+                    $('#modalProgresso').modal('hide');
+                    this.mostrarResultados();
+                    
+                } catch (error) {
+                    console.error('Erro ao executar análises:', error);
+                    $('#modalProgresso').modal('hide');
+                    alert('Erro ao executar análises ambientais');
+                }
+            }
+
+            async iniciarModulo() {
+                const response = await fetch(`/api/pr/fluxo/modulo/${this.projetoId}/${this.moduloNumero}/iniciar?usuario_id=1`, {
+                    method: 'POST'
+                });
+                
+                if (!response.ok && response.status !== 400) {
+                    throw new Error('Erro ao iniciar módulo');
+                }
+            }
+
+            async simularAnalises() {
+                const etapas = [
+                    'Carregando geometria do projeto...',
+                    'Analisando Unidades de Conservação...',
+                    'Verificando Áreas de Preservação Permanente...',
+                    'Consultando Terras Indígenas...',
+                    'Verificando áreas Quilombolas...',
+                    'Gerando relatório de conformidade...'
+                ];
+
+                for (let i = 0; i < etapas.length; i++) {
+                    document.getElementById('textoProgresso').textContent = etapas[i];
+                    document.getElementById('progressoAnalise').style.width = `${((i + 1) / etapas.length) * 100}%`;
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                }
+            }
+
+            mostrarResultados() {
+                const resultados = `
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check-circle mr-2"></i>Análises Concluídas</h6>
+                        <ul class="mb-0">
+                            <li>Unidades de Conservação: <strong>Sem interferência</strong></li>
+                            <li>APP: <strong>Interferência mínima (2,3%)</strong></li>
+                            <li>Terras Indígenas: <strong>Sem interferência</strong></li>
+                            <li>Quilombolas: <strong>Sem interferência</strong></li>
+                        </ul>
+                    </div>
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle mr-2"></i>Recomendações</h6>
+                        <p class="mb-0">Projeto apresenta baixa interferência ambiental. 
+                        Recomenda-se medidas compensatórias para a área de APP identificada.</p>
+                    </div>
+                `;
+                
+                document.getElementById('resultadosAnalise').innerHTML = resultados;
+                
+                // Gera preview do relatório
+                this.gerarPreviewRelatorio();
+            }
+
+            gerarPreviewRelatorio() {
+                const relatorio = `
+                    <div class="relatorio-conformidade">
+                        <h5 class="text-center mb-4">RELATÓRIO DE CONFORMIDADE AMBIENTAL</h5>
+                        <p><strong>Projeto:</strong> {{ projeto.nome }}</p>
+                        <p><strong>Data da Análise:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+                        
+                        <h6 class="mt-4">Resumo Executivo</h6>
+                        <p>A análise de conformidade ambiental identificou baixo impacto nas áreas protegidas, 
+                        com interferência mínima em APP (2,3% da área total).</p>
+                        
+                        <h6 class="mt-4">Análises Realizadas</h6>
+                        <table class="table table-sm table-bordered">
+                            <tr><td>Unidades de Conservação</td><td class="text-success">Sem interferência</td></tr>
+                            <tr><td>Áreas de Preservação Permanente</td><td class="text-warning">Interferência mínima (2,3%)</td></tr>
+                            <tr><td>Terras Indígenas</td><td class="text-success">Sem interferência</td></tr>
+                            <tr><td>Áreas Quilombolas</td><td class="text-success">Sem interferência</td></tr>
+                        </table>
+                        
+                        <h6 class="mt-4">Conclusão</h6>
+                        <p>O projeto atende aos requisitos de conformidade ambiental com restrições mínimas.</p>
+                    </div>
+                `;
+                
+                document.getElementById('previewRelatorio').innerHTML = relatorio;
+            }
+
+            async salvarRascunho() {
+                try {
+                    const observacoes = document.getElementById('observacoes').value;
+                    const dados = {
+                        observacoes: observacoes,
+                        analises_concluidas: this.analisesConcluidas,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // Salvar no localStorage como backup
+                    localStorage.setItem(`modulo_2_projeto_${this.projetoId}`, JSON.stringify(dados));
+                    
+                    alert('Rascunho salvo com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao salvar rascunho:', error);
+                    alert('Erro ao salvar rascunho');
+                }
+            }
+
+            async concluirModulo() {
+                try {
+                    if (!this.analisesConcluidas) {
+                        alert('Execute as análises antes de concluir o módulo');
+                        return;
+                    }
+
+                    const htmlConteudo = document.getElementById('previewRelatorio').innerHTML;
+                    const observacoes = document.getElementById('observacoes').value;
+                    
+                    const payload = {
+                        html_conteudo: htmlConteudo,
+                        dados_extras: {
+                            observacoes: observacoes,
+                            analises_realizadas: ['UC', 'APP', 'TI', 'Quilombolas'],
+                            data_conclusao: new Date().toISOString()
+                        }
+                    };
+
+                    const response = await fetch(`/api/pr/fluxo/modulo/${this.projetoId}/${this.moduloNumero}/concluir`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Erro ao concluir módulo');
+                    }
+
+                    alert('Módulo concluído com sucesso! Aguardando validação do coordenador.');
+                    
+                    // Atualiza navegação
+                    if (this.navegacao) {
+                        await this.navegacao.carregarStatusProjeto();
+                    }
+                    
+                } catch (error) {
+                    console.error('Erro ao concluir módulo:', error);
+                    alert('Erro ao concluir módulo');
+                }
+            }
+        }
+
+        // Inicializa quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            const projetoId = {{ projeto.id|tojson }};
+            new ConformidadeAmbiental(projetoId);
+        });
+    </script>
+</body>
+</html>

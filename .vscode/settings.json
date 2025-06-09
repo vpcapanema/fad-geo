@@ -13,5 +13,14 @@
         "& './start.ps1'"
       ]
     }
-  }
+  },
+  "terminal.integrated.shellArgs.windows": [
+    "-NoExit",
+    "-Command",
+    "& '${workspaceFolder}/start.ps1'"
+  ],
+  "tasks.runOnOpen": [
+    "Iniciar API FastAPI"
+  ],
+  "terminal.integrated.defaultLocation": "editor"
 }

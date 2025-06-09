@@ -10,8 +10,20 @@ class UsuarioCreate(BaseModel):
     email: EmailStr
     telefone: Optional[str] = None
     senha: str
-    tipo: str  # "comum", "administrador", "master"
+    tipo: str  # "analista", "coordenador", "master"
     pessoa_fisica_id: Optional[int] = None  # ID da PF associada (se aplicável)
+    instituicao: Optional[str] = None
+    tipo_lotacao: Optional[str] = None
+    email_institucional: Optional[EmailStr] = None
+    telefone_institucional: Optional[str] = None
+    ramal: Optional[str] = None
+    sede_hierarquia: Optional[str] = None
+    sede_coordenadoria: Optional[str] = None
+    sede_setor: Optional[str] = None
+    sede_assistencia: Optional[str] = None
+    regional_nome: Optional[str] = None
+    regional_coordenadoria: Optional[str] = None
+    regional_setor: Optional[str] = None
 
 class UsuarioOut(BaseModel):
     id: int
@@ -22,9 +34,21 @@ class UsuarioOut(BaseModel):
     tipo: str
     status: str
     ativo: bool
+    instituicao: Optional[str] = None
+    tipo_lotacao: Optional[str] = None
+    email_institucional: Optional[EmailStr] = None
+    telefone_institucional: Optional[str] = None
+    ramal: Optional[str] = None
+    sede_hierarquia: Optional[str] = None
+    sede_coordenadoria: Optional[str] = None
+    sede_setor: Optional[str] = None
+    sede_assistencia: Optional[str] = None
+    regional_nome: Optional[str] = None
+    regional_coordenadoria: Optional[str] = None
+    regional_setor: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UsuarioDB(UsuarioOut):
     pessoa_fisica_id: Optional[int]

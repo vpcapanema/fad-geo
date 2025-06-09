@@ -20,6 +20,9 @@ templates = Jinja2Templates(directory="app/templates")
 # ================== Página de cadastro ==================
 @router.get("/")
 def carregar_pagina_projeto(request: Request, db: Session = Depends(get_db)):
+    usuario_id = request.session.get("usuario_id")
+    if not usuario_id:
+        return RedirectResponse(url="/login", status_code=302)
     pfs = db.query(PessoaFisica).all()
     pjs = db.query(PessoaJuridica).all()
     trechos = db.query(TrechoEstadualizacao).all()

@@ -20,4 +20,4 @@ def listar_todos_os_projetos(db: Session = Depends(get_db)):
         ORDER BY p.id DESC
     '''
     projetos = db.execute(text(query)).fetchall()
-    return [dict(row) for row in projetos]
+    return [dict(row._mapping) for row in projetos]

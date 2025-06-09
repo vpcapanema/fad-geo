@@ -20,6 +20,8 @@
       right: 25px;
       font-size: 14px;
       color: #333;
+      text-align: center;
+      width: 100%;
     }
 
     .cadastro-topo a {
@@ -144,9 +146,22 @@
 <body>
 
   {% include 'componentes/fad_header.html' %}
+  <script>
+    // Torna a logo da FAD clicável para ir para a home
+    document.addEventListener('DOMContentLoaded', function() {
+      const logo = document.querySelector('.logo-fad');
+      if (logo) {
+        logo.style.cursor = 'pointer';
+        logo.addEventListener('click', function() {
+          window.location.href = '/';
+        });
+      }
+    });
+  </script>
 
-  <div class="cadastro-topo">
-    Não tem acesso? <a href="/cadastro">Cadastre-se aqui</a>
+  <div class="cadastro-topo" style="text-align: right; width: 100%;">
+    <span style="color: #fff; display: block;">Não tem cadastro?</span>
+    <a href="/cadastro-usuario" style="color: #fff; font-weight: bold; text-decoration: underline; display: inline-block; margin-top: 2px;">Cadastre-se aqui</a>
   </div>
 
   <div class="login-container">
@@ -159,9 +174,8 @@
       </div>
 
       <label for="tipo">Tipo de Acesso:</label>
-      <select id="tipo" name="tipo" required>
-        <option value="comum">Comum</option>
-        <option value="administrador">Administrador</option>
+      <select id="tipo" name="tipo" required>        <option value="analista">Analista</option>
+        <option value="coordenador">Coordenador</option>
         <option value="master">Master</option>
       </select>
 
@@ -221,22 +235,30 @@
         carregandoBox.classList.add("hidden");
 
         if (response.ok) {
-          const html = await response.text();
-          document.open();
-          document.write(html);
-          document.close();
+          // Espera JSON com redirect
+          const data = await response.json();
+          if (data.redirect) {
+            window.location.href = data.redirect;
+          } else {
+            erroTexto.textContent = "Login realizado, mas sem redirecionamento.";
+            erroBox.classList.remove("hidden");
+          }
         } else {
+          const errorData = await response.json().catch(() => ({}));
           if (response.status === 401) {
-            const errorText = await response.text();
-            if (errorText.includes("email")) {
+            if (errorData.detail === "email") {
               erroTexto.textContent = "E-mail não cadastrado.";
-            } else if (errorText.includes("senha")) {
+            } else if (errorData.detail === "senha") {
               erroTexto.textContent = "Senha incorreta.";
+            } else if (errorData.detail === "tipo") {
+              erroTexto.textContent = "Tipo de acesso incorreto.";
             } else {
               erroTexto.textContent = "Credenciais inválidas.";
             }
           } else if (response.status === 403) {
-            erroTexto.textContent = "Aguardando aprovação do administrador.";
+            erroTexto.textContent = "Aguardando aprovação do coordenador.";
+          } else if (errorData.detail === "SessionMiddleware não configurado") {
+            erroTexto.textContent = "Erro interno: SessionMiddleware não configurado.";
           } else {
             erroTexto.textContent = "Erro inesperado. Código: " + response.status;
           }

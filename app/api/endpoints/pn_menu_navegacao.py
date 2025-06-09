@@ -5,6 +5,7 @@ from app.database.session import get_db
 from app.models.cd_pessoa_fisica import PessoaFisica
 from app.models.cd_pessoa_juridica import PessoaJuridica
 from app.models.cd_trecho import TrechoEstadualizacao
+from fastapi.responses import RedirectResponse
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -43,10 +44,16 @@ def pessoa_juridica(request: Request):
 
 @router.get("/usuario")
 def cadastro_usuario(request: Request):
+    usuario_id = request.session.get("usuario_id")
+    if not usuario_id:
+        return RedirectResponse(url="/login", status_code=302)
     return templates.TemplateResponse("cd_cadastro_usuario.html", {"request": request})
 
 @router.get("/projeto")
 def cadastro_projeto(request: Request, db: Session = Depends(get_db)):
+    usuario_id = request.session.get("usuario_id")
+    if not usuario_id:
+        return RedirectResponse(url="/login", status_code=302)
     pfs = db.query(PessoaFisica).all()
     pjs = db.query(PessoaJuridica).all()
     trechos = db.query(TrechoEstadualizacao).all()

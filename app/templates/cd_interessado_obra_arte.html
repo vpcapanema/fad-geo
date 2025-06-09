@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Obra de Arte Rodoviária</title>
+  <link rel="stylesheet" href="/static/css/componentes/fad_header.css">
+  <link rel="stylesheet" href="/static/css/formulario_elemento.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #eef5f9;
+    }
+    .form-container {
+      max-width: 720px;
+      margin: 30px auto;
+      padding: 2rem 2.5%;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .form-section {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid #cce0f5;
+      border-radius: 8px;
+      background-color: #f7fbff;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+    .required::after {
+      content: " *";
+      color: #dc3545;
+      font-weight: bold;
+    }
+    input, select {
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 0.9rem;
+      background-color: #009933;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 2rem;
+    }
+    button:hover {
+      background-color: #007a29;
+    }
+    #sucessoBox {
+      display: none;
+      color: #0b6600;
+      background: #e6ffe6;
+      border: 1px solid #0b6600;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 18px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #erroBox {
+      display: none;
+      color: #a80000;
+      background: #ffeaea;
+      border: 1px solid #a80000;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 18px;
+      text-align: center;
+      font-weight: bold;
+    }
+    @media (max-width: 768px) {
+      .form-container { margin: 15px; padding: 1.5rem; }
+      .form-section { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  {% include 'componentes/fad_header.html' %}
+  <div class="form-container">
+    <h3 style="text-align:center; font-size: 24px;">Cadastro de Elemento Rodoviário</h3>
+    <h4 style="text-align:left; color:#003366; margin-bottom: 1.5rem; margin-top:0;">Obra de Arte Rodoviária</h4>
+    <form id="obraForm">
+      <div class="form-section">
+        <div class="form-group">
+          <div class="form-field">
+            <label for="codigo" class="required">Código da obra:</label>
+            <input name="codigo" id="codigo" required maxlength="100" pattern="[A-Z]{2,}-\d{3,}" title="Ex: AB-123 (duas letras maiúsculas, hífen, três números)">
+            <div id="codigo-erro" style="color: red; font-size: 13px; margin-top: 2px;"></div>
+          </div>
+          <div class="form-field">
+            <label for="denominacao" class="required">Denominação:</label>
+            <input name="denominacao" id="denominacao" required maxlength="255">
+          </div>
+          <div class="form-field">
+            <label for="tipo" class="required">Tipo da obra:</label>
+            <input name="tipo" id="tipo" required maxlength="100">
+          </div>
+          <div class="form-field">
+            <label for="municipio" class="required">Município:</label>
+            <select name="municipio" id="municipio" required>
+              <option value="">Selecione...</option>
+            </select>
+            <div id="municipio-erro" style="color: red; font-size: 13px; margin-top: 2px;"></div>
+          </div>
+          <div class="form-field">
+            <label for="extensao_m" class="required">Extensão (m):</label>
+            <input name="extensao_m" id="extensao_m" type="number" step="0.01" required>
+          </div>
+          <div class="form-field">
+            <label for="localizacao" class="required">Localização:</label>
+            <input name="localizacao" id="localizacao" required maxlength="255">
+          </div>
+          <div class="form-field">
+            <label for="telefone" class="required">Telefone:</label>
+            <input name="telefone" id="telefone" required maxlength="16">
+            <div id="telefone-erro" style="color: red; font-size: 13px; margin-top: 2px;"></div>
+          </div>
+          <div class="form-field">
+            <label for="email" class="required">E-mail:</label>
+            <input name="email" id="email" required maxlength="255">
+            <div id="email-erro" style="color: red; font-size: 13px; margin-top: 2px;"></div>
+          </div>
+        </div>
+      </div>
+      <button type="submit">Cadastrar Obra de Arte</button>
+    </form>
+    <div id="sucessoBox">Cadastro realizado com sucesso!</div>
+    <div id="erroBox"></div>
+    <div style="text-align:center; margin-top: 30px;">
+      <a href="/boas-vindas" class="menu-link" style="background:#004080; color:#fff; text-decoration:none; padding:10px 22px; border-radius:6px; font-size:16px; font-weight:500; display:inline-block;">Página inicial</a>
+    </div>
+  </div>
+  <script src="/static/js/formulario_elemento.js"></script>
+  <script>
+    const form = document.getElementById("obraForm");
+    const sucessoBox = document.getElementById("sucessoBox");
+    const erroBox = document.getElementById("erroBox");
+    const codigoInput = document.getElementById("codigo");
+    const codigoErro = document.getElementById("codigo-erro");
+    codigoInput.addEventListener("input", function() {
+      this.value = this.value.toUpperCase();
+      const regex = /^[A-Z]{2,}-\d{3,}$/;
+      if (this.value && !regex.test(this.value)) {
+        codigoErro.textContent = "Formato: duas letras maiúsculas, hífen, três números (ex: AB-123)";
+      } else {
+        codigoErro.textContent = "";
+      }
+    });
+    // Carregar municípios de SP
+    fetch('/static/municipios_sp.json')
+      .then(resp => resp.json())
+      .then(municipios => {
+        const municipioSelect = document.getElementById('municipio');
+        municipios.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.nome;
+          opt.text = m.nome;
+          municipioSelect.appendChild(opt);
+        });
+      });
+    const municipioSelect = document.getElementById('municipio');
+    const municipioErro = document.getElementById('municipio-erro');
+    municipioSelect.addEventListener('change', function() {
+      if (!this.value) {
+        municipioErro.textContent = 'Selecione um município.';
+      } else {
+        municipioErro.textContent = '';
+      }
+    });
+    const telefoneInput = document.getElementById('telefone');
+    const telefoneErro = document.getElementById('telefone-erro');
+    telefoneInput.addEventListener('input', function() {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length > 11) value = value.slice(0, 11);
+      value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+      value = value.replace(/(\d{1})?(\d{4,5})(\d{4})$/, "$1 $2-$3");
+      this.value = value;
+    });
+    telefoneInput.addEventListener('blur', function() {
+      const regex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+      if (this.value && !regex.test(this.value)) {
+        telefoneErro.textContent = 'Telefone inválido. Ex: (11) 91234-5678';
+      } else {
+        telefoneErro.textContent = '';
+      }
+    });
+    const emailInput = document.getElementById('email');
+    const emailErro = document.getElementById('email-erro');
+    emailInput.addEventListener('blur', function() {
+      this.value = this.value.toLowerCase();
+      const regex = /^[\w-.]+@[\w-]+\.[a-z]{2,}$/i;
+      if (this.value && !regex.test(this.value)) {
+        emailErro.textContent = 'E-mail inválido.';
+      } else {
+        emailErro.textContent = '';
+      }
+    });
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      sucessoBox.style.display = "none";
+      erroBox.style.display = "none";
+      const formData = Object.fromEntries(new FormData(form));
+      if (!formData.codigo || !formData.tipo || !formData.municipio) {
+        erroBox.innerText = "Preencha todos os campos obrigatórios.";
+        erroBox.style.display = "block";
+        return;
+      }
+      if (telefoneErro.textContent || emailErro.textContent) {
+        erroBox.innerText = 'Corrija os erros antes de enviar.';
+        erroBox.style.display = 'block';
+        return;
+      }
+      try {
+        const response = await fetch("/elementos/obra-arte", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(formData)
+        });
+        if (response.ok) {
+          sucessoBox.style.display = "block";
+          form.reset();
+        } else {
+          const data = await response.json();
+          erroBox.innerText = data.detail || "Erro ao cadastrar obra de arte.";
+          erroBox.style.display = "block";
+        }
+      } catch (error) {
+        erroBox.innerText = "Erro de conexão.";
+        erroBox.style.display = "block";
+      }
+    });
+    // Capitalização de nomes próprios e elementos rodoviários
+    function capitalizarNome(str) {
+      return str.toLowerCase().replace(/(^|\s|\b)([a-záéíóúãõâêîôûç])([a-záéíóúãõâêîôûç]*)/g, function(m, sep, ini, rest) {
+        if (["da","de","do","das","dos","e"].includes(ini+rest)) return sep+ini+rest;
+        return sep+ini.toUpperCase()+rest;
+      });
+    }
+    const campos = ["denominacao", "localizacao"];
+    campos.forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("blur", function() {
+          this.value = capitalizarNome(this.value);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

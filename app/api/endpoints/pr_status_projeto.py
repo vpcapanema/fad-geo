@@ -17,10 +17,10 @@ from app.api.dependencies import get_current_user
 
 router = APIRouter()
 
-# 🔁 Enviar projeto (usuário comum)
+# 🔁 Enviar projeto (usuário analista)
 @router.post("/projetos/{id}/enviar")
 def enviar_projeto(id: int, current_user=Depends(get_current_user)):
-    if current_user.tipo_usuario != "comum":
+    if current_user.tipo_usuario != "analista":
         raise HTTPException(status_code=403, detail="Apenas usuários comuns podem enviar projeto.")
     
     db: Session = SessionLocal()
@@ -37,8 +37,8 @@ def enviar_projeto(id: int, current_user=Depends(get_current_user)):
 # ✅ Aprovar projeto (admin)
 @router.post("/projetos/{id}/aprovar")
 def aprovar_projeto(id: int, current_user=Depends(get_current_user)):
-    if current_user.tipo_usuario != "administrador":
-        raise HTTPException(status_code=403, detail="Apenas administradores podem aprovar projeto.")
+    if current_user.tipo_usuario != "coordenador":
+        raise HTTPException(status_code=403, detail="Apenas coordenadores podem aprovar projeto.")
 
     db: Session = SessionLocal()
     projeto = db.query(Projeto).filter(Projeto.id == id).first()
@@ -55,8 +55,8 @@ def aprovar_projeto(id: int, current_user=Depends(get_current_user)):
 # ❌ Reprovar projeto (admin)
 @router.post("/projetos/{id}/reprovar")
 def reprovar_projeto(id: int, current_user=Depends(get_current_user)):
-    if current_user.tipo_usuario != "administrador":
-        raise HTTPException(status_code=403, detail="Apenas administradores podem reprovar projeto.")
+    if current_user.tipo_usuario != "coordenador":
+        raise HTTPException(status_code=403, detail="Apenas coordenadores podem reprovar projeto.")
 
     db: Session = SessionLocal()
     projeto = db.query(Projeto).filter(Projeto.id == id).first()
@@ -67,7 +67,7 @@ def reprovar_projeto(id: int, current_user=Depends(get_current_user)):
     projeto.status = "em edição"
     projeto.aprovador_id = current_user.id_usuario
     db.commit()
-    return {"mensagem": "Projeto reprovado. Retornado para edição do usuário comum."}
+    return {"mensagem": "Projeto reprovado. Retornado para edição do usuário analista."}
 
 # 🔁 Corrigir status (master)
 @router.post("/projetos/{id}/corrigir-status")

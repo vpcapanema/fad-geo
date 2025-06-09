@@ -20,7 +20,6 @@ def painel_usuario_comum(request: Request, db: Session = Depends(get_db)):
     usuario_id = request.session.get("usuario_id")
     if not usuario_id:
         return HTMLResponse(status_code=401, content="Não autorizado.")
-
     usuario = db.query(UsuarioSistema).filter(UsuarioSistema.id == usuario_id).first()
     return templates.TemplateResponse("pn_painel_usuario_comum.html", {
         "request": request,
@@ -29,7 +28,7 @@ def painel_usuario_comum(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/usuarios", response_class=JSONResponse)
 def listar_usuarios_comuns(db: Session = Depends(get_db)):
-    usuarios = db.query(UsuarioSistema).filter(UsuarioSistema.tipo == "comum").all()
+    usuarios = db.query(UsuarioSistema).filter(UsuarioSistema.tipo == "analista").all()
     return [
         {
             "id": u.id,
@@ -37,9 +36,14 @@ def listar_usuarios_comuns(db: Session = Depends(get_db)):
             "cpf": u.cpf,
             "email": u.email,
             "telefone": u.telefone,
+            "instituicao": u.instituicao,
+            "tipo_lotacao": u.tipo_lotacao,
+            "email_institucional": u.email_institucional,
+            "telefone_institucional": u.telefone_institucional,
+            "ramal": u.ramal,
             "criado_em": u.criado_em.strftime("%Y-%m-%d") if u.criado_em else "",
             "aprovado_em": u.aprovado_em.strftime("%Y-%m-%d") if u.aprovado_em else "",
-            "aprovado_por": u.aprovado_por,
+            "aprovado_por": u.aprovador_id,
             "tipo_usuario": u.tipo,
             "status": u.status,
             "ativo": u.ativo

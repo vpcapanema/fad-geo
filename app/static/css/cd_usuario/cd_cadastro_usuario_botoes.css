@@ -1,0 +1,161 @@
+/* Botão pequeno - versão consolidada */
+.btn-pequeno {
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-pequeno:hover {
+  background-color: #0056b3;
+}
+
+/* Botão de confirmação - versão consolidada */
+.confirmar-btn {
+  width: 95%;
+  margin-top: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.confirmar-btn:hover {
+  background-color: #218838;
+}
+
+/* Botão FAD principal - versão consolidada */
+.botao-fad {
+  width: 95%;
+  margin-top: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botao-fad:hover {
+  background-color: #0056b3;
+}
+
+/* Botões ícone - versão consolidada com largura reduzida e bordas coloridas */
+.btn-icone {
+  background-color: transparent;
+  color: #444;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 6px;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icone:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border-color: #000;
+}
+
+/* Botão editar - ícone de lápis para editar seleções */
+.btn-editar {
+  background-color: transparent;
+  color: #444;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 6px;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-editar:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border-color: #000;
+}
+
+/* Botão atualizar lista - posicionado sobre o select */
+.btn-atualizar-lista {
+  position: absolute;
+  right: 25px; /* Recuo da direita para não tapar a seta */
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #888;
+  color: #666;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 6px;
+  min-width: 22px;
+  min-height: 22px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.btn-atualizar-lista:hover {
+  background-color: #f0f0f0;
+  color: #333;
+  border-color: #999;
+}
+
+.btn-atualizar-lista::before {
+  content: "⟲";
+}
+
+/* Botão confirmar seleção - mesmo padrão visual do botão editar */
+.btn-confirmar-selecao {
+  background-color: transparent;
+  color: #444;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 6px;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-confirmar-selecao:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border-color: #000;
+}
+
+/* Container do select deve ser relativo */
+#pfSelect {
+  position: relative;
+  padding-right: 60px !important; /* Espaço aumentado para o botão */
+}
+
+/* Garantir que o container pai seja relativo */
+#pfSelect + .btn-atualizar-lista {
+  position: absolute;
+}

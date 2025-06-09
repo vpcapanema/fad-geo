@@ -41,7 +41,7 @@ Ela permite importar, validar e cruzar geometrias com dados oficiais, classifica
 Permite o cadastro, autenticação e controle de acesso de operadores da FAD.
 
 **O que faz:**
-- Cria usuários com perfil `comum` ou `master`
+- Cria usuários com perfil `analista` ou `master`
 - Gera hash seguro das senhas
 - Controla sessão ativa
 

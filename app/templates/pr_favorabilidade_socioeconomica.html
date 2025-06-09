@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAD-GEO - Módulo 4: Favorabilidade Socioeconômica</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    
+    <style>
+        :root {
+            --cor-primaria: #2E7D32;
+            --cor-secundaria: #4CAF50;
+            --cor-destaque: #FFC107;
+            --cor-perigo: #DC3545;
+            --cor-sucesso: #28A745;
+            --cor-info: #007BFF;
+            --cor-socioeconomico: #6A1B9A;
+            --cor-cinza-claro: #F8F9FA;
+            --cor-cinza-medio: #6C757D;
+            --cor-cinza-escuro: #343A40;
+        }
+
+        body {
+            background-color: var(--cor-cinza-claro);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header-modulo {
+            background: linear-gradient(135deg, var(--cor-socioeconomico) 0%, #8E24AA 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header-modulo h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-modulo .lead {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card-indicador {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-indicador:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header-indicador {
+            background: linear-gradient(45deg, var(--cor-socioeconomico), #7B1FA2);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .indicador-valor {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--cor-socioeconomico);
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .indicador-descricao {
+            color: var(--cor-cinza-medio);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .grafico-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .mapa-socioeconomico {
+            height: 450px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+
+        .score-socioeconomico {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--cor-socioeconomico), #8E24AA);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .score-valor {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dados-municipios {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .municipio-item {
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .municipio-item:hover {
+            border-color: var(--cor-socioeconomico);
+            box-shadow: 0 2px 8px rgba(106, 27, 154, 0.2);
+        }
+
+        .municipio-nome {
+            font-weight: 600;
+            color: var(--cor-socioeconomico);
+            margin-bottom: 0.5rem;
+        }
+
+        .municipio-dados {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-analisar {
+            background: linear-gradient(45deg, var(--cor-socioeconomico), #8E24AA);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-analisar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(106, 27, 154, 0.4);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-pendente {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-processando {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status-concluido {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .legend-socioeconomica {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        .tabela-indicadores {
+            font-size: 0.9rem;
+        }
+
+        .indicador-alto {
+            color: #28A745;
+            font-weight: 600;
+        }
+
+        .indicador-medio {
+            color: #FFC107;
+            font-weight: 600;
+        }
+
+        .indicador-baixo {
+            color: #DC3545;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegação Modular -->
+    {% include 'componentes/navegacao_modular.html' %}
+
+    <!-- Header do Módulo -->
+    <div class="header-modulo">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-chart-line me-3"></i>Módulo 4: Favorabilidade Socioeconômica</h1>
+                    <p class="lead">Análise dos aspectos socioeconômicos e demográficos dos municípios impactados</p>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="status-badge status-pendente" id="status-modulo">
+                        <i class="fas fa-clock me-2"></i>Aguardando Análise
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Painel de Indicadores Socioeconômicos -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Indicadores Socioeconômicos</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Indicador: População Total -->
+                        <div class="card card-indicador">
+                            <div class="card-header card-header-indicador">
+                                <i class="fas fa-users me-2"></i>População Total
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="indicador-valor" id="populacao-total">--</div>
+                                <div class="indicador-descricao">Habitantes nos municípios impactados</div>
+                            </div>
+                        </div>
+
+                        <!-- Indicador: IDH Médio -->
+                        <div class="card card-indicador">
+                            <div class="card-header card-header-indicador">
+                                <i class="fas fa-award me-2"></i>IDH Médio
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="indicador-valor" id="idh-medio">--</div>
+                                <div class="indicador-descricao">Índice de Desenvolvimento Humano médio</div>
+                            </div>
+                        </div>
+
+                        <!-- Indicador: PIB per Capita -->
+                        <div class="card card-indicador">
+                            <div class="card-header card-header-indicador">
+                                <i class="fas fa-dollar-sign me-2"></i>PIB per Capita
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="indicador-valor" id="pib-per-capita">--</div>
+                                <div class="indicador-descricao">Produto Interno Bruto per capita médio</div>
+                            </div>
+                        </div>
+
+                        <!-- Indicador: Taxa de Emprego -->
+                        <div class="card card-indicador">
+                            <div class="card-header card-header-indicador">
+                                <i class="fas fa-briefcase me-2"></i>Taxa de Emprego
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="indicador-valor" id="taxa-emprego">--</div>
+                                <div class="indicador-descricao">Percentual de população empregada</div>
+                            </div>
+                        </div>
+
+                        <div class="p-3">
+                            <button class="btn btn-analisar btn-block" onclick="analisarSocioeconomico()">
+                                <i class="fas fa-search me-2"></i>Analisar Impactos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Municípios Impactados -->
+                <div class="card mt-3">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Municípios Impactados</h6>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="dados-municipios" id="lista-municipios">
+                            <div class="text-center text-muted py-3">
+                                <i class="fas fa-city fa-2x mb-2"></i>
+                                <p>Execute a análise para ver os municípios</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área de Visualização de Resultados -->
+            <div class="col-md-8">
+                <!-- Resultado da Análise Socioeconômica -->
+                <div id="resultado-container" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="score-socioeconomico">
+                                <div class="score-valor" id="score-socioeconomico">0.0</div>
+                                <div class="score-label">Índice Socioeconômico</div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="grafico-container">
+                                <h5><i class="fas fa-chart-pie me-2"></i>Distribuição dos Indicadores</h5>
+                                <canvas id="chart-indicadores" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mapa Socioeconômico -->
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="grafico-container">
+                                <h5><i class="fas fa-map me-2"></i>Mapa de Impactos Socioeconômicos</h5>
+                                <div id="mapa-socioeconomico" class="mapa-socioeconomico"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="legend-socioeconomica">
+                                <h6><i class="fas fa-palette me-2"></i>Legenda</h6>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #1B5E20;"></div>
+                                    <span>Alto Desenvolvimento</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #388E3C;"></div>
+                                    <span>Médio-Alto</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #66BB6A;"></div>
+                                    <span>Médio</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #FFB74D;"></div>
+                                    <span>Médio-Baixo</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #F44336;"></div>
+                                    <span>Baixo Desenvolvimento</span>
+                                </div>
+                            </div>
+
+                            <!-- Resumo Estatístico -->
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <h6><i class="fas fa-calculator me-2"></i>Resumo</h6>
+                                <div class="tabela-indicadores">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Municípios:</span>
+                                        <span id="total-municipios">--</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>População:</span>
+                                        <span id="total-populacao">--</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>IDH Médio:</span>
+                                        <span id="idh-medio-resumo">--</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>PIB Total:</span>
+                                        <span id="pib-total">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela Detalhada de Municípios -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="grafico-container">
+                                <h5><i class="fas fa-table me-2"></i>Detalhamento por Município</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="tabela-municipios">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Município</th>
+                                                <th>População</th>
+                                                <th>IDH</th>
+                                                <th>PIB per Capita</th>
+                                                <th>Taxa Emprego</th>
+                                                <th>Classificação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dados-tabela-municipios">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Área de Status Inicial -->
+                <div id="status-inicial" class="text-center py-5">
+                    <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Execute a análise socioeconômica</h3>
+                    <p class="text-muted">Clique em "Analisar Impactos" para processar os dados socioeconômicos dos municípios</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel de Ações -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">Ações do Módulo</h5>
+                                <small class="text-muted">Salvar análise e prosseguir para o próximo módulo</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary me-2" onclick="salvarRascunho()">
+                                    <i class="fas fa-save me-2"></i>Salvar Rascunho
+                                </button>
+                                <button class="btn btn-success" onclick="concluirModulo()" id="btn-concluir" disabled>
+                                    <i class="fas fa-check me-2"></i>Concluir Módulo 4
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+        // Variáveis globais
+        const projetoId = {{ projeto.id if projeto else 'null' }};
+        let mapaSocioeconomico;
+        let chartIndicadores;
+        let tabelaMunicipios;
+
+        // Inicialização
+        $(document).ready(function() {
+            inicializarMapa();
+            verificarStatusModulo();
+        });
+
+        // Função para analisar dados socioeconômicos
+        async function analisarSocioeconomico() {
+            if (!projetoId) {
+                alert('Erro: Projeto não identificado!');
+                return;
+            }
+
+            // Mostrar loading
+            $('#status-modulo').removeClass('status-pendente').addClass('status-processando').html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
+
+            try {
+                const response = await fetch('/api/modulos/4/processar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        projeto_id: projetoId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    exibirResultados(data.resultado);
+                    $('#status-modulo').removeClass('status-processando').addClass('status-concluido').html('<i class="fas fa-check me-2"></i>Análise Concluída');
+                    $('#btn-concluir').prop('disabled', false);
+                } else {
+                    throw new Error(data.erro || 'Erro no processamento');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao processar análise socioeconômica: ' + error.message);
+                $('#status-modulo').removeClass('status-processando').addClass('status-pendente').html('<i class="fas fa-exclamation-triangle me-2"></i>Erro no Processamento');
+            }
+        }
+
+        // Função para exibir resultados
+        function exibirResultados(resultado) {
+            $('#status-inicial').hide();
+            $('#resultado-container').show();
+
+            // Atualizar indicadores
+            $('#populacao-total').text(resultado.populacao_total.toLocaleString('pt-BR'));
+            $('#idh-medio').text(resultado.idh_medio.toFixed(3));
+            $('#pib-per-capita').text('R$ ' + resultado.pib_per_capita.toLocaleString('pt-BR'));
+            $('#taxa-emprego').text(resultado.taxa_emprego.toFixed(1) + '%');
+            $('#score-socioeconomico').text(resultado.indice_socioeconomico.toFixed(2));
+
+            // Atualizar resumo
+            $('#total-municipios').text(resultado.municipios.length);
+            $('#total-populacao').text(resultado.populacao_total.toLocaleString('pt-BR'));
+            $('#idh-medio-resumo').text(resultado.idh_medio.toFixed(3));
+            $('#pib-total').text('R$ ' + (resultado.pib_total / 1000000).toFixed(1) + 'M');
+
+            // Atualizar lista de municípios
+            atualizarListaMunicipios(resultado.municipios);
+
+            // Atualizar mapa
+            atualizarMapaSocioeconomico(resultado.geometria_municipios);
+
+            // Criar gráfico de indicadores
+            criarGraficoIndicadores(resultado);
+
+            // Atualizar tabela detalhada
+            atualizarTabelaMunicipios(resultado.municipios);
+        }
+
+        // Função para inicializar mapa
+        function inicializarMapa() {
+            mapaSocioeconomico = L.map('mapa-socioeconomico').setView([-23.5505, -46.6333], 8);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(mapaSocioeconomico);
+        }
+
+        // Função para atualizar mapa
+        function atualizarMapaSocioeconomico(geometria) {
+            if (geometria) {
+                L.geoJSON(geometria, {
+                    style: function(feature) {
+                        const idh = feature.properties.idh || 0;
+                        return {
+                            fillColor: getCorDesenvolvimento(idh),
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            fillOpacity: 0.7
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        const props = feature.properties;
+                        layer.bindPopup(`
+                            <strong>${props.nome}</strong><br>
+                            População: ${props.populacao.toLocaleString('pt-BR')}<br>
+                            IDH: ${props.idh.toFixed(3)}<br>
+                            PIB per Capita: R$ ${props.pib_per_capita.toLocaleString('pt-BR')}
+                        `);
+                    }
+                }).addTo(mapaSocioeconomico);
+            }
+        }
+
+        // Função para determinar cor baseada no desenvolvimento
+        function getCorDesenvolvimento(idh) {
+            if (idh >= 0.8) return '#1B5E20';    // Alto
+            if (idh >= 0.7) return '#388E3C';    // Médio-Alto
+            if (idh >= 0.6) return '#66BB6A';    // Médio
+            if (idh >= 0.5) return '#FFB74D';    // Médio-Baixo
+            return '#F44336';                    // Baixo
+        }
+
+        // Função para atualizar lista de municípios
+        function atualizarListaMunicipios(municipios) {
+            const container = $('#lista-municipios');
+            container.empty();
+
+            municipios.forEach(municipio => {
+                const item = $(`
+                    <div class="municipio-item">
+                        <div class="municipio-nome">${municipio.nome}</div>
+                        <div class="municipio-dados">
+                            <div><strong>Pop:</strong> ${municipio.populacao.toLocaleString('pt-BR')}</div>
+                            <div><strong>IDH:</strong> ${municipio.idh.toFixed(3)}</div>
+                            <div><strong>PIB:</strong> R$ ${municipio.pib_per_capita.toLocaleString('pt-BR')}</div>
+                            <div><strong>Emp:</strong> ${municipio.taxa_emprego.toFixed(1)}%</div>
+                        </div>
+                    </div>
+                `);
+                container.append(item);
+            });
+        }
+
+        // Função para criar gráfico de indicadores
+        function criarGraficoIndicadores(resultado) {
+            const ctx = document.getElementById('chart-indicadores').getContext('2d');
+            
+            if (chartIndicadores) {
+                chartIndicadores.destroy();
+            }
+
+            const faixasIdh = [0, 0, 0, 0, 0]; // Baixo, Médio-Baixo, Médio, Médio-Alto, Alto
+            
+            resultado.municipios.forEach(m => {
+                const idh = m.idh;
+                if (idh >= 0.8) faixasIdh[4]++;
+                else if (idh >= 0.7) faixasIdh[3]++;
+                else if (idh >= 0.6) faixasIdh[2]++;
+                else if (idh >= 0.5) faixasIdh[1]++;
+                else faixasIdh[0]++;
+            });
+
+            chartIndicadores = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Baixo', 'Médio-Baixo', 'Médio', 'Médio-Alto', 'Alto'],
+                    datasets: [{
+                        data: faixasIdh,
+                        backgroundColor: ['#F44336', '#FFB74D', '#66BB6A', '#388E3C', '#1B5E20'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Distribuição do IDH dos Municípios'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Função para atualizar tabela detalhada
+        function atualizarTabelaMunicipios(municipios) {
+            const tbody = $('#dados-tabela-municipios');
+            tbody.empty();
+
+            municipios.forEach(municipio => {
+                const classificacao = getClassificacaoIDH(municipio.idh);
+                const row = $(`
+                    <tr>
+                        <td>${municipio.nome}</td>
+                        <td>${municipio.populacao.toLocaleString('pt-BR')}</td>
+                        <td>${municipio.idh.toFixed(3)}</td>
+                        <td>R$ ${municipio.pib_per_capita.toLocaleString('pt-BR')}</td>
+                        <td>${municipio.taxa_emprego.toFixed(1)}%</td>
+                        <td><span class="${classificacao.classe}">${classificacao.texto}</span></td>
+                    </tr>
+                `);
+                tbody.append(row);
+            });
+
+            // Inicializar DataTable se ainda não foi
+            if (!tabelaMunicipios) {
+                tabelaMunicipios = $('#tabela-municipios').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json'
+                    },
+                    pageLength: 10,
+                    order: [[2, 'desc']] // Ordenar por IDH descendente
+                });
+            } else {
+                tabelaMunicipios.clear().rows.add(tbody.find('tr')).draw();
+            }
+        }
+
+        // Função para classificar IDH
+        function getClassificacaoIDH(idh) {
+            if (idh >= 0.8) return { texto: 'Muito Alto', classe: 'indicador-alto' };
+            if (idh >= 0.7) return { texto: 'Alto', classe: 'indicador-alto' };
+            if (idh >= 0.6) return { texto: 'Médio', classe: 'indicador-medio' };
+            if (idh >= 0.5) return { texto: 'Baixo', classe: 'indicador-baixo' };
+            return { texto: 'Muito Baixo', classe: 'indicador-baixo' };
+        }
+
+        // Função para verificar status do módulo
+        async function verificarStatusModulo() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/modulos/4/status`);
+                const data = await response.json();
+
+                if (data.concluido) {
+                    $('#status-modulo').removeClass('status-pendente').addClass('status-concluido').html('<i class="fas fa-check me-2"></i>Módulo Concluído');
+                    $('#btn-concluir').prop('disabled', false);
+                    
+                    if (data.resultado) {
+                        exibirResultados(data.resultado);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
+            }
+        }
+
+        // Função para salvar rascunho
+        async function salvarRascunho() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch('/api/modulos/4/salvar-rascunho', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        projeto_id: projetoId
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.sucesso) {
+                    alert('Rascunho salvo com sucesso!');
+                } else {
+                    throw new Error(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar rascunho: ' + error.message);
+            }
+        }
+
+        // Função para concluir módulo
+        async function concluirModulo() {
+            if (!projetoId) return;
+
+            if (!confirm('Tem certeza que deseja concluir este módulo? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/modulos/4/concluir`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    alert('Módulo 4 concluído com sucesso! Redirecionando para o Módulo 5...');
+                    window.location.href = `/projetos/${projetoId}/modulos/5`;
+                } else {
+                    throw new Error(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao concluir módulo: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

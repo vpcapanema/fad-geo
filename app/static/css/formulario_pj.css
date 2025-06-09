@@ -1,0 +1,76 @@
+/* CSS para validação visual do formulário de Pessoa Jurídica */
+.form-field.campo-validado label .check-icone {
+  display: inline;
+}
+.form-field label .check-icone {
+  display: none;
+  color: #145a32;
+  font-weight: bold;
+  margin-left: 3px;
+  font-size: 1.1em;
+}
+.form-field.campo-validado input {
+  border: 2px solid #28a745;
+  background: #eaffea;
+}
+.form-field input.erro-campo {
+  border: 2px solid #dc3545;
+  background: #fff0f0;
+}
+.form-field {
+  position: relative;
+}
+.campo-validacao {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-height: 2.2em;
+  height: auto;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+}
+.form-field label {
+  position: relative;
+  z-index: 3;
+  background: transparent;
+}
+.form-field .campo-validacao .check-icone,
+.form-field .campo-validacao .obrigatorio-icone {
+  margin-left: 6px;
+  font-size: 1.1em;
+}
+.form-field .check-icone,
+.form-field .obrigatorio-icone {
+  position: static;
+}
+.obrigatorio-icone {
+  color: #dc3545;
+  font-weight: bold;
+  margin-left: 3px;
+  font-size: 1.1em;
+  display: inline;
+  transition: color 0.2s;
+}
+.check-icone {
+  color: #145a32;
+  font-weight: bold;
+  margin-left: 3px;
+  font-size: 1.1em;
+  display: none;
+  transition: color 0.2s;
+}
+.campo-validado .obrigatorio-icone { display: none; }
+.campo-validado .check-icone { display: inline; }
+.erro-campo { border: 2px solid #dc3545 !important; background: #fff0f0 !important; }
+.campo-validado label, .campo-validado input, .campo-validado select {
+  border: 2px solid #28a745 !important;
+  background: #eaffea !important;
+}
+/* Remove qualquer ::after de label obrigatória */
+label.required::after {
+  display: none !important;
+  content: none !important;
+}

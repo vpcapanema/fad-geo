@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database.session import get_db
@@ -9,7 +10,11 @@ router = APIRouter(
 )
 
 @router.get('/projetos')
-def listar_projetos(db: Session = Depends(get_db)):
+def listar_projetos(request: Request, db: Session = Depends(get_db)):
+    usuario_id = request.session.get("usuario_id")
+    if not usuario_id:
+        return RedirectResponse(url="/login", status_code=302)
+    
     query = text("""
         SELECT p.id, p.nome,
                COALESCE(pj.razao_social, pf.nome) AS interessado,

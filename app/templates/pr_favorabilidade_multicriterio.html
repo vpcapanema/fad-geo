@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAD-GEO - Módulo 3: Favorabilidade Multicritério</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    
+    <style>
+        :root {
+            --cor-primaria: #2E7D32;
+            --cor-secundaria: #4CAF50;
+            --cor-destaque: #FFC107;
+            --cor-perigo: #DC3545;
+            --cor-sucesso: #28A745;
+            --cor-info: #007BFF;
+            --cor-cinza-claro: #F8F9FA;
+            --cor-cinza-medio: #6C757D;
+            --cor-cinza-escuro: #343A40;
+        }
+
+        body {
+            background-color: var(--cor-cinza-claro);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .header-modulo {
+            background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header-modulo h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-modulo .lead {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card-criterio {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-criterio:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header-criterio {
+            background: linear-gradient(45deg, var(--cor-info), #0056b3);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .peso-slider {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .peso-valor {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--cor-primaria);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .criterio-descricao {
+            color: var(--cor-cinza-medio);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .resultado-multicriterio {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--cor-sucesso), #20c928);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .score-valor {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .matriz-criterios {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-calcular {
+            background: linear-gradient(45deg, var(--cor-destaque), #e0a800);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-calcular:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
+            color: white;
+        }
+
+        .mapa-resultado {
+            height: 400px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-pendente {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-processando {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status-concluido {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--cor-primaria), var(--cor-secundaria));
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegação Modular -->
+    {% include 'componentes/navegacao_modular.html' %}
+
+    <!-- Header do Módulo -->
+    <div class="header-modulo">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-layer-group me-3"></i>Módulo 3: Favorabilidade Multicritério</h1>
+                    <p class="lead">Análise integrada de múltiplos critérios para avaliação da favorabilidade territorial</p>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="status-badge status-pendente" id="status-modulo">
+                        <i class="fas fa-clock me-2"></i>Aguardando Análise
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Painel de Configuração de Critérios -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Configuração de Critérios</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Critério 1: Distância de Áreas Urbanas -->
+                        <div class="card card-criterio">
+                            <div class="card-header card-header-criterio">
+                                <i class="fas fa-city me-2"></i>Distância de Áreas Urbanas
+                            </div>
+                            <div class="card-body">
+                                <div class="criterio-descricao">
+                                    Avalia a proximidade com centros urbanos, considerando impactos socioeconômicos
+                                </div>
+                                <label for="peso-urbano" class="form-label">Peso do Critério:</label>
+                                <input type="range" class="form-range peso-slider" id="peso-urbano" min="1" max="10" value="7" oninput="atualizarPeso('urbano', this.value)">
+                                <div class="peso-valor" id="valor-urbano">7</div>
+                            </div>
+                        </div>
+
+                        <!-- Critério 2: Densidade Populacional -->
+                        <div class="card card-criterio">
+                            <div class="card-header card-header-criterio">
+                                <i class="fas fa-users me-2"></i>Densidade Populacional
+                            </div>
+                            <div class="card-body">
+                                <div class="criterio-descricao">
+                                    Considera a concentração populacional e potenciais impactos demográficos
+                                </div>
+                                <label for="peso-densidade" class="form-label">Peso do Critério:</label>
+                                <input type="range" class="form-range peso-slider" id="peso-densidade" min="1" max="10" value="6" oninput="atualizarPeso('densidade', this.value)">
+                                <div class="peso-valor" id="valor-densidade">6</div>
+                            </div>
+                        </div>
+
+                        <!-- Critério 3: Proximidade de Infraestrutura -->
+                        <div class="card card-criterio">
+                            <div class="card-header card-header-criterio">
+                                <i class="fas fa-road me-2"></i>Proximidade de Infraestrutura
+                            </div>
+                            <div class="card-body">
+                                <div class="criterio-descricao">
+                                    Avalia a proximidade com rodovias, ferrovias e outras infraestruturas
+                                </div>
+                                <label for="peso-infraestrutura" class="form-label">Peso do Critério:</label>
+                                <input type="range" class="form-range peso-slider" id="peso-infraestrutura" min="1" max="10" value="8" oninput="atualizarPeso('infraestrutura', this.value)">
+                                <div class="peso-valor" id="valor-infraestrutura">8</div>
+                            </div>
+                        </div>
+
+                        <!-- Critério 4: Sensibilidade Ambiental -->
+                        <div class="card card-criterio">
+                            <div class="card-header card-header-criterio">
+                                <i class="fas fa-leaf me-2"></i>Sensibilidade Ambiental
+                            </div>
+                            <div class="card-body">
+                                <div class="criterio-descricao">
+                                    Considera áreas de preservação, unidades de conservação e sensibilidade ecológica
+                                </div>
+                                <label for="peso-ambiental" class="form-label">Peso do Critério:</label>
+                                <input type="range" class="form-range peso-slider" id="peso-ambiental" min="1" max="10" value="9" oninput="atualizarPeso('ambiental', this.value)">
+                                <div class="peso-valor" id="valor-ambiental">9</div>
+                            </div>
+                        </div>
+
+                        <!-- Critério 5: Viabilidade Técnica -->
+                        <div class="card card-criterio">
+                            <div class="card-header card-header-criterio">
+                                <i class="fas fa-tools me-2"></i>Viabilidade Técnica
+                            </div>
+                            <div class="card-body">
+                                <div class="criterio-descricao">
+                                    Avalia aspectos geotécnicos, topográficos e construtivos
+                                </div>
+                                <label for="peso-tecnico" class="form-label">Peso do Critério:</label>
+                                <input type="range" class="form-range peso-slider" id="peso-tecnico" min="1" max="10" value="8" oninput="atualizarPeso('tecnico', this.value)">
+                                <div class="peso-valor" id="valor-tecnico">8</div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-calcular" onclick="calcularFavorabilidade()">
+                                <i class="fas fa-calculator me-2"></i>Calcular Favorabilidade
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área de Visualização de Resultados -->
+            <div class="col-md-8">
+                <!-- Resultado da Análise Multicritério -->
+                <div class="resultado-multicriterio" id="resultado-container" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="score-display">
+                                <div class="score-valor" id="score-final">0.0</div>
+                                <div class="score-label">Índice de Favorabilidade</div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <h4><i class="fas fa-chart-bar me-2"></i>Matriz de Critérios Ponderados</h4>
+                            <div class="matriz-criterios">
+                                <canvas id="chart-criterios" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mapa de Favorabilidade -->
+                    <div class="row mt-4">
+                        <div class="col-md-9">
+                            <h4><i class="fas fa-map me-2"></i>Mapa de Favorabilidade Multicritério</h4>
+                            <div id="mapa-favorabilidade" class="mapa-resultado"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <h5><i class="fas fa-palette me-2"></i>Legenda</h5>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #2E8B57;"></div>
+                                <span>Muito Favorável (0.8-1.0)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #32CD32;"></div>
+                                <span>Favorável (0.6-0.8)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #FFD700;"></div>
+                                <span>Moderado (0.4-0.6)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #FF8C00;"></div>
+                                <span>Pouco Favorável (0.2-0.4)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #DC143C;"></div>
+                                <span>Desfavorável (0.0-0.2)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Área de Status Inicial -->
+                <div id="status-inicial" class="text-center py-5">
+                    <i class="fas fa-layer-group fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Configure os critérios e execute a análise</h3>
+                    <p class="text-muted">Ajuste os pesos dos critérios no painel lateral e clique em "Calcular Favorabilidade"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel de Ações -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">Ações do Módulo</h5>
+                                <small class="text-muted">Salvar análise e prosseguir para o próximo módulo</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary me-2" onclick="salvarRascunho()">
+                                    <i class="fas fa-save me-2"></i>Salvar Rascunho
+                                </button>
+                                <button class="btn btn-success" onclick="concluirModulo()" id="btn-concluir" disabled>
+                                    <i class="fas fa-check me-2"></i>Concluir Módulo 3
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Variáveis globais
+        const projetoId = {{ projeto.id if projeto else 'null' }};
+        let mapaFavorabilidade;
+        let chartCriterios;
+        const criterios = {
+            urbano: 7,
+            densidade: 6,
+            infraestrutura: 8,
+            ambiental: 9,
+            tecnico: 8
+        };
+
+        // Inicialização
+        $(document).ready(function() {
+            inicializarMapa();
+            verificarStatusModulo();
+        });
+
+        // Função para atualizar peso dos critérios
+        function atualizarPeso(criterio, valor) {
+            criterios[criterio] = parseInt(valor);
+            document.getElementById(`valor-${criterio}`).textContent = valor;
+        }
+
+        // Função para calcular favorabilidade multicritério
+        async function calcularFavorabilidade() {
+            if (!projetoId) {
+                alert('Erro: Projeto não identificado!');
+                return;
+            }
+
+            // Mostrar loading
+            $('#status-modulo').removeClass('status-pendente').addClass('status-processando').html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
+
+            try {
+                const response = await fetch('/api/modulos/3/processar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        projeto_id: projetoId,
+                        criterios: criterios
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    exibirResultados(data.resultado);
+                    $('#status-modulo').removeClass('status-processando').addClass('status-concluido').html('<i class="fas fa-check me-2"></i>Análise Concluída');
+                    $('#btn-concluir').prop('disabled', false);
+                } else {
+                    throw new Error(data.erro || 'Erro no processamento');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao processar análise multicritério: ' + error.message);
+                $('#status-modulo').removeClass('status-processando').addClass('status-pendente').html('<i class="fas fa-exclamation-triangle me-2"></i>Erro no Processamento');
+            }
+        }
+
+        // Função para exibir resultados
+        function exibirResultados(resultado) {
+            $('#status-inicial').hide();
+            $('#resultado-container').show();
+
+            // Atualizar score
+            $('#score-final').text(resultado.indice_favorabilidade.toFixed(2));
+
+            // Atualizar mapa
+            atualizarMapaFavorabilidade(resultado.geometria_resultado);
+
+            // Criar gráfico de critérios
+            criarGraficoCriterios();
+        }
+
+        // Função para inicializar mapa
+        function inicializarMapa() {
+            mapaFavorabilidade = L.map('mapa-favorabilidade').setView([-23.5505, -46.6333], 8);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(mapaFavorabilidade);
+        }
+
+        // Função para atualizar mapa com resultados
+        function atualizarMapaFavorabilidade(geometria) {
+            if (geometria) {
+                L.geoJSON(geometria, {
+                    style: function(feature) {
+                        const favorabilidade = feature.properties.favorabilidade || 0;
+                        return {
+                            fillColor: getCorFavorabilidade(favorabilidade),
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            fillOpacity: 0.7
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        layer.bindPopup(`Favorabilidade: ${(feature.properties.favorabilidade || 0).toFixed(2)}`);
+                    }
+                }).addTo(mapaFavorabilidade);
+            }
+        }
+
+        // Função para determinar cor baseada na favorabilidade
+        function getCorFavorabilidade(valor) {
+            if (valor >= 0.8) return '#2E8B57';      // Muito Favorável
+            if (valor >= 0.6) return '#32CD32';      // Favorável
+            if (valor >= 0.4) return '#FFD700';      // Moderado
+            if (valor >= 0.2) return '#FF8C00';      // Pouco Favorável
+            return '#DC143C';                        // Desfavorável
+        }
+
+        // Função para criar gráfico de critérios
+        function criarGraficoCriterios() {
+            const ctx = document.getElementById('chart-criterios').getContext('2d');
+            
+            if (chartCriterios) {
+                chartCriterios.destroy();
+            }
+
+            chartCriterios = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Áreas Urbanas', 'Densidade Pop.', 'Infraestrutura', 'Sensib. Ambiental', 'Viabilidade Técnica'],
+                    datasets: [{
+                        label: 'Pesos dos Critérios',
+                        data: [criterios.urbano, criterios.densidade, criterios.infraestrutura, criterios.ambiental, criterios.tecnico],
+                        borderColor: '#007BFF',
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        pointBackgroundColor: '#007BFF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            });
+        }
+
+        // Função para verificar status do módulo
+        async function verificarStatusModulo() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/modulos/3/status`);
+                const data = await response.json();
+
+                if (data.concluido) {
+                    $('#status-modulo').removeClass('status-pendente').addClass('status-concluido').html('<i class="fas fa-check me-2"></i>Módulo Concluído');
+                    $('#btn-concluir').prop('disabled', false);
+                    
+                    if (data.resultado) {
+                        exibirResultados(data.resultado);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
+            }
+        }
+
+        // Função para salvar rascunho
+        async function salvarRascunho() {
+            if (!projetoId) return;
+
+            try {
+                const response = await fetch('/api/modulos/3/salvar-rascunho', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        projeto_id: projetoId,
+                        criterios: criterios
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.sucesso) {
+                    alert('Rascunho salvo com sucesso!');
+                } else {
+                    throw new Error(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao salvar rascunho: ' + error.message);
+            }
+        }
+
+        // Função para concluir módulo
+        async function concluirModulo() {
+            if (!projetoId) return;
+
+            if (!confirm('Tem certeza que deseja concluir este módulo? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}/modulos/3/concluir`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        criterios: criterios
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    alert('Módulo 3 concluído com sucesso! Redirecionando para o Módulo 4...');
+                    window.location.href = `/projetos/${projetoId}/modulos/4`;
+                } else {
+                    throw new Error(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao concluir módulo: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

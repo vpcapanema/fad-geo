@@ -1,0 +1,19 @@
+/* CSS para validação visual dos formulários de elementos rodoviários */
+.form-field.campo-validado label .check-icone {
+  display: inline;
+}
+.form-field label .check-icone {
+  display: none;
+  color: #145a32;
+  font-weight: bold;
+  margin-left: 3px;
+  font-size: 1.1em;
+}
+.form-field.campo-validado input, .form-field.campo-validado select {
+  border: 2px solid #28a745;
+  background: #eaffea;
+}
+.form-field input.erro-campo, .form-field select.erro-campo {
+  border: 2px solid #dc3545;
+  background: #fff0f0;
+}

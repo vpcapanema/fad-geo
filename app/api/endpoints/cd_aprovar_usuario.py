@@ -24,7 +24,7 @@ templates = Jinja2Templates(directory="app/templates")
 def exibir_painel_aprovacao(request: Request, current_user=Depends(get_current_user), db: Session = Depends(get_db)):
     if current_user.tipo != "master":
         raise HTTPException(status_code=403, detail="Acesso negado.")
-    usuarios = db.query(UsuarioSistema).filter(UsuarioSistema.tipo == "comum").all()
+    usuarios = db.query(UsuarioSistema).filter(UsuarioSistema.tipo == "analista").all()
     return templates.TemplateResponse("cd_painel_aprovacao.html", {"request": request, "usuarios": usuarios})
 
 

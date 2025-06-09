@@ -13,8 +13,8 @@ router = APIRouter(
 
 templates = Jinja2Templates(directory="app/templates")
 
-@router.get("/painel-usuario-administrador", response_class=HTMLResponse)
-def painel_administrador(request: Request, db: Session = Depends(get_db)):
+@router.get("/painel-usuario-coordenador", response_class=HTMLResponse)
+def painel_coordenador(request: Request, db: Session = Depends(get_db)):
     try:
         # 🧑‍💼 Usuários aprovados
         usuarios = db.execute(text("""

@@ -3,230 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <title>Cadastro - Pessoa Física</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #eef5f9;
-    }
-
-    header.fad-header {
-      text-align: center;
-      background-color: #003366;
-      padding: 10px;
-      color: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    header.fad-header h1 {
-      font-size: 40px;
-      margin: 0;
-      text-shadow: 1px 1px 2px #00000060;
-    }
-
-    header.fad-header h2 {
-      font-size: 22px;
-      margin-top: 4px;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px #00000050;
-    }
-
-    .form-container {
-      max-width: 720px;
-      margin: 30px auto;
-      padding: 2rem 2.5%;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .form-section {
-      margin-bottom: 2rem;
-      padding: 1rem;
-      border: 1px solid #cce0f5;
-      border-radius: 8px;
-      background-color: #f7fbff;
-    }
-
-    .form-container > h3 {
-      margin-top: 1rem;
-      font-size: 24px;
-      text-align: center;
-      margin: 1rem 0;
-    }
-
-    .form-section h3 {
-      margin-top: 0;
-      color: #003366;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid #00336633;
-      padding-bottom: .5rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .form-row {
-      display: flex;
-      width: 100%;
-      gap: 2.5%;
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      font-weight: bold;
-      margin-bottom: 0.3rem;
-    }
-
-    input {
-      padding: 0.7rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    .full { width: 100%; }
-    .half { width: 49%; }
-    .logradouro { width: 65%; }
-    .numero { width: 11%; }
-    .complemento { width: 19%; }
-    .cep { width: 35%; }
-    .bairro { width: 666%; }
-    .municipio { width: 89%; }
-    .uf { width: 15%; }
-
-    button {
-      display: block;
-      width: 100%;
-      padding: 0.9rem;
-      background-color: #009933;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 2rem;
-    }
-
-    button:hover {
-      background-color: #007a29;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/componentes/fad_header.css">
+  <link rel="stylesheet" href="/static/css/cd_pf/cd_cadastro_pf.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 </head>
 <body>
-
-  <header class="fad-header">
-    <h1>FAD</h1>
-    <h2>FERRAMENTA DE ANÁLISE DINAMIZADA</h2>
-  </header>
-
+  {% include 'componentes/fad_header.html' %}
   <div class="form-container">
-    <h3>Cadastro de Pessoa Física</h3
+    <h3>Cadastro de Pessoa Física</h3>
     <form id="pfForm">
-
-      <!-- Dados principais -->
       <div class="form-section">
-        <h3>Dados Principais</h3>
+        <h3>Informações Pessoais</h3>
         <div class="form-group">
-          <div class="form-field full">
-            <label for="nome">Nome Completo:</label>
-            <input type="text" name="nome" id="nome" required>
+          <div class="form-row">
+            <div class="form-field half">
+              <label for="nome">Nome Completo:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input type="text" name="nome" id="nome" required maxlength="255" />
+              <div class="feedback-erro" id="nome-erro"></div>
+            </div>
+            <div class="form-field half">
+              <label for="cpf">CPF:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input type="text" name="cpf" id="cpf" required maxlength="14" />
+              <div class="feedback-erro" id="cpf-erro"></div>
+            </div>
           </div>
-          <div class="form-field full">
-            <label for="cpf">CPF:</label>
-            <input type="text" name="cpf" id="cpf" required>
-          </div>
-          <div class="form-field full">
-            <label for="email">E-mail:</label>
-            <input type="email" name="email" id="email" required>
-          </div>
-          <div class="form-field full">
-            <label for="telefone">Telefone:</label>
-            <input type="text" name="telefone" id="telefone" required>
+          <div class="form-row">
+            <div class="form-field half">
+              <label for="email">E-mail:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input type="email" name="email" id="email" required maxlength="255" />
+              <div class="feedback-erro" id="email-erro"></div>
+            </div>
+            <div class="form-field half">
+              <label for="telefone">Telefone:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input type="text" name="telefone" id="telefone" required maxlength="16" />
+              <div class="feedback-erro" id="telefone-erro"></div>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- Endereço -->
       <div class="form-section">
         <h3>Endereço Residencial</h3>
         <div class="form-group">
           <div class="form-row">
-            <div class="form-field logradouro">
-              <label for="rua">Logradouro:</label>
-              <input name="rua" id="rua" />
+            <div class="form-field half">
+              <label for="rua">Logradouro:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input name="rua" id="rua" required maxlength="255" />
+              <div class="feedback-erro" id="rua-erro"></div>
             </div>
-            <div class="form-field numero">
-              <label for="numero">Número:</label>
-              <input name="numero" id="numero" />
-            </div>
-            <div class="form-field complemento">
-              <label for="complemento">Complemento:</label>
-              <input name="complemento" id="complemento" />
+            <div class="form-field half">
+              <label for="numero">Número:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input name="numero" id="numero" required maxlength="10" />
+              <div class="feedback-erro" id="numero-erro"></div>
             </div>
           </div>
-
           <div class="form-row">
-            <div class="form-field cep">
-              <label for="cep">CEP:</label>
-              <input name="cep" id="cep" />
+            <div class="form-field half">
+              <label for="complemento">Complemento:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input name="complemento" id="complemento" required maxlength="50" />
+              <div class="feedback-erro" id="complemento-erro"></div>
             </div>
-            <div class="form-field bairro">
-              <label for="bairro">Bairro/Distrito:</label>
-              <input name="bairro" id="bairro" />
+            <div class="form-field half">
+              <label for="cep">CEP:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input name="cep" id="cep" required maxlength="9" />
+              <div class="feedback-erro" id="cep-erro"></div>
             </div>
           </div>
-
           <div class="form-row">
-            <div class="form-field municipio">
-              <label for="cidade">Município:</label>
-              <input name="cidade" id="cidade" />
+            <div class="form-field half">
+              <label for="bairro">Bairro/Distrito:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input name="bairro" id="bairro" required maxlength="100" />
+              <div class="feedback-erro" id="bairro-erro"></div>
             </div>
-            <div class="form-field uf">
-              <label for="uf">UF:</label>
-              <input name="uf" id="uf" />
+            <div class="form-field half">
+              <label for="cidade">Município:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <input name="cidade" id="cidade" required maxlength="100" />
+              <div class="feedback-erro" id="cidade-erro"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field half">
+              <label for="uf">UF:<span class="obrigatorio-icone">*</span><span class="check-icone">&#10003;</span></label>
+              <select name="uf" id="uf" required>
+                <option value="">Selecione...</option>
+                <option value="AC">AC</option>
+                <option value="AL">AL</option>
+                <option value="AP">AP</option>
+                <option value="AM">AM</option>
+                <option value="BA">BA</option>
+                <option value="CE">CE</option>
+                <option value="DF">DF</option>
+                <option value="ES">ES</option>
+                <option value="GO">GO</option>
+                <option value="MA">MA</option>
+                <option value="MT">MT</option>
+                <option value="MS">MS</option>
+                <option value="MG">MG</option>
+                <option value="PA">PA</option>
+                <option value="PB">PB</option>
+                <option value="PR">PR</option>
+                <option value="PE">PE</option>
+                <option value="PI">PI</option>
+                <option value="RJ">RJ</option>
+                <option value="RN">RN</option>
+                <option value="RS">RS</option>
+                <option value="RO">RO</option>
+                <option value="RR">RR</option>
+                <option value="SC">SC</option>
+                <option value="SP">SP</option>
+                <option value="SE">SE</option>
+                <option value="TO">TO</option>
+              </select>
+              <div class="feedback-erro" id="uf-erro"></div>
             </div>
           </div>
         </div>
       </div>
-
-      <button type="submit">Cadastrar</button>
+      <button type="submit" class="botao-fad" disabled> Cadastrar </button>
+      <div id="sucessoBox" style="display:none; text-align:center; margin-top:18px;"></div>
+      <div id="erroBox" style="display:none; text-align:center; margin-top:18px;"></div>
+      <div id="okBtnContainer" style="text-align:center; margin-top:10px; display:none;">
+        <button type="button" class="ok-btn" id="okBtn">OK</button>
+      </div>
     </form>
+    <div style="text-align:center; margin-top: 30px;">
+      <a href="/boas-vindas" class="menu-link" style="background:#004080; color:#fff; text-decoration:none; padding:10px 22px; border-radius:6px; font-size:16px; font-weight:500; display:inline-block;">Página inicial</a>
+    </div>
   </div>
-
-  <script>
-    const cpfInput = document.getElementById("cpf");
-    const telInput = document.getElementById("telefone");
-
-    cpfInput.addEventListener("input", function () {
-      let value = this.value.replace(/\D/g, '');
-      if (value.length > 11) value = value.slice(0, 11);
-      value = value.replace(/(\d{3})(\d)/, "$1.$2");
-      value = value.replace(/(\d{3})(\d)/, "$1.$2");
-      value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-      this.value = value;
-    });
-
-    telInput.addEventListener("input", function () {
-      let value = this.value.replace(/\D/g, '');
-      if (value.length > 11) value = value.slice(0, 11);
-      value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
-      value = value.replace(/(\d{1})?(\d{4})(\d{4})$/, "$1 $2-$3");
-      this.value = value;
-    });
-  </script>
-
+  <!-- Remover todos os scripts inline e utilitários antigos, manter só o principal como módulo -->
+  <script type="module" src="/static/js/cd_pf/formulario_pf.js"></script>
 </body>
 </html>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.0/jquery.xdomainrequest.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax/3.5.1/jquery.ajax.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax/3.5.1/jquery.ajax.transport.script.min.js"></script>  

@@ -24,4 +24,4 @@ class GeometriaUploadDB(GeometriaUploadBase):
     id: int  # id_geom_up convertido para id
 
     class Config:
-        orm_mode = True
+        from_attributes = True

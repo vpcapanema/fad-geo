@@ -9,9 +9,13 @@ router = APIRouter()
 def listar_usuarios_comuns(db: Session = Depends(get_db)):
     try:
         query = text("""
-            SELECT id, nome, cpf, email, telefone, status
+            SELECT id, nome, cpf, email, telefone, status, tipo as tipo_usuario,
+                   criado_em, aprovado_em, aprovador_id, ativo, pessoa_fisica_id,
+                   instituicao, tipo_lotacao, email_institucional, telefone_institucional, ramal,
+                   sede_hierarquia, sede_coordenadoria, sede_setor, sede_assistencia,
+                   regional_nome, regional_coordenadoria, regional_setor
             FROM "Cadastro".usuario_sistema
-            WHERE tipo = 'comum'
+            WHERE tipo = 'analista'
             ORDER BY nome
         """)
         resultados = db.execute(query).mappings().all()
@@ -20,12 +24,16 @@ def listar_usuarios_comuns(db: Session = Depends(get_db)):
         return {"erro": str(e)}
 
 @router.get("/painel/coordenador/usuarios")
-def listar_usuarios_administradores(db: Session = Depends(get_db)):
+def listar_usuarios_coordenadores(db: Session = Depends(get_db)):
     try:
         query = text("""
-            SELECT id, nome, cpf, email, telefone, status
+            SELECT id, nome, cpf, email, telefone, status, tipo as tipo_usuario,
+                   criado_em, aprovado_em, aprovador_id, ativo, pessoa_fisica_id,
+                   instituicao, tipo_lotacao, email_institucional, telefone_institucional, ramal,
+                   sede_hierarquia, sede_coordenadoria, sede_setor, sede_assistencia,
+                   regional_nome, regional_coordenadoria, regional_setor
             FROM "Cadastro".usuario_sistema
-            WHERE tipo = 'administrador'
+            WHERE tipo = 'coordenador'
             ORDER BY nome
         """)
         resultados = db.execute(query).mappings().all()

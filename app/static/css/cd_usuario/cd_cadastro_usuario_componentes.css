@@ -1,0 +1,72 @@
+/* Consolidando regras de input, select, label, senha, erro-campo, campo-validado, obrigatorio-icone, check-icone, etc. neste arquivo. */
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+input, select {
+  width: 100% !important;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Estilos consolidados para validação de senha */
+.senha-regras {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #666;
+}
+
+.senha-regras div {
+  margin: 2px 0;
+}
+
+.senha-msg {
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.senha-erro { color: #dc3545; }
+
+.senha-sucesso { color: #28a745; }
+
+.regra-ok { color: #28a745 !important; font-weight: bold; }
+
+.obrigatorio-icone { color: #dc3545; font-weight: bold; margin-left: 3px; font-size: 1.1em; transition: color 0.2s; }
+
+.check-icone { color: #145a32; font-weight: bold; margin-left: 3px; font-size: 1.1em; display: none; transition: color 0.2s; }
+
+.campo-validado .obrigatorio-icone { display: none; }
+
+.campo-validado .check-icone { display: inline; }
+
+.erro-campo { border: 2px solid #dc3545 !important; background: #fff0f0 !important; }
+
+.campo-validado {
+  border: none !important;
+}
+
+.campo-validado label,
+label.campo-validado,
+label.campo-validado-obrigatorio {
+  display: inline-block;
+  border: 2px solid #145a32 !important;
+  background: #f0fff0 !important;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-bottom: 4px;
+}
+
+/* Remove borda verde de input/select */
+.campo-validado input,
+.campo-validado select,
+input.campo-validado,
+select.campo-validado {
+  border: 1px solid #ccc !important;
+  background: #fff !important;
+}

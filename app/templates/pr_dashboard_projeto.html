@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<!-- filepath: c:\Users\vinic\fad-geo\app\templates\pr_dashboard_projeto.html -->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAD-GEO - Dashboard do Projeto</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CSS específico da FAD -->
+    <link rel="stylesheet" href="/static/css/fad-global.css">
+</head>
+<body>
+    <!-- Header FAD -->
+    <header class="fad-header bg-primary text-white py-3">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <img src="/static/img/logo_fad.png" alt="FAD-GEO" class="logo-fad">
+                </div>
+                <div class="col-md-8 text-center">
+                    <h2 class="mb-0">Dashboard do Projeto</h2>
+                    <p class="mb-0">{{ projeto.nome }}</p>
+                </div>
+                <div class="col-md-2 text-right">
+                    <span class="badge badge-light">ID: {{ projeto.id }}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid mt-4">
+        <!-- Informações do projeto -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Informações do Projeto
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Nome:</strong><br>
+                                {{ projeto.nome }}
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Status Atual:</strong><br>
+                                <span class="badge badge-primary">{{ projeto.status }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Módulo Atual:</strong><br>
+                                <span class="badge badge-secondary">{{ status_projeto.modulo_atual }} - {{ status_projeto.modulo_atual_nome }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Progresso Geral:</strong><br>
+                                <div class="progress mt-1">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {{ status_projeto.progresso_percentual }}%"
+                                         aria-valuenow="{{ status_projeto.progresso_percentual }}" 
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        {{ status_projeto.progresso_percentual }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if projeto.observacao %}
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <strong>Observações:</strong><br>
+                                {{ projeto.observacao }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegação modular -->
+        {% include 'componentes/navegacao_modular.html' %}
+
+        <!-- Resumo detalhado dos módulos -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-list-check mr-2"></i>
+                            Status Detalhado dos Módulos
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Módulo</th>
+                                        <th>Nome</th>
+                                        <th>Status</th>
+                                        <th>Criado em</th>
+                                        <th>Atualizado em</th>
+                                        <th>Validado em</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for modulo in status_projeto.modulos %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge badge-secondary">{{ modulo.numero }}</span>
+                                        </td>
+                                        <td>{{ modulo.nome }}</td>
+                                        <td>
+                                            {% if modulo.status == 'pendente' %}
+                                                <span class="badge badge-secondary">
+                                                    <i class="fas fa-clock mr-1"></i>{{ modulo.status_display }}
+                                                </span>
+                                            {% elif modulo.status == 'em_execucao' %}
+                                                <span class="badge badge-primary">
+                                                    <i class="fas fa-spinner fa-spin mr-1"></i>{{ modulo.status_display }}
+                                                </span>
+                                            {% elif modulo.status == 'concluido' %}
+                                                <span class="badge badge-warning">
+                                                    <i class="fas fa-check-circle mr-1"></i>{{ modulo.status_display }}
+                                                </span>
+                                            {% elif modulo.status == 'validado' %}
+                                                <span class="badge badge-success">
+                                                    <i class="fas fa-check-circle mr-1"></i>{{ modulo.status_display }}
+                                                </span>
+                                            {% elif modulo.status == 'rejeitado' %}
+                                                <span class="badge badge-danger">
+                                                    <i class="fas fa-times-circle mr-1"></i>{{ modulo.status_display }}
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if modulo.criado_em %}
+                                                {{ modulo.criado_em.split('T')[0] }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if modulo.atualizado_em %}
+                                                {{ modulo.atualizado_em.split('T')[0] }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if modulo.validado_em %}
+                                                <span class="text-success">
+                                                    {{ modulo.validado_em.split('T')[0] }}
+                                                </span>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if modulo.pode_executar or modulo.status in ['concluido', 'validado'] %}
+                                                <a href="/modulo/{{ projeto.id }}/{{ modulo.numero }}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye mr-1"></i>
+                                                    {% if modulo.status == 'validado' %}Visualizar{% else %}Acessar{% endif %}
+                                                </a>
+                                            {% else %}
+                                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                    <i class="fas fa-lock mr-1"></i>Bloqueado
+                                                </button>
+                                            {% endif %}
+                                            
+                                            {% if modulo.tem_relatorio %}
+                                                <button class="btn btn-sm btn-outline-info ml-1" 
+                                                        onclick="visualizarRelatorio({{ projeto.id }}, {{ modulo.numero }})">
+                                                    <i class="fas fa-file-alt mr-1"></i>Relatório
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% if modulo.observacoes_validacao %}
+                                    <tr class="table-warning">
+                                        <td colspan="7">
+                                            <small>
+                                                <strong>Observações do Coordenador:</strong> 
+                                                {{ modulo.observacoes_validacao }}
+                                            </small>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações gerais -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-tools mr-2"></i>
+                            Ações do Projeto
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex flex-wrap">
+                                    <button class="btn btn-primary mr-2 mb-2" onclick="continuarProximoModulo()">
+                                        <i class="fas fa-play mr-1"></i>
+                                        Continuar Próximo Módulo
+                                    </button>
+                                    <button class="btn btn-info mr-2 mb-2" onclick="atualizarStatus()">
+                                        <i class="fas fa-sync mr-1"></i>
+                                        Atualizar Status
+                                    </button>
+                                    <button class="btn btn-secondary mr-2 mb-2" onclick="exportarDados()">
+                                        <i class="fas fa-download mr-1"></i>
+                                        Exportar Dados
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                {% if status_projeto.todos_modulos_concluidos %}
+                                <button class="btn btn-danger btn-lg" onclick="gerarPdfFinal()">
+                                    <i class="fas fa-file-pdf mr-2"></i>
+                                    Gerar PDF Final
+                                </button>
+                                {% else %}
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    Complete todos os módulos para gerar o PDF final
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar relatórios -->
+    <div class="modal fade" id="modalRelatorio" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Relatório do Módulo</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="conteudoRelatorio">
+                        <div class="text-center">
+                            <i class="fas fa-spinner fa-spin fa-2x"></i>
+                            <p>Carregando relatório...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="imprimirRelatorio()">
+                        <i class="fas fa-print mr-1"></i>Imprimir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Variáveis globais
+        const projetoId = {{ projeto.id }};
+        let navegacao;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa navegação modular
+            if (typeof inicializarNavegacaoModular === 'function') {
+                navegacao = inicializarNavegacaoModular(projetoId, '{{ projeto.nome }}');
+            }
+        });
+
+        function continuarProximoModulo() {
+            const moduloAtual = {{ status_projeto.modulo_atual }};
+            const proximoModulo = moduloAtual <= 5 ? moduloAtual : null;
+            
+            if (proximoModulo) {
+                window.location.href = `/modulo/${projetoId}/${proximoModulo}`;
+            } else {
+                alert('Todos os módulos foram concluídos');
+            }
+        }
+
+        async function atualizarStatus() {
+            try {
+                await fetch(`/api/pr/fluxo/atualizar-permissoes/${projetoId}`, {
+                    method: 'POST'
+                });
+                
+                // Recarrega navegação
+                if (navegacao) {
+                    await navegacao.carregarStatusProjeto();
+                }
+                
+                // Recarrega a página para atualizar a tabela
+                location.reload();
+                
+            } catch (error) {
+                console.error('Erro ao atualizar status:', error);
+                alert('Erro ao atualizar status do projeto');
+            }
+        }
+
+        async function visualizarRelatorio(projetoId, moduloNumero) {
+            try {
+                const response = await fetch(`/api/pr/fluxo/modulo/${projetoId}/${moduloNumero}/relatorio`);
+                if (!response.ok) throw new Error('Erro ao carregar relatório');
+                
+                const data = await response.json();
+                
+                document.getElementById('conteudoRelatorio').innerHTML = data.html_conteudo || 
+                    '<div class="alert alert-warning">Relatório não disponível</div>';
+                
+                document.querySelector('#modalRelatorio .modal-title').textContent = 
+                    `Relatório do Módulo ${moduloNumero}: ${data.modulo_nome}`;
+                
+                $('#modalRelatorio').modal('show');
+                
+            } catch (error) {
+                console.error('Erro ao visualizar relatório:', error);
+                alert('Erro ao carregar relatório');
+            }
+        }
+
+        function imprimirRelatorio() {
+            const conteudo = document.getElementById('conteudoRelatorio').innerHTML;
+            const janela = window.open('', '_blank');
+            janela.document.write(`
+                <html>
+                    <head>
+                        <title>Relatório FAD-GEO</title>
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                    </head>
+                    <body class="container mt-4">
+                        ${conteudo}
+                    </body>
+                </html>
+            `);
+            janela.document.close();
+            janela.print();
+        }
+
+        async function gerarPdfFinal() {
+            try {
+                const response = await fetch(`/api/pr/pdf/gerar/${projetoId}`, {
+                    method: 'POST'
+                });
+                
+                if (!response.ok) throw new Error('Erro ao gerar PDF');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `FAD-GEO-Projeto-${projetoId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF do projeto');
+            }
+        }
+
+        function exportarDados() {
+            // Implementar exportação de dados do projeto
+            alert('Funcionalidade de exportação será implementada');
+        }
+    </script>
+</body>
+</html>
