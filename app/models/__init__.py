@@ -11,7 +11,8 @@ from .pr_zip_uploads import ZipUpload
 from .cd_pessoa_fisica import PessoaFisica
 from .cd_pessoa_juridica import PessoaJuridica
 from .cd_usuario_sistema import UsuarioSistema
-from .cd_trecho import TrechoEstadualizacao
+from .cd_trecho_estadualizacao import TrechoEstadualizacao
+from .au_recuperacao_senha import RecuperacaoSenha
 
 __all__ = [
     'Projeto',
@@ -24,5 +25,6 @@ __all__ = [
     'PessoaFisica',
     'PessoaJuridica',
     'UsuarioSistema',
-    'TrechoEstadualizacao'
+    'TrechoEstadualizacao',
+    'RecuperacaoSenha'
 ]

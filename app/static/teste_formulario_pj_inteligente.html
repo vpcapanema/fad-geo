@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste - Formulário PJ com Telefone Inteligente</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-field { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="email"] { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+        input.erro-campo { border-color: #dc3545; background: #fff0f0; }
+        .campo-validado input { border-color: #28a745; background: #f0fff0; }
+        .feedback-info { font-size: 12px; margin-top: 5px; }
+        .check-icone { color: #28a745; margin-left: 5px; display: none; font-weight: bold; }
+        .obrigatorio-icone { color: #dc3545; margin-left: 5px; font-weight: bold; }
+        .loading-msg { color: #007bff; font-size: 12px; margin-top: 5px; display: none; align-items: center; gap: 5px; }
+        .spinner { width: 12px; height: 12px; border: 2px solid #f3f3f3; border-top: 2px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .teste-info { background: #e3f2fd; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .test-section { background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px; border-left: 4px solid #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste - Formulário PJ com Sistema Inteligente</h1>
+        
+        <div class="teste-info">
+            <h3>Funcionalidades testadas:</h3>
+            <ul>
+                <li><strong>Telefone Inteligente:</strong> Detecta automaticamente celular (11 dígitos) ou fixo (10 dígitos)</li>
+                <li><strong>Busca CNPJ:</strong> Busca automática após digitar 14 dígitos válidos</li>
+                <li><strong>Busca CEP:</strong> Busca automática após digitar 8 dígitos</li>
+                <li><strong>Validação instantânea:</strong> Todos os campos validam no evento 'input'</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Teste CNPJ (preenchimento automático)</h3>
+            <p><strong>CNPJs para teste:</strong></p>
+            <ul>
+                <li>11.222.333/0001-81 (formato válido para testar)</li>
+                <li>Digite e veja o carregamento automático dos dados</li>
+            </ul>
+        </div>
+
+        <form id="test-form">
+            <div class="form-field">
+                <label for="cnpj">
+                    CNPJ: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="text" id="cnpj" name="cnpj" placeholder="XX.XXX.XXX/XXXX-XX">
+                <div class="loading-msg" id="cnpj-loading"></div>
+            </div>
+
+            <div class="form-field">
+                <label for="razao_social">
+                    Razão Social: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="text" id="razao_social" name="razao_social">
+            </div>
+
+            <div class="form-field">
+                <label for="nome_fantasia">
+                    Nome Fantasia: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="text" id="nome_fantasia" name="nome_fantasia">
+            </div>
+
+            <div class="form-field">
+                <label for="telefone_institucional">
+                    Telefone Institucional: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="text" id="telefone_institucional" name="telefone_institucional" placeholder="(XX) XXXXX-XXXX ou (XX) XXXX-XXXX">
+                <div class="feedback-info" id="telefone-tipo" style="display: none;"></div>
+            </div>
+
+            <div class="form-field">
+                <label for="email">
+                    E-mail: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="email" id="email" name="email">
+            </div>
+
+            <div class="form-field">
+                <label for="cep">
+                    CEP: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="text" id="cep" name="cep" placeholder="XXXXX-XXX">
+            </div>
+
+            <div class="form-field">
+                <label for="rua">
+                    Logradouro: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="text" id="rua" name="rua">
+            </div>
+
+            <div class="form-field">
+                <label for="bairro">
+                    Bairro: <span class="obrigatorio-icone">*</span><span class="check-icone">✓</span>
+                </label>
+                <input type="text" id="bairro" name="bairro">
+            </div>
+
+            <div class="form-field">
+                <label for="resultado">Status Geral do Formulário:</label>
+                <input type="text" id="resultado" readonly placeholder="Aguardando validação...">
+            </div>
+        </form>
+    </div>
+
+    <script type="module">
+        // Importa as funções dos módulos
+        import { formatarCNPJ, validarCNPJ } from '/static/js/formatacao_valores_campos/formatacao_cnpj.js';
+        import { formatarTelefone, validarTelefone } from '/static/js/formatacao_valores_campos/formatacao_telefone_movel.js';
+        import { formatarTelefoneFixo, validarTelefoneFixo } from '/static/js/formatacao_valores_campos/formatacao_telefone_fixo.js';
+        import { formatarCEP, validarCEP } from '/static/js/formatacao_valores_campos/formatacao_cep.js';
+        import { formatarEmail, validarEmail } from '/static/js/formatacao_valores_campos/formatacao_email.js';
+
+        // Função inteligente para telefone
+        function mascaraTelefoneInteligente(valor) {
+            let digitos = valor.replace(/\D/g, '');
+            if (digitos.length === 11) {
+                return formatarTelefone(valor);
+            } else {
+                return formatarTelefoneFixo(valor);
+            }
+        }
+        
+        function validarTelefoneInteligente(valor) {
+            let digitos = valor.replace(/\D/g, '');
+            if (digitos.length === 11) {
+                return validarTelefone(valor);
+            } else if (digitos.length === 10) {
+                return validarTelefoneFixo(valor);
+            } else {
+                return false;
+            }
+        }
+
+        // Função para atualizar visual do campo
+        function atualizarValidacaoCampo(inputElement, isValid) {
+            const label = inputElement.closest('.form-field').querySelector('label');
+            const check = label ? label.querySelector('.check-icone') : null;
+            const asterisco = label ? label.querySelector('.obrigatorio-icone') : null;
+            
+            // Feedback especial para telefone
+            if (inputElement.id === 'telefone_institucional') {
+                const feedbackTipo = document.getElementById('telefone-tipo');
+                const digitos = inputElement.value.replace(/\D/g, '');
+                
+                if (digitos.length >= 10) {
+                    if (digitos.length === 11) {
+                        feedbackTipo.textContent = '📱 Celular detectado';
+                        feedbackTipo.style.color = '#28a745';
+                    } else if (digitos.length === 10) {
+                        feedbackTipo.textContent = '📞 Telefone fixo detectado';
+                        feedbackTipo.style.color = '#007bff';
+                    }
+                    feedbackTipo.style.display = 'block';
+                } else {
+                    feedbackTipo.style.display = 'none';
+                }
+            }
+            
+            if (!inputElement.value) {
+                if (asterisco) asterisco.style.display = 'inline';
+                if (check) check.style.display = 'none';
+                inputElement.classList.remove('erro-campo');
+                inputElement.closest('.form-field').classList.remove('campo-validado');
+                return;
+            }
+            if (isValid) {
+                if (asterisco) asterisco.style.display = 'none';
+                if (check) check.style.display = 'inline';
+                inputElement.classList.remove('erro-campo');
+                inputElement.closest('.form-field').classList.add('campo-validado');
+            } else {
+                if (asterisco) asterisco.style.display = 'inline';
+                if (check) check.style.display = 'none';
+                inputElement.classList.add('erro-campo');
+                inputElement.closest('.form-field').classList.remove('campo-validado');
+            }
+        }
+
+        function preencherCampo(id, valor) {
+            const input = document.getElementById(id);
+            if (input && valor) {
+                input.value = valor;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+
+        // Configurar campos
+        const campos = [
+            {id: 'cnpj', mask: formatarCNPJ, custom: validarCNPJ},
+            {id: 'razao_social', custom: (v) => v.length >= 3},
+            {id: 'nome_fantasia', custom: (v) => v.length >= 3},
+            {id: 'telefone_institucional', mask: mascaraTelefoneInteligente, custom: validarTelefoneInteligente},
+            {id: 'email', custom: validarEmail},
+            {id: 'cep', mask: formatarCEP, custom: validarCEP},
+            {id: 'rua', custom: (v) => v.length >= 3},
+            {id: 'bairro', custom: (v) => v.length >= 2}
+        ];
+
+        const resultadoInput = document.getElementById('resultado');
+
+        campos.forEach(({id, mask, custom}) => {
+            const input = document.getElementById(id);
+            if (!input) return;
+            
+            input.addEventListener('input', function() {
+                if (mask) this.value = mask(this.value);
+                let valido = custom ? custom(this.value) : !!this.value;
+                atualizarValidacaoCampo(this, valido);
+                
+                // Atualizar status geral
+                const todosValidos = campos.every(campo => {
+                    const inp = document.getElementById(campo.id);
+                    return inp && inp.closest('.form-field').classList.contains('campo-validado');
+                });
+                
+                resultadoInput.value = todosValidos ? 
+                    '✅ Formulário válido - todos os campos preenchidos corretamente' :
+                    '⏳ Aguardando preenchimento completo dos campos obrigatórios';
+            });
+        });
+
+        // Busca automática CNPJ
+        const cnpjInput = document.getElementById('cnpj');
+        if (cnpjInput) {
+            let timeoutCnpj;
+            
+            cnpjInput.addEventListener('input', function() {
+                const cnpj = this.value.replace(/\D/g, '');
+                clearTimeout(timeoutCnpj);
+                
+                if (cnpj.length === 14 && validarCNPJ(this.value)) {
+                    timeoutCnpj = setTimeout(() => {
+                        const loadingMsg = document.getElementById('cnpj-loading');
+                        if (loadingMsg) {
+                            loadingMsg.innerHTML = '<div class="spinner"></div> Simulando busca CNPJ...';
+                            loadingMsg.style.display = 'flex';
+                            
+                            // Simula dados fictícios após 2 segundos
+                            setTimeout(() => {
+                                preencherCampo('razao_social', 'EMPRESA TESTE LTDA');
+                                preencherCampo('nome_fantasia', 'Empresa Teste');
+                                preencherCampo('telefone_institucional', '11987654321');
+                                preencherCampo('email', 'contato@empresateste.com.br');
+                                preencherCampo('cep', '01310-100');
+                                
+                                loadingMsg.innerHTML = '✅ Dados carregados (simulação)';
+                                setTimeout(() => {
+                                    loadingMsg.style.display = 'none';
+                                }, 2000);
+                            }, 2000);
+                        }
+                    }, 1000);
+                }
+            });
+        }
+
+        // Busca automática CEP
+        const cepInput = document.getElementById('cep');
+        if (cepInput) {
+            let timeoutCep;
+            
+            cepInput.addEventListener('input', function() {
+                const cep = this.value.replace(/\D/g, '');
+                clearTimeout(timeoutCep);
+                
+                if (cep.length === 8) {
+                    timeoutCep = setTimeout(async () => {
+                        try {
+                            const resp = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                            const data = await resp.json();
+                            if (!data.erro) {
+                                preencherCampo('rua', data.logradouro);
+                                preencherCampo('bairro', data.bairro);
+                            }
+                        } catch (e) {
+                            console.log('Erro ao buscar CEP:', e);
+                        }
+                    }, 500);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

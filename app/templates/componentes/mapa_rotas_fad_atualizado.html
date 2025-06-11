@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Rotas - Sistema FAD</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            background-color: #ecf0f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+        }
+        .route-section {
+            margin-bottom: 25px;
+        }
+        .route-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+            transition: background-color 0.3s;
+        }
+        .route-item:hover {
+            background-color: #e3f2fd;
+        }
+        .method {
+            font-weight: bold;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            margin-right: 10px;
+            min-width: 50px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .get { background-color: #5cb85c; }
+        .post { background-color: #5bc0de; }
+        .put { background-color: #f0ad4e; }
+        .delete { background-color: #d9534f; }
+        .route-path {
+            font-family: 'Courier New', monospace;
+            background-color: #fff;
+            padding: 4px 8px;
+            border-radius: 3px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            flex: 1;
+        }
+        .route-description {
+            color: #666;
+            font-style: italic;
+        }
+        .summary {
+            background-color: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6c3;
+        }
+        .last-updated {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Mapa Completo de Rotas - Sistema FAD</h1>
+        
+        <div class="summary">
+            <strong>Resumo:</strong> Este documento apresenta todas as rotas disponíveis no Sistema FAD (Ferramenta de Apoio ao Diagnóstico), 
+            incluindo endpoints de API, rotas HTML e funcionalidades de autenticação. Última atualização reflete a separação dos 
+            endpoints de elementos rodoviários em rotas individualizadas.
+        </div>
+
+        <!-- Rotas Principais -->
+        <div class="route-section">
+            <h2>🏠 Rotas Principais do Sistema</h2>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/</span>
+                <span class="route-description">Página inicial do sistema</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/login</span>
+                <span class="route-description">Tela de login</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/debug</span>
+                <span class="route-description">Informações de debug da API</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/favicon.ico</span>
+                <span class="route-description">Ícone do sistema</span>
+            </div>
+        </div>
+
+        <!-- Autenticação -->
+        <div class="route-section">
+            <h2>🔐 Autenticação e Recuperação de Senha</h2>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/autenticar</span>
+                <span class="route-description">Realizar login no sistema</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/logout</span>
+                <span class="route-description">Fazer logout do sistema</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/solicitar-recuperacao-senha</span>
+                <span class="route-description">Solicitar recuperação de senha</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/verificar-codigo-recuperacao</span>
+                <span class="route-description">Verificar código de recuperação</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/redefinir-senha</span>
+                <span class="route-description">Redefinir senha com código</span>
+            </div>
+        </div>
+
+        <!-- Cadastros de Usuários -->
+        <div class="route-section">
+            <h2>👥 Cadastros de Usuários e Pessoas</h2>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/cadastro-usuario</span>
+                <span class="route-description">Tela de cadastro de usuário</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/api/cd/cadastrar-usuario-sistema</span>
+                <span class="route-description">Cadastrar novo usuário do sistema</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/cadastrar-pessoa-fisica</span>
+                <span class="route-description">Cadastrar pessoa física</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/cadastrar-pessoa-juridica</span>
+                <span class="route-description">Cadastrar pessoa jurídica</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/aprovar-usuario</span>
+                <span class="route-description">Aprovar cadastro de usuário</span>
+            </div>
+        </div>
+
+        <!-- Elementos Rodoviários - NOVOS ENDPOINTS INDIVIDUALIZADOS -->
+        <div class="route-section">
+            <h2>🛣️ Elementos Rodoviários (Endpoints Individualizados)</h2>
+            
+            <!-- Trecho Rodoviário -->
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/api/cd/trecho-rodoviario/cadastrar</span>
+                <span class="route-description">Cadastrar trecho rodoviário</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/trecho-rodoviario/listar</span>
+                <span class="route-description">Listar trechos rodoviários</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/trecho-rodoviario/{id}</span>
+                <span class="route-description">Obter trecho rodoviário por ID</span>
+            </div>
+            
+            <!-- Rodovia -->
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/api/cd/rodovia/cadastrar</span>
+                <span class="route-description">Cadastrar rodovia</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/rodovia/listar</span>
+                <span class="route-description">Listar rodovias</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/rodovia/{id}</span>
+                <span class="route-description">Obter rodovia por ID</span>
+            </div>
+            
+            <!-- Dispositivo -->
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/api/cd/dispositivo/cadastrar</span>
+                <span class="route-description">Cadastrar dispositivo rodoviário</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/dispositivo/listar</span>
+                <span class="route-description">Listar dispositivos rodoviários</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/dispositivo/{id}</span>
+                <span class="route-description">Obter dispositivo por ID</span>
+            </div>
+            
+            <!-- Obra de Arte -->
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/api/cd/obra-arte/cadastrar</span>
+                <span class="route-description">Cadastrar obra de arte</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/obra-arte/listar</span>
+                <span class="route-description">Listar obras de arte</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/api/cd/obra-arte/{id}</span>
+                <span class="route-description">Obter obra de arte por ID</span>
+            </div>
+        </div>
+
+        <!-- Formulários HTML para Elementos Rodoviários -->
+        <div class="route-section">
+            <h2>📝 Formulários HTML - Elementos Rodoviários</h2>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/cadastro-interessado-trecho</span>
+                <span class="route-description">Formulário de cadastro de trecho</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/cadastro-interessado-rodovia</span>
+                <span class="route-description">Formulário de cadastro de rodovia</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/cadastro-interessado-dispositivo</span>
+                <span class="route-description">Formulário de cadastro de dispositivo</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/cadastro-interessado-obra-arte</span>
+                <span class="route-description">Formulário de cadastro de obra de arte</span>
+            </div>
+        </div>
+
+        <!-- Painéis de Usuário -->
+        <div class="route-section">
+            <h2>👤 Painéis de Usuário</h2>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/painel-analista</span>
+                <span class="route-description">Painel do usuário analista</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/painel-coordenador</span>
+                <span class="route-description">Painel do usuário coordenador</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/painel-master</span>
+                <span class="route-description">Painel do usuário master</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/meus-dados</span>
+                <span class="route-description">Dados pessoais do usuário</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/boas-vindas</span>
+                <span class="route-description">Página de boas-vindas</span>
+            </div>
+        </div>
+
+        <!-- Projetos -->
+        <div class="route-section">
+            <h2>📋 Gestão de Projetos</h2>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/cadastro-projeto</span>
+                <span class="route-description">Tela de cadastro de projeto</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/novo-projeto</span>
+                <span class="route-description">Formulário de novo projeto</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/gravar-projeto</span>
+                <span class="route-description">Gravar novo projeto</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/salvar-projeto</span>
+                <span class="route-description">Salvar alterações do projeto</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/status-projeto</span>
+                <span class="route-description">Verificar status do projeto</span>
+            </div>
+        </div>
+
+        <!-- Upload e Validação -->
+        <div class="route-section">
+            <h2>📤 Upload e Validação de Arquivos</h2>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/importar</span>
+                <span class="route-description">Interface de importação</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/upload-zip</span>
+                <span class="route-description">Upload de arquivo ZIP</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/validacao-geometria</span>
+                <span class="route-description">Validar geometria carregada</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/salvar-geometria-validada</span>
+                <span class="route-description">Salvar geometria após validação</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/relatorio-upload</span>
+                <span class="route-description">Relatório de upload</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/relatorio-validacao</span>
+                <span class="route-description">Relatório de validação</span>
+            </div>
+        </div>
+
+        <!-- Conformidade Ambiental -->
+        <div class="route-section">
+            <h2>🌿 Conformidade Ambiental</h2>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/ca/processar</span>
+                <span class="route-description">Processar conformidade ambiental</span>
+            </div>
+        </div>
+
+        <!-- Utilitários -->
+        <div class="route-section">
+            <h2>🔧 Utilitários e Proxies</h2>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/proxy/receitaws/cnpj/{cnpj}</span>
+                <span class="route-description">Proxy para consulta de CNPJ</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/cabecalho-fad</span>
+                <span class="route-description">Visualizar cabeçalho FAD</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method get">GET</span>
+                <span class="route-path">/visualizar-cadastro-ficticio</span>
+                <span class="route-description">Visualizar cadastro de exemplo</span>
+            </div>
+        </div>
+
+        <!-- Endpoints Legados -->
+        <div class="route-section">
+            <h2>⚠️ Endpoints Legados (Mantidos para Compatibilidade)</h2>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/cadastrar-trechos-estadualizacao</span>
+                <span class="route-description">Cadastro de trechos (método legado)</span>
+            </div>
+            
+            <div class="route-item">
+                <span class="method post">POST</span>
+                <span class="route-path">/cadastrar-elementos-rodoviarios</span>
+                <span class="route-description">Cadastro geral de elementos (método legado)</span>
+            </div>
+        </div>
+
+        <div class="last-updated">
+            <strong>Última atualização:</strong> 10 de junho de 2025<br>
+            <strong>Versão:</strong> Sistema FAD v2.0 - Endpoints Individualizados<br>
+            <strong>Total de rotas mapeadas:</strong> 60+ endpoints ativos
+        </div>
+    </div>
+</body>
+</html>

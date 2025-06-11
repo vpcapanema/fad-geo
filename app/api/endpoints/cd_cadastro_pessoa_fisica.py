@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from app.database.session import get_db
 from app.models.cd_pessoa_fisica import PessoaFisica, registrar_auditoria_pessoa_fisica
 from app.models.cd_pessoa_juridica import PessoaJuridica
-from app.models.cd_trecho import TrechoEstadualizacao
+from app.models.cd_trecho_estadualizacao import TrechoEstadualizacao
 from datetime import datetime
 import re
 

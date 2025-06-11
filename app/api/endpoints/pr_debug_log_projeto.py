@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.models.cd_pessoa_fisica import PessoaFisica
 from app.models.cd_pessoa_juridica import PessoaJuridica
-from app.models.cd_trecho import TrechoEstadualizacao
+from app.models.cd_trecho_estadualizacao import TrechoEstadualizacao
 
 router = APIRouter(prefix="/projeto", tags=["Cadastro de Projeto"])
 templates = Jinja2Templates(directory="app/templates")

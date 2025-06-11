@@ -16,7 +16,7 @@ def listar_projetos(db: Session = Depends(get_db)):
             FROM public.projeto p
             LEFT JOIN "Cadastro".pessoa_juridica pj ON p.pessoa_juridica_id = pj.id
             LEFT JOIN "Cadastro".pessoa_fisica pf ON p.pessoa_fisica_id = pf.id
-            LEFT JOIN "Elementos_rodoviarios".trechos_estadualizacao t ON p.trecho_id = t.id
+            LEFT JOIN "Elementos_rodoviarios".trecho_rodoviario t ON p.trecho_id = t.id
             LEFT JOIN "Cadastro".usuario_sistema u ON u.id = p.usuario_id
         """)
         projetos = db.execute(query).fetchall()

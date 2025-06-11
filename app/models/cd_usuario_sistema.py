@@ -44,11 +44,16 @@ class UsuarioSistema(Base):
         back_populates="usuarios",
         primaryjoin="UsuarioSistema.pessoa_fisica_id == PessoaFisica.id"
     )
-
     aprovador = relationship(
         "UsuarioSistema",
         remote_side=[id],
         primaryjoin="UsuarioSistema.aprovador_id == UsuarioSistema.id"
+    )
+
+    recuperacoes_senha = relationship(
+        "RecuperacaoSenha",
+        back_populates="usuario",
+        cascade="all, delete-orphan"
     )
 
 class UsuarioSistemaAuditoria(Base):

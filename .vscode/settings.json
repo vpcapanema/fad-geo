@@ -22,5 +22,58 @@
   "tasks.runOnOpen": [
     "Iniciar API FastAPI"
   ],
-  "terminal.integrated.defaultLocation": "editor"
+  "terminal.integrated.defaultLocation": "editor",
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/**": true,
+    "**/venv/**": true,
+    "**/__pycache__/**": true,
+    "**/AppData/**": true,
+    "**/OneDrive/**": true,
+    "**/Documents/**": true,
+    "**/Downloads/**": true,
+    "**/Music/**": true,
+    "**/Videos/**": true,
+    "**/Saved Games/**": true,
+    "**/.vscode/**": true,
+    "**/NTUSER.DAT*": true,
+    "**/ntuser.*": true,
+    "**/Cookies": true,
+    "**/Recent": true,
+    "**/Ambiente*": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/AppData": true,
+    "**/NTUSER.DAT*": true,
+    "**/ntuser.*": true,
+    "**/Cookies": true,
+    "**/Recent": true,
+    "**/Ambiente*": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/AppData": true,
+    "**/OneDrive": true,
+    "**/Documents": true,
+    "**/Downloads": true,
+    "**/Music": true,
+    "**/Videos": true,
+    "**/Cookies": true,
+    "**/Recent": true,
+    "**/Ambiente*": true
+  },
+  "files.associations": {
+    "*.js": "javascript",
+    "*.py": "python",
+    "*.html": "html",
+    "*.css": "css"
+  },
+  "livePreview.defaultPreviewPath": "/app/templates/mapa_rotas_fad_atualizado.html"
 }

@@ -14,7 +14,7 @@ class Projeto(Base):
 
     pessoa_juridica_id = Column(Integer, ForeignKey("Cadastro.pessoa_juridica.id"))
     pessoa_fisica_id = Column(Integer, ForeignKey("Cadastro.pessoa_fisica.id"))
-    trecho_id = Column(Integer, ForeignKey("Elementos_rodoviarios.trechos_estadualizacao.id"))
+    trecho_id = Column(Integer, ForeignKey("Elementos_rodoviarios.trecho_rodoviario.id"))
     geometria_id = Column(Integer)
 
     enviado_em = Column(DateTime)

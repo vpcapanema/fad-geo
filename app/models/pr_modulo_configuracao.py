@@ -11,9 +11,8 @@ class ModuloConfiguracao(Base):
     numero = Column(Integer, nullable=False, unique=True)
     nome = Column(String(100), nullable=False)
     descricao = Column(Text)
-    
-    # Controle de sequência
-    modulo_anterior = Column(Integer, ForeignKey("modulo_configuracao.numero"))
+      # Controle de sequência
+    modulo_anterior = Column(Integer, ForeignKey("public.modulo_configuracao.numero"))
     obrigatorio = Column(Boolean, default=True)
     
     # Configurações de template

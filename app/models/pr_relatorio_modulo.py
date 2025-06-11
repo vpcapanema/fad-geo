@@ -9,7 +9,7 @@ class RelatorioModulo(Base):
     __table_args__ = {"schema": "public"}
 
     id = Column(Integer, primary_key=True)
-    projeto_id = Column(Integer, ForeignKey("projeto.id", ondelete="CASCADE"), nullable=False)
+    projeto_id = Column(Integer, ForeignKey("public.projeto.id", ondelete="CASCADE"), nullable=False)
     modulo_numero = Column(Integer, nullable=False)
     modulo_nome = Column(String(100), nullable=False)
     status = Column(String(50), nullable=False, default="pendente")

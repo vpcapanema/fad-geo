@@ -6,7 +6,7 @@ from datetime import datetime
 
 class UsuarioCreate(BaseModel):
     nome: str
-    cpf: str = Field(..., pattern=r"^\d{3}\.\d{3}\.\d{3}-\d{2}$")
+    cpf: str = Field(..., min_length=11, max_length=14, description="CPF com ou sem formatação (será limpo no backend)")
     email: EmailStr
     telefone: Optional[str] = None
     senha: str

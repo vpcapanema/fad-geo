@@ -30,6 +30,11 @@ from app.api.endpoints.cd_cadastro_pessoa_juridica import router as cadastro_pj_
 from app.api.endpoints.cd_cadastro_trechos_estadualizacao import router as cadastro_trechos_router
 from app.api.endpoints.cd_cadastro_usuario_sistema import router as cadastro_usuario_router
 from app.api.endpoints.cd_cadastro_elementos_rodoviarios import router as cadastro_elementos_rodoviarios_router
+# Novos endpoints separados para elementos rodoviários
+from app.api.endpoints.cd_cadastro_trecho_rodoviario import router as cadastro_trecho_rodoviario_router
+from app.api.endpoints.cd_cadastro_rodovia import router as cadastro_rodovia_router
+from app.api.endpoints.cd_cadastro_dispositivo import router as cadastro_dispositivo_router
+from app.api.endpoints.cd_cadastro_obra_arte import router as cadastro_obra_arte_router
 from app.api.endpoints.pn_menu_navegacao import router as menu_navegacao_router
 from app.api.endpoints.pn_painel_usuario_administrador import router as painel_administrador_router
 from app.api.endpoints.pn_painel_usuario_comum import router as painel_usuario_comum_router
@@ -46,6 +51,7 @@ from app.api.endpoints.vw_painel_administrador import router as vw_painel_admini
 from app.api.endpoints.vw_projetos_usuario_comum import router as vw_projetos_usuario_comum_router
 from app.api.endpoints.pr_fluxo_modular import router as fluxo_modular_router
 from app.api.endpoints.pr_modulos_pages import router as modulos_pages_router
+from app.api.endpoints.au_recuperacao_senha import router as recuperacao_senha_router
 
 # ============================ 🚀 Instância principal da API ============================
 app = FastAPI(
@@ -151,6 +157,11 @@ async def home(request: Request):
 def tela_login(request: Request):
     return templates.TemplateResponse("au_login.html", {"request": request})
 
+# ✅ Rota para o mapa de rotas
+@app.get("/mapa-rotas", response_class=HTMLResponse)
+def mapa_rotas(request: Request):
+    return templates.TemplateResponse("mapa_rotas_fad_atualizado.html", {"request": request})
+
 # =============== 🐞 Rota Debug ===============
 @app.get("/debug", response_class=JSONResponse)
 async def debug_info(request: Request):
@@ -176,8 +187,13 @@ app.include_router(aprovar_usuario_router)
 app.include_router(cadastro_pf_router)
 app.include_router(cadastro_pj_router)
 app.include_router(cadastro_trechos_router)
-app.include_router(cadastro_usuario_router)
+app.include_router(cadastro_usuario_router, prefix="/api/cd")
 app.include_router(cadastro_elementos_rodoviarios_router)
+# Novos endpoints separados para elementos rodoviários
+app.include_router(cadastro_trecho_rodoviario_router, prefix="/api/cd")
+app.include_router(cadastro_rodovia_router, prefix="/api/cd")
+app.include_router(cadastro_dispositivo_router, prefix="/api/cd")
+app.include_router(cadastro_obra_arte_router, prefix="/api/cd")
 app.include_router(menu_navegacao_router)
 app.include_router(painel_administrador_router)
 app.include_router(painel_usuario_comum_router)
@@ -194,6 +210,7 @@ app.include_router(vw_painel_administrador_router)
 app.include_router(vw_projetos_usuario_comum_router)
 app.include_router(fluxo_modular_router)
 app.include_router(modulos_pages_router)
+app.include_router(recuperacao_senha_router)
 
 # ======================== 🌐 Rotas HTML diretas ========================
 @app.get("/cadastro-usuario", response_class=HTMLResponse)
@@ -389,6 +406,10 @@ def visualizar_cadastro_ficticio(request: Request):
 @app.get("/cadastro-interessado-rodovia", response_class=HTMLResponse)
 def cadastro_rodovia(request: Request):
     return templates.TemplateResponse("cd_interessado_rodovia.html", {"request": request})
+
+@app.get("/cadastro-interessado-trecho", response_class=HTMLResponse)
+def cadastro_trecho(request: Request):
+    return templates.TemplateResponse("cd_interessado_trecho.html", {"request": request})
 
 @app.get("/cadastro-interessado-dispositivo", response_class=HTMLResponse)
 def cadastro_dispositivo(request: Request):

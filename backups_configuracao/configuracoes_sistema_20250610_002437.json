@@ -1,0 +1,86 @@
+{
+  "timestamp": "2025-06-10T00:24:37.722572",
+  "versao_backup": "1.0",
+  "ambiente": "production",
+  "configuracoes_smtp": {
+    "servidor": "smtp.gmail.com",
+    "porta": "587",
+    "usuario": "fadgeoteste@gmail.com",
+    "remetente": "fadgeoteste@gmail.com",
+    "nome_remetente": "FAD - Plataforma de Análise Dinamizada",
+    "senha_configurada": true
+  },
+  "estrutura_projeto": {
+    "arquivos_principais": [
+      {
+        "arquivo": "app/api/endpoints/au_recuperacao_senha.py",
+        "existe": true,
+        "tamanho": 14345,
+        "modificado": "2025-06-10T00:08:32.905763"
+      },
+      {
+        "arquivo": "app/services/email_service.py",
+        "existe": true,
+        "tamanho": 16389,
+        "modificado": "2025-06-10T00:23:50.349831"
+      },
+      {
+        "arquivo": "app/api/endpoints/cd_cadastro_usuario_sistema.py",
+        "existe": true,
+        "tamanho": 15475,
+        "modificado": "2025-06-10T00:01:35.736166"
+      }
+    ],
+    "templates_criados": [
+      {
+        "nome": "au_email_enviado.html",
+        "tamanho": 3424
+      },
+      {
+        "nome": "au_login.html",
+        "tamanho": 8214
+      },
+      {
+        "nome": "au_recuperar_senha.html",
+        "tamanho": 10180
+      },
+      {
+        "nome": "au_redefinir_senha.html",
+        "tamanho": 14971
+      },
+      {
+        "nome": "au_senha_alterada.html",
+        "tamanho": 2752
+      },
+      {
+        "nome": "au_token_invalido.html",
+        "tamanho": 3486
+      }
+    ],
+    "scripts_utilitarios": [
+      {
+        "nome": "monitorar_emails.py",
+        "existe": true,
+        "tamanho": 13210
+      },
+      {
+        "nome": "testar_recuperacao_senha.py",
+        "existe": true,
+        "tamanho": 6840
+      },
+      {
+        "nome": "configurar_gmail.py",
+        "existe": true,
+        "tamanho": 4155
+      },
+      {
+        "nome": "recuperar_minha_senha.py",
+        "existe": true,
+        "tamanho": 4061
+      }
+    ]
+  },
+  "estatisticas_logs": {
+    "erro": "Banco de logs não encontrado"
+  }
+}

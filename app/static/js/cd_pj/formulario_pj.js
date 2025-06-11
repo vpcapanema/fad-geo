@@ -1,11 +1,44 @@
 import { atualizarValidacaoCampo, checarTodosCamposValidos } from './js_util_validacao.js';
 import { formatarCNPJ, validarCNPJ } from '/static/js/formatacao_valores_campos/formatacao_cnpj.js';
-import { formatarTelefone } from '/static/js/formatacao_valores_campos/formatacao_telefone.js';
-import { formatarCEP } from '/static/js/formatacao_valores_campos/formatacao_cep.js';
-import { formatarEmail } from '/static/js/formatacao_valores_campos/formatacao_email.js';
+import { formatarTelefone, validarTelefone } from '/static/js/formatacao_valores_campos/formatacao_telefone_movel.js';
+import { formatarTelefoneFixo, validarTelefoneFixo } from '/static/js/formatacao_valores_campos/formatacao_telefone_fixo.js';
+import { formatarCEP, validarCEP } from '/static/js/formatacao_valores_campos/formatacao_cep.js';
+import { formatarEmail, validarEmail } from '/static/js/formatacao_valores_campos/formatacao_email.js';
 import { validarRazaoSocialPJ, formatarRazaoSocialPJ } from '/static/js/formatacao_valores_campos/formatacao_razao_social_pj.js';
 
 function mascaraCNPJ(v) { return formatarCNPJ(v); }
+
+// Função inteligente para telefone - detecta se é móvel ou fixo
+function mascaraTelefoneInteligente(valor) {
+  let digitos = valor.replace(/\D/g, '');
+  
+  // Se tem 11 dígitos, é celular
+  if (digitos.length === 11) {
+    return formatarTelefone(valor);
+  }
+  // Se tem 10 dígitos ou menos, é fixo
+  else {
+    return formatarTelefoneFixo(valor);
+  }
+}
+
+// Função inteligente para validar telefone - detecta se é móvel ou fixo
+function validarTelefoneInteligente(valor) {
+  let digitos = valor.replace(/\D/g, '');
+  
+  // Se tem 11 dígitos, valida como celular
+  if (digitos.length === 11) {
+    return validarTelefone(valor);
+  }
+  // Se tem 10 dígitos, valida como fixo
+  else if (digitos.length === 10) {
+    return validarTelefoneFixo(valor);
+  }
+  // Se não tem 10 nem 11 dígitos, é inválido
+  else {
+    return false;
+  }
+}
 
 function capitalizarNome(str) {
   return str.toUpperCase();
@@ -23,28 +56,45 @@ function formatarABNT(str) {
 
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('pjForm');
-  if (!form) return;
-  const campos = [
+  if (!form) return;  const campos = [
     {id: 'razao_social', custom: validarRazaoSocialPJ, format: v => v.toUpperCase()},
     {id: 'cnpj', mask: mascaraCNPJ, regex: /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, custom: validarCNPJ},
     {id: 'nome_fantasia', format: v => v.toUpperCase(), regex: /^.{3,}$/},
-    {id: 'telefone', mask: v => formatarTelefoneFixo(v), regex: /^\(\d{2}\) \d{4}-\d{4}$/},
-    {id: 'celular', mask: v => formatarCelular(v), regex: /^\(\d{2}\) \d{5}-\d{4}$/},
+    {id: 'telefone_institucional', mask: mascaraTelefoneInteligente, custom: validarTelefoneInteligente},
     {id: 'email', regex: /^[\w-.]+@[\w-]+\.[a-z]{2,}$/i},
-    {id: 'cep', mask: v => formatarCEPPadrao(v), regex: /^\d{2}\.\d{3}-\d{3}$/},
+    {id: 'cep', mask: v => formatarCEP(v), custom: validarCEP},
     {id: 'bairro', format: formatarABNT, regex: /^.{2,}$/},
     {id: 'rua', format: formatarABNT, regex: /^.{3,}$/},
     {id: 'numero', regex: /^.{1,}$/},
     {id: 'complemento', format: formatarABNT, regex: /^.{1,}$/},
     {id: 'uf', regex: /^[A-Z]{2}$/},
     {id: 'cidade', format: formatarABNT, regex: /^.{2,}$/}
-  ];
-  campos.forEach(({id, regex, mask, format, custom}) => {
+  ];  campos.forEach(({id, regex, mask, format, custom}) => {
     const input = document.getElementById(id);
     if (!input) return;
     input.addEventListener('input', function() {
       if (mask) this.value = mask(this.value);
       if (format) this.value = format(this.value);
+      
+      // Feedback especial para telefone - mostra tipo detectado
+      if (id === 'telefone_institucional') {
+        const feedbackTipo = document.getElementById('telefone-tipo');
+        const digitos = this.value.replace(/\D/g, '');
+        
+        if (digitos.length >= 10) {
+          if (digitos.length === 11) {
+            feedbackTipo.textContent = '📱 Celular detectado';
+            feedbackTipo.style.color = '#28a745';
+          } else if (digitos.length === 10) {
+            feedbackTipo.textContent = '📞 Telefone fixo detectado';
+            feedbackTipo.style.color = '#007bff';
+          }
+          feedbackTipo.style.display = 'block';
+        } else {
+          feedbackTipo.style.display = 'none';
+        }
+      }
+      
       let valido = custom ? custom(this.value) : (regex ? regex.test(this.value) : !!this.value);
       atualizarValidacaoCampo(this, valido);
       checarTodosCamposValidos('#pjForm', 'button[type="submit"]');
@@ -57,6 +107,26 @@ document.addEventListener('DOMContentLoaded', function() {
       checarTodosCamposValidos('#pjForm', 'button[type="submit"]');
     });
   });
+  // Adiciona evento para campo UF (select) para validação instantânea
+  const ufSelect = document.getElementById('uf');
+  if (ufSelect) {
+    ufSelect.addEventListener('change', function() {
+      let valido = this.value !== '';
+      atualizarValidacaoCampo(this, valido);
+      checarTodosCamposValidos('#pjForm', 'button[type="submit"]');
+    });
+  }
+  
+  // Adiciona evento para campo cidade (select) para validação instantânea
+  const cidadeSelect = document.getElementById('cidade');
+  if (cidadeSelect) {
+    cidadeSelect.addEventListener('change', function() {
+      let valido = this.value !== '';
+      atualizarValidacaoCampo(this, valido);
+      checarTodosCamposValidos('#pjForm', 'button[type="submit"]');
+    });
+  }
+  
   checarTodosCamposValidos('#pjForm', 'button[type="submit"]');
 
   // Padronização visual e envio do formulário PJ
@@ -145,67 +215,109 @@ document.addEventListener('DOMContentLoaded', function() {
       input.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }
-
-  // --- CORRIGE CEP: mensagem de erro só se preenchido e inválido ---
+  // --- BUSCA AUTOMÁTICA CEP COM TRIGGER NO INPUT ---
   const cepInput = document.getElementById('cep');
   if (cepInput) {
+    let timeoutCep;
+    
     cepInput.addEventListener('input', function() {
       const msg = document.getElementById('cep-erro');
+      const cep = this.value.replace(/\D/g, '');
+      
+      // Limpa timeout anterior
+      clearTimeout(timeoutCep);
+      
       if (msg) {
-        if (!cepInput.value) {
+        if (!this.value) {
           msg.textContent = '';
-        } else if (!/^\d{2}\.\d{3}-\d{3}$/.test(cepInput.value)) {
+        } else if (!validarCEP(this.value)) {
           msg.textContent = 'CEP inválido';
         } else {
           msg.textContent = '';
         }
       }
-    });
-  }
-
-  // --- CORRIGE PREENCHIMENTO AUTOMÁTICO (CNPJ/CEP) PARA USAR FEEDBACK INSTANTÂNEO ---
-  // Busca automática de endereço ao digitar o CEP (PJ)
-  if (cepInput) {
-    cepInput.addEventListener('blur', async function() {
-      const cep = cepInput.value.replace(/\D/g, '');
+      
+      // Se CEP tem 8 dígitos, agenda busca automática após 500ms
       if (cep.length === 8) {
-        try {
-          const resp = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-          const data = await resp.json();
-          if (!data.erro) {
-            preencherCampo('rua', data.logradouro);
-            preencherCampo('bairro', data.bairro);
-            preencherCampo('cidade', data.localidade);
-            preencherCampo('uf', data.uf);
+        timeoutCep = setTimeout(async () => {
+          try {
+            const resp = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await resp.json();
+            if (!data.erro) {
+              preencherCampo('rua', data.logradouro);
+              preencherCampo('bairro', data.bairro);
+              preencherCampo('cidade', data.localidade);
+              preencherCampo('uf', data.uf);
+            }
+          } catch (e) {
+            console.log('Erro ao buscar CEP:', e);
           }
-        } catch (e) {}
+        }, 500);
       }
     });
   }
-
-  // Busca automática de dados de PJ ao digitar o CNPJ (usando proxy backend)
+  // --- BUSCA AUTOMÁTICA CNPJ COM TRIGGER NO INPUT ---
   const cnpjInput = document.getElementById('cnpj');
   if (cnpjInput) {
-    cnpjInput.addEventListener('blur', async function() {
-      const cnpj = cnpjInput.value.replace(/\D/g, '');
-      if (cnpj.length === 14) {
-        try {
-          const resp = await fetch(`/proxy/receitaws/cnpj/${cnpj}`);
-          const data = await resp.json();
-          if (data.status === 'OK') {
-            preencherCampo('razao_social', data.nome);
-            preencherCampo('nome_fantasia', data.fantasia);
-            preencherCampo('telefone', data.telefone);
-            preencherCampo('email', data.email);
-            preencherCampo('cep', data.cep);
-            preencherCampo('rua', data.logradouro);
-            preencherCampo('numero', data.numero);
-            preencherCampo('complemento', data.complemento);
-            preencherCampo('bairro', data.bairro);
-            preencherCampo('cidade', data.municipio);
-            preencherCampo('uf', data.uf);
+    let timeoutCnpj;
+    
+    cnpjInput.addEventListener('input', function() {
+      const cnpj = this.value.replace(/\D/g, '');
+      
+      // Limpa timeout anterior
+      clearTimeout(timeoutCnpj);
+      
+      // Se CNPJ tem 14 dígitos, agenda busca automática após 1 segundo
+      if (cnpj.length === 14 && validarCNPJ(this.value)) {
+        timeoutCnpj = setTimeout(async () => {
+          const loadingMsg = document.getElementById('cnpj-loading');
+          
+          try {
+            if (loadingMsg) {
+              loadingMsg.innerHTML = '<div class="spinner"></div> Buscando dados da empresa...';
+              loadingMsg.style.display = 'flex';
+            }
+            
+            const resp = await fetch(`/proxy/receitaws/cnpj/${cnpj}`);
+            const data = await resp.json();
+            
+            if (data.status === 'OK') {
+              preencherCampo('razao_social', data.nome);
+              preencherCampo('nome_fantasia', data.fantasia);
+              preencherCampo('telefone_institucional', data.telefone);
+              preencherCampo('email', data.email);
+              preencherCampo('cep', data.cep);
+              preencherCampo('rua', data.logradouro);
+              preencherCampo('numero', data.numero);
+              preencherCampo('complemento', data.complemento);
+              preencherCampo('bairro', data.bairro);
+              preencherCampo('cidade', data.municipio);
+              preencherCampo('uf', data.uf);
+              
+              if (loadingMsg) {
+                loadingMsg.innerHTML = '✅ Dados carregados com sucesso!';
+                setTimeout(() => {
+                  loadingMsg.style.display = 'none';
+                }, 2000);
+              }
+            } else {
+              if (loadingMsg) {
+                loadingMsg.innerHTML = '⚠️ CNPJ não encontrado';
+                setTimeout(() => {
+                  loadingMsg.style.display = 'none';
+                }, 3000);
+              }
+            }
+          } catch (e) {
+            console.log('Erro ao buscar CNPJ:', e);
+            if (loadingMsg) {
+              loadingMsg.innerHTML = '❌ Erro ao buscar dados';
+              setTimeout(() => {
+                loadingMsg.style.display = 'none';
+              }, 3000);
+            }
           }
-        } catch (e) {}
+        }, 1000);
       }
     });
   }
