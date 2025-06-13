@@ -75,5 +75,5 @@
     "*.html": "html",
     "*.css": "css"
   },
-  "livePreview.defaultPreviewPath": "/app/templates/mapa_rotas_fad_atualizado.html"
+  "livePreview.defaultPreviewPath": "/app/templates/componentes/mapa_rotas_fad_atualizado.html"
 }

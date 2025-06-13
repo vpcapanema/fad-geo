@@ -1,0 +1,124 @@
+{
+  "hierarquiaSede": [
+    {"label": "Presidência - PR"},
+    {"label": "Vice-Presidência - VP"},
+    {"label": "Gabinete - GAB"},
+    {"label": "Procuradoria Jurídica - PJ"},
+    {"label": "Consultoria Jurídica - CJ"},
+    {"label": "Órgãos de Assistência Direta", "children": [
+      {"label": "Assessoria de Auditoria - AUD"},
+      {"label": "Assessoria de Comunicação - ASCOM"},
+      {"label": "Assessoria de Correição - ACR"},
+      {"label": "Assessoria de Gestão da Qualidade - AGQ"},
+      {"label": "Assessoria de Integridade - INT"},
+      {"label": "Assessoria de Ouvidoria - OUV"}
+    ]},
+    {"label": "Diretorias", "children": []}
+  ],
+  "diretorias": [
+    {"label": "Diretoria de Administração - DA", "children": [
+      {"label": "Coordenadoria Geral de Contabilidade, Finanças e Orçamento - CGFA", "children": [
+        {"label": "Coordenadoria de Contabilidade - CCA"},
+        {"label": "Coordenadoria de Finanças - CFA"},
+        {"label": "Coordenadoria de Orçamento, Custos e Arrecadação - COA"}
+      ]},
+      {"label": "Coordenadoria Geral de Gestão Patrimonial, Tecnologia e Serviços - CGTA", "children": [
+        {"label": "Coordenadoria de Atividades Gerais - CGA"},
+        {"label": "Coordenadoria de Patrimônio - CPA"},
+        {"label": "Coordenadoria de Tecnologia da Informação - CTA"}
+      ]},
+      {"label": "Coordenadoria Geral de Aquisições e Licitações - CGLA", "children": [
+        {"label": "Coordenadoria de Aquisições e Licitações de Bens e Serviços - CLA"},
+        {"label": "Coordenadoria de Licitações e Contratação de Obras e Serviços de Engenharia - CSA"}
+      ]},
+      {"label": "Coordenadoria Geral de Recursos Humanos - CGRA", "children": [
+        {"label": "Coordenadoria de Administração de Pessoal, Seleção e Aperfeiçoamento - CAA"},
+        {"label": "Coordenadoria de Pagamentos - CDA"}
+      ]}
+    ]},
+    {"label": "Diretoria de Engenharia - DE", "children": [
+      {"label": "Coordenadoria Geral de Projetos - CGPE", "children": [
+        {"label": "Coordenadoria de Geometria e Sinalização - CGE"},
+        {"label": "Coordenadoria de Pavimentos - CPE"},
+        {"label": "Coordenadoria de Drenagem e Geotecnia - CDE"},
+        {"label": "Coordenadoria de Obras de Arte Especiais - CAE"}
+      ]},
+      {"label": "Coordenadoria Geral de Levantamentos - CGLE", "children": [
+        {"label": "Coordenadoria de Estudo de Viabilidade Técnica - CVE"},
+        {"label": "Coordenadoria de Gestão Técnica - CTE"}
+      ]}
+    ]},
+    {"label": "Diretoria de Obras - DO", "children": [
+      {"label": "Coordenadoria Geral de Obras - CGOO", "children": [
+        {"label": "Coordenadoria de Construção - CCO"},
+        {"label": "Coordenadoria de Restauração - CRO"}
+      ]},
+      {"label": "Coordenadoria Geral de Conservação e Sinalização - CGCO", "children": [
+        {"label": "Coordenadoria de Conservação de Rotina - CMO"},
+        {"label": "Coordenadoria de Sinalização - CSO"}
+      ]}
+    ]},
+    {"label": "Diretoria de Operações Viárias - DV", "children": [
+      {"label": "Coordenadoria Geral de Operação Viária - CGOV", "children": [
+        {"label": "Coordenadoria de Operação Viária - COV"},
+        {"label": "Coordenadoria de Segurança Viária - CSV"}
+      ]},
+      {"label": "Coordenadoria Geral de Fiscalização - CGFV", "children": [
+        {"label": "Coordenadoria de Pátios e Leilões - CPV"},
+        {"label": "Coordenadoria de Fiscalização, Pedágios e Multas - CFV"}
+      ]}
+    ]},
+    {"label": "Diretoria de Planejamento - DP", "children": [
+      {"label": "Coordenadoria Geral de Planejamento e Pesquisa - CGPP", "children": [
+        {"label": "Coordenadoria de Planejamento e Custos - CPP"},
+        {"label": "Coordenadoria de Estudos e Pesquisas - CEP"}
+      ]},
+      {"label": "Coordenadoria Geral Socioambiental - CGSP", "children": [
+        {"label": "Coordenadoria de Meio Ambiente - CAP"},
+        {"label": "Coordenadoria de Desapropriação, Reassentamento e Faixa de Domínio - CDP"}
+      ]},
+      {"label": "Coordenadoria Geral de Contratos e Convênios - CGCP", "children": [
+        {"label": "Coordenadoria de Contratos - CCP"},
+        {"label": "Coordenadoria de Convênios - CGP"}
+      ]}
+    ]}
+  ],
+  "regionais": [
+    {"label": "Coordenadoria Geral Regional de Campinas - CGR.1"},
+    {"label": "Coordenadoria Geral Regional de Itapetininga - CGR.2"},
+    {"label": "Coordenadoria Geral Regional de Bauru - CGR.3"},
+    {"label": "Coordenadoria Geral Regional de Araraquara - CGR.4"},
+    {"label": "Coordenadoria Geral Regional de Cubatão - CGR.5"},
+    {"label": "Coordenadoria Geral Regional de Taubaté - CGR.6"},
+    {"label": "Coordenadoria Geral Regional de Assis - CGR.7"},
+    {"label": "Coordenadoria Geral Regional de Ribeirão Preto - CGR.8"},
+    {"label": "Coordenadoria Geral Regional de São José do Rio Preto - CGR.9"},
+    {"label": "Coordenadoria Geral Regional de São Paulo - CGR.10"},
+    {"label": "Coordenadoria Geral Regional de Araçatuba - CGR.11"},
+    {"label": "Coordenadoria Geral Regional de Presidente Prudente - CGR.12"},
+    {"label": "Coordenadoria Geral Regional de Rio Claro - CGR.13"},
+    {"label": "Coordenadoria Geral Regional de Barretos - CGR.14"}
+  ],
+  "regionalCoordenadorias": [
+    {"label": "Coordenadoria Administrativa - CA"},
+    {"label": "Coordenadoria de Conservação e Operações Viárias - CO"},
+    {"label": "Coordenadoria Técnica - CT"}
+  ],
+  "regionalServicos": {
+    "Coordenadoria Administrativa - CA": [
+      "Serviço de Administração de Pessoal - SA",
+      "Serviço de Aquisições e Contratações - SQ",
+      "Serviço de Finanças - SF",
+      "Serviço de Patrimônio, Tecnologia e Atividades Gerais - SG"
+    ],
+    "Coordenadoria de Conservação e Operações Viárias - CO": [
+      "Serviço de Faixa de Domínio, Pedágio, Radar e Balança - SR",
+      "Serviço de Unidade Básica de Atendimento (UBA) - SB",
+      "Serviço de Conservação de Rotina - SC"
+    ],
+    "Coordenadoria Técnica - CT": [
+      "Serviço de Construção - ST",
+      "Serviço de Planejamento e Projetos - SP"
+    ]
+  }
+}

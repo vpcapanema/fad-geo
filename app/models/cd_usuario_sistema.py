@@ -25,8 +25,10 @@ class UsuarioSistema(Base):
     telefone_institucional = Column(String, nullable=True)
     ramal = Column(String, nullable=True)
     sede_hierarquia = Column(String, nullable=True)
+    sede_assistencia_direta = Column(String, nullable=True)  # nova coluna para Assistência Direta
+    sede_diretoria = Column(String, nullable=True)  # nova coluna para Diretoria
+    sede_coordenadoria_geral = Column(String, nullable=True)  # nova coluna para Coordenadoria Geral
     sede_coordenadoria = Column(String, nullable=True)
-    sede_setor = Column(String, nullable=True)
     sede_assistencia = Column(String, nullable=True)
     regional_nome = Column(String, nullable=True)
     regional_coordenadoria = Column(String, nullable=True)
@@ -72,7 +74,7 @@ def registrar_auditoria_usuario_sistema(db: Session, usuario_antigo: UsuarioSist
     campos = [
         'nome', 'cpf', 'email', 'telefone', 'pessoa_fisica_id', 'instituicao', 'tipo_lotacao',
         'email_institucional', 'telefone_institucional', 'ramal', 'sede_hierarquia', 'sede_coordenadoria',
-        'sede_setor', 'sede_assistencia', 'regional_nome', 'regional_coordenadoria', 'regional_setor',
+        'sede_assistencia', 'regional_nome', 'regional_coordenadoria', 'regional_setor',
         'tipo', 'status', 'ativo'
     ]
     for campo in campos:

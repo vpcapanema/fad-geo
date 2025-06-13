@@ -45,10 +45,6 @@ if (emailInput) {
   }
 }
 
-// formatacao_email.js como módulo ES6
-export function formatarEmail(valor) {
-  return valor.trim().toLowerCase();
-}
-export function validarEmail(valor) {
-  return /^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$/.test(valor.trim());
-}
+// Removido export para uso direto em <script>
+// export function formatarEmail(valor) { ... }
+// export function validarEmail(valor) { ... }

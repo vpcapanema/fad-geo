@@ -5,7 +5,7 @@ from typing import List
 from app.database.session import get_db
 
 router = APIRouter(
-    prefix='/painel/analista',
+    prefix='/painel-analista',
     tags=['Painel do Analista']
 )
 

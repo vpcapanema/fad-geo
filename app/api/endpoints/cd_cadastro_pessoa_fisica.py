@@ -13,7 +13,7 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 # Página de cadastro de PF (interface HTML)
-@router.get("/cadastro-interessado-pf")
+@router.get("/cadastrar-pessoa-fisica")
 def interessado_pf(request: Request, db: Session = Depends(get_db)):
     pjs = db.query(PessoaJuridica).all()
     trechos = db.query(TrechoEstadualizacao).all()
@@ -110,7 +110,7 @@ def validar_cpf_endpoint(cpf: str, db: Session = Depends(get_db)):
         return {"valido": False, "motivo": "CPF já cadastrado"}
     return {"valido": True}
 
-@router.post("/cadastro/pessoa-fisica", status_code=status.HTTP_201_CREATED)
+@router.post("/cadastrar-pessoa-fisica", status_code=status.HTTP_201_CREATED)
 def cadastrar_pessoa_fisica(dados: dict = Body(...), db: Session = Depends(get_db)):
     campos_obrigatorios = [
         'nome', 'cpf', 'email', 'telefone', 'rua', 'numero', 'bairro', 'cep', 'cidade', 'uf'

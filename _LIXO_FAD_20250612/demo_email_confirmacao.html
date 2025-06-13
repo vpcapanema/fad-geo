@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Email de Confirmação de Cadastro FAD</title>
+    <style>
+        /* Estilos para demonstração */
+        .demo-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f2f5;
+            border-radius: 8px;
+        }
+        .demo-title {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 30px;
+        }
+        .email-preview {
+            border: 2px solid #003366;
+            border-radius: 8px;
+            background: white;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        /* Visual azul FAD */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f9; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; }
+        .header { background: linear-gradient(90deg, #003366 60%, #006699 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { color: #fff; font-weight: 700; letter-spacing: 0.5px; }
+        .header p { color: #e0eaf6; margin-top: 8px; }
+        .content { padding: 30px; }
+        .success-box { background: #e3f2fd; color: #003366; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 5px solid #006699; }
+        .success-box h3 { color: #006699; margin-top: 0; }
+        .footer { background: #f4f7fb; padding: 20px; text-align: center; font-size: 12px; color: #003366; border-top: 1px solid #e0eaf6; }
+        ul { color: #003366; }
+        strong { color: #006699; }
+        @media (max-width: 700px) {
+            .container, .email-preview { max-width: 100% !important; }
+            .content { padding: 16px; }
+        }
+    </style>
+</head>
+<body style="background: #f0f2f5; padding: 20px;">
+    <div class="demo-container">
+        <h1 class="demo-title">📧 Preview do Email de Confirmação de Cadastro</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            <strong>Assunto:</strong> "FAD - Confirmação de Cadastro de Usuário"<br>
+            Este é o template de email que é enviado automaticamente após a solicitação de cadastro de usuário no sistema FAD
+        </p>
+        
+        <div class="email-preview">
+            <!-- EMAIL TEMPLATE COMEÇA AQUI -->
+            <div class="container">
+                <div class="header">
+                    <h1>Solicitação de Cadastro de Usuário Confirmada</h1>
+                    <p>FAD - Ferramenta de Análise Dinamizada</p>
+                </div>
+                
+                <div class="content">
+                    <h2>Parabéns, Vinicius do Prado Capanema!</h2>
+                    
+                    <div class="success-box">
+                        <h3>Sua solicitação de cadastro de usuário foi realizada com sucesso!</h3>
+                        <p>Bem-vindo à Plataforma FAD de Análise Dinamizada</p>
+                    </div>
+                    
+                    <p>Sua solicitação de cadastro de usuário foi processada e confirmada no sistema FAD e está em análise pela nossa equipe. Nós avisaremos assim que seu cadastro for aprovado e ativado. Por enquanto, pedimos que aguarde e teste suas credenciais na página de login.<br>
+                    Você deverá receber a mensagem <strong>"Aguardando aprovação"</strong>.<br>
+                    Em anexo, você encontrará o comprovante oficial do seu registro.</p>
+                    
+                    <p><strong>Próximos passos:</strong></p>
+                    <ul>
+                        <li>Guarde o comprovante em anexo para seus registros</li>
+                        <li>Acesse a plataforma com suas credenciais</li>
+                        <li>Complete seu perfil se necessário</li>
+                    </ul>
+                </div>
+                
+                <div class="footer">
+                    <p>FAD - Ferramenta de Análise Dinamizada</p>
+                    <p>Este é um email automático, não responda.</p>
+                </div>
+            </div>
+            <!-- EMAIL TEMPLATE TERMINA AQUI -->
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 8px; border-left: 4px solid #28a745;">
+            <h3>📋 Características do Email</h3>
+            <ul>
+                <li><strong>Assunto:</strong> "FAD - Confirmação de Cadastro"</li>
+                <li><strong>Formato:</strong> HTML responsivo</li>
+                <li><strong>Anexo:</strong> PDF com comprovante de cadastro</li>
+                <li><strong>Personalização:</strong> Nome do usuário inserido dinamicamente</li>
+                <li><strong>Estilo:</strong> Cores e identidade visual FAD</li>
+                <li><strong>Compatibilidade:</strong> Funciona em todos os clientes de email</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px;">
+            <h3>⚙️ Funcionamento Automático</h3>
+            <p>Este email é enviado automaticamente quando:</p>
+            <ol>
+                <li>Um usuário completa o cadastro no sistema</li>
+                <li>O PDF de comprovante é gerado com sucesso</li>
+                <li>Os dados são salvos no banco de dados</li>
+                <li>O email é disparado para o endereço institucional informado</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

@@ -18,6 +18,8 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.models.cd_usuario_sistema import UsuarioSistema
 from app.models.cd_pessoa_fisica import PessoaFisica
+from app.models.cd_pessoa_juridica import PessoaJuridica
+from app.models.cd_trecho_estadualizacao import TrechoEstadualizacao
 from datetime import datetime, timedelta
 from starlette.responses import RedirectResponse
 
@@ -29,7 +31,6 @@ from app.api.endpoints.cd_cadastro_pessoa_fisica import router as cadastro_pf_ro
 from app.api.endpoints.cd_cadastro_pessoa_juridica import router as cadastro_pj_router
 from app.api.endpoints.cd_cadastro_trechos_estadualizacao import router as cadastro_trechos_router
 from app.api.endpoints.cd_cadastro_usuario_sistema import router as cadastro_usuario_router
-from app.api.endpoints.cd_cadastro_elementos_rodoviarios import router as cadastro_elementos_rodoviarios_router
 # Novos endpoints separados para elementos rodoviários
 from app.api.endpoints.cd_cadastro_trecho_rodoviario import router as cadastro_trecho_rodoviario_router
 from app.api.endpoints.cd_cadastro_rodovia import router as cadastro_rodovia_router
@@ -161,6 +162,10 @@ def tela_login(request: Request):
 @app.get("/mapa-rotas", response_class=HTMLResponse)
 def mapa_rotas(request: Request):
     return templates.TemplateResponse("mapa_rotas_fad_atualizado.html", {"request": request})
+# Rota para exibir o formulário de envio de cadastro de usuário (Backend)
+@app.get("/cadastro-usuario-sistema-envio", response_class=HTMLResponse)
+def view_cadastro_usuario_envio(request: Request):
+    return templates.TemplateResponse("cd_cadastro_usuario_envio.html", {"request": request})
 
 # =============== 🐞 Rota Debug ===============
 @app.get("/debug", response_class=JSONResponse)
@@ -188,16 +193,15 @@ app.include_router(cadastro_pf_router)
 app.include_router(cadastro_pj_router)
 app.include_router(cadastro_trechos_router)
 app.include_router(cadastro_usuario_router, prefix="/api/cd")
-app.include_router(cadastro_elementos_rodoviarios_router)
 # Novos endpoints separados para elementos rodoviários
 app.include_router(cadastro_trecho_rodoviario_router, prefix="/api/cd")
 app.include_router(cadastro_rodovia_router, prefix="/api/cd")
 app.include_router(cadastro_dispositivo_router, prefix="/api/cd")
 app.include_router(cadastro_obra_arte_router, prefix="/api/cd")
 app.include_router(menu_navegacao_router)
-app.include_router(painel_administrador_router)
-app.include_router(painel_usuario_comum_router)
 app.include_router(painel_master_router)
+app.include_router(painel_administrador_router, prefix="/painel-coordenador")
+app.include_router(painel_usuario_comum_router, prefix="/painel-analista")
 app.include_router(cadastrar_projeto_router)
 app.include_router(relatorio_upload_router)
 app.include_router(relatorio_validacao_router)
@@ -213,87 +217,45 @@ app.include_router(modulos_pages_router)
 app.include_router(recuperacao_senha_router)
 
 # ======================== 🌐 Rotas HTML diretas ========================
-@app.get("/cadastro-usuario", response_class=HTMLResponse)
+@app.get("/cadastrar-usuario", response_class=HTMLResponse)
 def tela_cadastro(request: Request):
     return templates.TemplateResponse("cd_cadastro_usuario.html", {"request": request})
 
-@app.get("/cadastro-projeto", response_class=HTMLResponse)
-def tela_projeto(request: Request, db: Session = Depends(get_db)):
-    usuario_id = request.session.get("usuario_id")
-    if not usuario_id:
-        return RedirectResponse(url="/login", status_code=302)
-    usuario = db.query(UsuarioSistema).filter(UsuarioSistema.id == usuario_id).first()
-    timeout = 15 * 60  # 15 minutos em segundos
-    now = datetime.utcnow().timestamp()
-    last_active = request.session.get('last_active', now)
-    tempo_restante = int(timeout - (now - last_active))
-    if tempo_restante < 0:
-        tempo_restante = 0
-    return templates.TemplateResponse("pr_cadastro_projeto.html", {
+@app.get("/cadastrar-pessoa-fisica", response_class=HTMLResponse)
+def cadastrar_pessoa_fisica_html(request: Request, db: Session = Depends(get_db)):
+    pjs = db.query(PessoaJuridica).all()
+    trechos = db.query(TrechoEstadualizacao).all()
+    return templates.TemplateResponse("cd_interessado_pf.html", {
         "request": request,
-        "usuario": usuario,
-        "tempo_restante": tempo_restante
+        "pjs": pjs,
+        "trechos": trechos
     })
 
-@app.get("/importar", response_class=HTMLResponse)
-def importar_geometria(request: Request):
-    return templates.TemplateResponse("iv_interface.html", {"request": request})
-
-@app.get("/painel-analista", response_class=HTMLResponse)
-def painel_comum(request: Request, db: Session = Depends(get_db)):
-    usuario_id = request.session.get("usuario_id")
-    if not usuario_id:
-        return RedirectResponse(url="/login", status_code=302)
-    usuario = db.query(UsuarioSistema).filter(UsuarioSistema.id == usuario_id).first()
-    timeout = 15 * 60  # 15 minutos em segundos
-    now = datetime.utcnow().timestamp()
-    last_active = request.session.get('last_active', now)
-    tempo_restante = int(timeout - (now - last_active))
-    if tempo_restante < 0:
-        tempo_restante = 0
-    return templates.TemplateResponse("pn_painel_usuario_comum.html", {
+@app.get("/cadastrar-pessoa-juridica", response_class=HTMLResponse)
+def cadastrar_pessoa_juridica_html(request: Request, db: Session = Depends(get_db)):
+    pfs = db.query(PessoaFisica).all()
+    trechos = db.query(TrechoEstadualizacao).all()
+    return templates.TemplateResponse("cd_interessado_pj.html", {
         "request": request,
-        "usuario": usuario,
-        "tempo_restante": tempo_restante
+        "pfs": pfs,
+        "trechos": trechos
     })
 
-@app.get("/painel-coordenador", response_class=HTMLResponse)
-def painel_adm(request: Request, db: Session = Depends(get_db)):
-    usuario_id = request.session.get("usuario_id")
-    if not usuario_id:
-        return RedirectResponse(url="/login", status_code=302)
-    usuario = db.query(UsuarioSistema).filter(UsuarioSistema.id == usuario_id).first()
-    timeout = 15 * 60  # 15 minutos em segundos
-    now = datetime.utcnow().timestamp()
-    last_active = request.session.get('last_active', now)
-    tempo_restante = int(timeout - (now - last_active))
-    if tempo_restante < 0:
-        tempo_restante = 0
-    return templates.TemplateResponse("pn_painel_usuario_adm.html", {
-        "request": request,
-        "usuario": usuario,
-        "tempo_restante": tempo_restante
-    })
+@app.get("/cadastrar-trecho-rodoviario", response_class=HTMLResponse)
+def cadastrar_trecho_rodoviario_html(request: Request):
+    return templates.TemplateResponse("cd_interessado_trecho.html", {"request": request})
 
-@app.get("/painel-master", response_class=HTMLResponse)
-def painel_master(request: Request, db: Session = Depends(get_db)):
-    usuario_id = request.session.get("usuario_id")
-    if not usuario_id:
-        return RedirectResponse(url="/login", status_code=302)
-    usuario = db.query(UsuarioSistema).filter(UsuarioSistema.id == usuario_id).first()
-    # Tempo restante da sessão
-    timeout = 15 * 60  # 15 minutos em segundos
-    now = datetime.utcnow().timestamp()
-    last_active = request.session.get('last_active', now)
-    tempo_restante = int(timeout - (now - last_active))
-    if tempo_restante < 0:
-        tempo_restante = 0
-    return templates.TemplateResponse("pn_painel_usuario_master.html", {
-        "request": request,
-        "usuario": usuario,
-        "tempo_restante": tempo_restante,
-        "now": datetime.now()
-    })
+@app.get("/cadastrar-rodovia", response_class=HTMLResponse)
+def cadastrar_rodovia_html(request: Request):
+    return templates.TemplateResponse("cd_interessado_rodovia.html", {"request": request})
+
+@app.get("/cadastrar-dispositivo", response_class=HTMLResponse)
+def cadastrar_dispositivo_html(request: Request):
+    return templates.TemplateResponse("cd_interessado_dispositivo.html", {"request": request})
+
+@app.get("/cadastrar-obra-arte", response_class=HTMLResponse)
+def cadastrar_obra_arte_html(request: Request):
+    return templates.TemplateResponse("cd_interessado_obra_arte.html", {"request": request})
 
 # ======================== 🌐 Rota de visualização do Cabeçalho FAD ========================
 @app.get("/cabecalho-fad", response_class=HTMLResponse)

@@ -1,11 +1,14 @@
-from fastapi import APIRouter, HTTPException, Body, Depends
+from fastapi import APIRouter, HTTPException, Body, Depends, Request
 from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.models.cd_rodovia_estadualizacao import RodoviaEstadualizacao
 from datetime import datetime
 import re
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter(tags=['Cadastro de Rodovia'])
+
+templates = Jinja2Templates(directory="app/templates")
 
 def capitalizar_nome(s):
     """Capitaliza nomes próprios, mantendo preposições em minúsculo"""
@@ -160,3 +163,7 @@ def obter_rodovia_por_id(rodovia_id: int, db: Session = Depends(get_db)):
             status_code=500,
             detail=f"Erro ao obter rodovia: {str(e)}"
         )
+
+@router.get("/cadastrar-rodovia")
+def cadastrar_rodovia_html(request: Request):
+    return templates.TemplateResponse("cd_interessado_rodovia.html", {"request": request})

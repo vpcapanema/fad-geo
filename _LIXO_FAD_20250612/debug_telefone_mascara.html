@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>DEBUG - Máscara Telefone Passo a Passo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-container { margin-bottom: 30px; padding: 20px; border: 1px solid #ccc; }
+        .input-container { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { padding: 10px; border: 1px solid #ccc; width: 300px; }
+        .debug-info { 
+            background: #f0f0f0; 
+            padding: 10px; 
+            margin-top: 10px; 
+            font-family: monospace; 
+            font-size: 12px;
+        }
+        .step { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 DEBUG: Máscara de Telefone Passo a Passo</h1>
+    
+    <div class="test-container">
+        <h2>📱 Telefone Pessoal</h2>
+        <div class="input-container">
+            <label for="telefone">Digite números (ex: 11987654321):</label>
+            <input type="text" id="telefone" maxlength="16" />
+        </div>
+        <div class="debug-info" id="debug-pessoal">
+            <div><strong>Debug em tempo real:</strong></div>
+            <div class="step" id="step1-pessoal">1. Valor original: </div>
+            <div class="step" id="step2-pessoal">2. Apenas dígitos: </div>
+            <div class="step" id="step3-pessoal">3. Limitado a 11: </div>
+            <div class="step" id="step4-pessoal">4. Formatação aplicada: </div>
+            <div class="step" id="step5-pessoal">5. Regex testada: </div>
+            <div class="step" id="step6-pessoal">6. Resultado válido: </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🏢 Telefone Institucional</h2>
+        <div class="input-container">
+            <label for="telefone_institucional">Digite números (ex: 1134567890):</label>
+            <input type="text" id="telefone_institucional" maxlength="16" />
+        </div>
+        <div class="debug-info" id="debug-institucional">
+            <div><strong>Debug em tempo real:</strong></div>
+            <div class="step" id="step1-inst">1. Valor original: </div>
+            <div class="step" id="step2-inst">2. Apenas dígitos: </div>
+            <div class="step" id="step3-inst">3. Limitado a 11: </div>
+            <div class="step" id="step4-inst">4. Formatação aplicada: </div>
+            <div class="step" id="step5-inst">5. Regex testada: </div>
+            <div class="step" id="step6-inst">6. Resultado válido: </div>
+        </div>
+    </div>
+
+    <script>
+        // Função de validação mockada
+        window.atualizarValidacaoCampo = function() {};
+
+        // Debug para telefone pessoal
+        const telPessoal = document.getElementById('telefone');
+        if (telPessoal) {
+            telPessoal.addEventListener('input', function(e) {
+                const original = e.target.value;
+                document.getElementById('step1-pessoal').textContent = `1. Valor original: "${original}"`;
+                
+                let v = original.replace(/\D/g, '');
+                document.getElementById('step2-pessoal').textContent = `2. Apenas dígitos: "${v}" (${v.length} caracteres)`;
+                
+                if (v.length > 11) v = v.slice(0, 11);
+                document.getElementById('step3-pessoal').textContent = `3. Limitado a 11: "${v}" (${v.length} caracteres)`;
+                
+                let formatado = '';
+                if (v.length > 10) {
+                    // Celular: (99) 99999-9999
+                    formatado = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                    document.getElementById('step4-pessoal').textContent = `4. Formatação aplicada: "${formatado}" (CELULAR - 11 dígitos)`;
+                } else if (v.length > 6) {
+                    // Fixo: (99) 9999-9999 ou início de celular
+                    formatado = v.replace(/(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
+                    document.getElementById('step4-pessoal').textContent = `4. Formatação aplicada: "${formatado}" (FIXO ou INÍCIO - 7-10 dígitos)`;
+                } else if (v.length > 2) {
+                    formatado = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+                    document.getElementById('step4-pessoal').textContent = `4. Formatação aplicada: "${formatado}" (INÍCIO DDD - 3-6 dígitos)`;
+                } else {
+                    formatado = v.replace(/(\d{0,2})/, '$1');
+                    document.getElementById('step4-pessoal').textContent = `4. Formatação aplicada: "${formatado}" (MUITO POUCO - 0-2 dígitos)`;
+                }
+                
+                e.target.value = formatado;
+                
+                // Teste de validação
+                const regexFixo = /^\(\d{2}\) \d{4}-\d{4}$/;
+                const regexMovel = /^\(\d{2}\) \d{5}-\d{4}$/;
+                
+                const testeFixo = regexFixo.test(formatado);
+                const testeMovel = regexMovel.test(formatado);
+                
+                document.getElementById('step5-pessoal').textContent = 
+                    `5. Regex testada: Fixo=${testeFixo} | Móvel=${testeMovel}`;
+                
+                const valido = testeFixo || testeMovel;
+                document.getElementById('step6-pessoal').textContent = 
+                    `6. Resultado válido: ${valido ? '✅ VÁLIDO' : '❌ INVÁLIDO'}`;
+            });
+        }
+
+        // Debug para telefone institucional
+        const telInst = document.getElementById('telefone_institucional');
+        if (telInst) {
+            telInst.addEventListener('input', function(e) {
+                const original = e.target.value;
+                document.getElementById('step1-inst').textContent = `1. Valor original: "${original}"`;
+                
+                let v = original.replace(/\D/g, '');
+                document.getElementById('step2-inst').textContent = `2. Apenas dígitos: "${v}" (${v.length} caracteres)`;
+                
+                if (v.length > 11) v = v.slice(0, 11);
+                document.getElementById('step3-inst').textContent = `3. Limitado a 11: "${v}" (${v.length} caracteres)`;
+                
+                let formatado = '';
+                if (v.length > 10) {
+                    // Celular: (99) 99999-9999
+                    formatado = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                    document.getElementById('step4-inst').textContent = `4. Formatação aplicada: "${formatado}" (CELULAR - 11 dígitos)`;
+                } else if (v.length > 6) {
+                    // Fixo: (99) 9999-9999 ou início de celular
+                    formatado = v.replace(/(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
+                    document.getElementById('step4-inst').textContent = `4. Formatação aplicada: "${formatado}" (FIXO ou INÍCIO - 7-10 dígitos)`;
+                } else if (v.length > 2) {
+                    formatado = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+                    document.getElementById('step4-inst').textContent = `4. Formatação aplicada: "${formatado}" (INÍCIO DDD - 3-6 dígitos)`;
+                } else {
+                    formatado = v.replace(/(\d{0,2})/, '$1');
+                    document.getElementById('step4-inst').textContent = `4. Formatação aplicada: "${formatado}" (MUITO POUCO - 0-2 dígitos)`;
+                }
+                
+                e.target.value = formatado;
+                
+                // Teste de validação
+                const regexFixo = /^\(\d{2}\) \d{4}-\d{4}$/;
+                const regexMovel = /^\(\d{2}\) \d{5}-\d{4}$/;
+                
+                const testeFixo = regexFixo.test(formatado);
+                const testeMovel = regexMovel.test(formatado);
+                
+                document.getElementById('step5-inst').textContent = 
+                    `5. Regex testada: Fixo=${testeFixo} | Móvel=${testeMovel}`;
+                
+                const valido = testeFixo || testeMovel;
+                document.getElementById('step6-inst').textContent = 
+                    `6. Resultado válido: ${valido ? '✅ VÁLIDO' : '❌ INVÁLIDO'}`;
+            });
+        }
+    </script>
+</body>
+</html>

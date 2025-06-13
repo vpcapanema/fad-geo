@@ -1,19 +1,39 @@
-from fastapi import APIRouter, Request, Form, Depends, HTTPException
+from fastapi import APIRouter, Request, Form, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import text
 from app.database.session import get_db
 from app.core.jinja import templates
 from app.models.cd_usuario_sistema import UsuarioSistema
+        
 from app.models.cd_pessoa_fisica import PessoaFisica
 from app.schemas.usuario import UsuarioCreate
 from passlib.hash import bcrypt
 import re
-from fastapi import Request
 import logging
+import os
+import pdfkit
+import asyncio
 
 # Configuração básica de logging para debug detalhado
 logging.basicConfig(level=logging.INFO, format='[FAD DEBUG] %(asctime)s %(levelname)s %(message)s')
+
+def limpar_formatacao_telefone(telefone):
+    """
+    Remove toda formatação de telefone, mantendo apenas números
+    """
+    if not telefone:
+        return None
+    return re.sub(r"[^\d]", "", str(telefone))
+
+def limpar_formatacao_cpf(cpf):
+    """
+    Remove toda formatação de CPF, mantendo apenas números
+    """
+    if not cpf:
+        return None
+    return re.sub(r"[^\d]", "", str(cpf))
 
 def log_requisicao(request: Request, etapa: str, info_extra: str = ""):
     logging.info(f"{etapa} | {request.method} {request.url.path} | IP: {request.client.host} | {info_extra}")
@@ -22,390 +42,6 @@ def log_requisicao(request: Request, etapa: str, info_extra: str = ""):
 router = APIRouter(
     tags=['Cadastro de Usuário']
 )
-
-# ===============================
-# Formulário de Cadastro de Usuário
-# ===============================
-@router.get("/cadastrar-usuario", response_class=HTMLResponse)
-def form_cadastro_usuario(request: Request, db: Session = Depends(get_db)):
-    pfs = db.query(PessoaFisica).order_by(PessoaFisica.nome).all()
-    return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-        "request": request,
-        "pfs": pfs
-    })
-
-# ===============================
-# Cadastro de novo usuário
-# ===============================
-@router.post("/cadastrar-usuario", response_class=HTMLResponse)
-def cadastrar_usuario(
-    request: Request,
-    nome: str = Form(...),
-    cpf: str = Form(...),
-    email: str = Form(...),
-    telefone: str = Form(...),
-    senha: str = Form(...),
-    confirmar_senha: str = Form(...),
-    tipo: str = Form(...),
-    pessoa_fisica_id: int = Form(...),
-    instituicao: str = Form(None),
-    tipo_lotacao: str = Form(None),
-    email_institucional: str = Form(None),
-    telefone_institucional: str = Form(None),
-    ramal: str = Form(None),
-    sede_hierarquia: str = Form(None),
-    sede_coordenadoria: str = Form(None),
-    sede_setor: str = Form(None),
-    sede_assistencia: str = Form(None),
-    regional_nome: str = Form(None),
-    regional_coordenadoria: str = Form(None),
-    regional_setor: str = Form(None),
-    db: Session = Depends(get_db)
-):
-    pfs = db.query(PessoaFisica).order_by(PessoaFisica.nome).all()
-
-    log_requisicao(request, "INÍCIO", "Dados recebidos para cadastro")
-
-    # Verifica se o tipo de usuário é 'master', caso seja, não permitir o cadastro via interface
-    if tipo == "master":
-        log_requisicao(request, "FIM", "Tentativa de cadastro com tipo 'master'")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ O tipo de usuário 'master' só pode ser criado diretamente pela equipe técnica da FAD."
-        })
-
-    # Verifica se as senhas são iguais
-    if senha != confirmar_senha:
-        log_requisicao(request, "FIM", "Senhas não coincidem")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ As senhas não coincidem."
-        })
-
-    # Normaliza o CPF, removendo caracteres não numéricos
-    cpf_limpo = re.sub(r"\D", "", cpf)
-
-    # Verifica se já existe um usuário com a mesma combinação de CPF e tipo
-    usuario_existente = db.query(UsuarioSistema).filter(
-        UsuarioSistema.cpf == cpf_limpo,
-        UsuarioSistema.tipo == tipo
-    ).first()
-
-    if usuario_existente:
-        log_requisicao(request, "FIM", "Usuário já cadastrado com este CPF e tipo")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ Usuário já cadastrado com este CPF para este tipo."
-        })
-
-    # Verifica se o CPF já está associado a outros tipos de usuário
-    usuario_com_outra_categoria = db.query(UsuarioSistema).filter(UsuarioSistema.cpf == cpf_limpo).all()
-    if len(usuario_com_outra_categoria) >= 3:
-        log_requisicao(request, "FIM", "CPF já cadastrado para os três tipos de usuários")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ Este CPF já está cadastrado para os três tipos de usuários."
-        })
-        
-    # Validações adicionais de formato e obrigatoriedade
-    obrigatorios = [nome, cpf, email, telefone, senha, confirmar_senha, tipo, pessoa_fisica_id, instituicao, tipo_lotacao, email_institucional, telefone_institucional, ramal, sede_hierarquia, sede_coordenadoria, sede_setor, sede_assistencia, regional_nome, regional_coordenadoria, regional_setor]
-    if any(x is None or str(x).strip() == '' for x in obrigatorios):
-        log_requisicao(request, "FIM", "Campos obrigatórios não preenchidos")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ Todos os campos são obrigatórios. Preencha todos corretamente."
-        })
-    email_regex = r"^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$"
-    telefone_regex = r"^\(\d{2}\) \d{4,5}-\d{4}$"
-    cpf_regex = r"^\d{11}$"
-    ramal_regex = r"^\d{4,10}$"
-    if not re.match(email_regex, email):
-        log_requisicao(request, "FIM", "E-mail pessoal inválido")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ E-mail pessoal inválido."
-        })
-    if not re.match(email_regex, email_institucional):
-        log_requisicao(request, "FIM", "E-mail institucional inválido")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ E-mail institucional inválido."
-        })
-    if not re.match(telefone_regex, telefone):
-        log_requisicao(request, "FIM", "Telefone pessoal inválido")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ Telefone pessoal inválido. Use o formato (XX) XXXXX-XXXX."
-        })
-    if not re.match(telefone_regex, telefone_institucional):
-        log_requisicao(request, "FIM", "Telefone institucional inválido")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ Telefone institucional inválido. Use o formato (XX) XXXXX-XXXX."
-        })
-    if not re.match(cpf_regex, re.sub(r"\D", "", cpf)):
-        log_requisicao(request, "FIM", "CPF inválido")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ CPF inválido."
-        })
-    if not re.match(ramal_regex, ramal):
-        log_requisicao(request, "FIM", "Ramal inválido")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ Ramal inválido. Deve conter ao menos 4 dígitos."
-        })
-
-    # Criação do novo usuário
-    novo_usuario = UsuarioSistema(
-        nome=nome,
-        cpf=cpf_limpo,
-        email=email,
-        telefone=telefone,
-        senha_hash=bcrypt.hash(senha),
-        tipo=tipo,
-        pessoa_fisica_id=pessoa_fisica_id,
-        status="aguardando_aprovacao",
-        ativo=False,
-        instituicao=instituicao,
-        tipo_lotacao=tipo_lotacao,
-        email_institucional=email_institucional,
-        telefone_institucional=telefone_institucional,
-        ramal=ramal,
-        sede_hierarquia=sede_hierarquia,
-        sede_coordenadoria=sede_coordenadoria,
-        sede_setor=sede_setor,
-        sede_assistencia=sede_assistencia,
-        regional_nome=regional_nome,
-        regional_coordenadoria=regional_coordenadoria,
-        regional_setor=regional_setor
-    )
-    db.add(novo_usuario)
-
-    try:
-        db.commit()
-        log_requisicao(request, "FIM", "Usuário cadastrado com sucesso")
-        db.refresh(novo_usuario)
-
-        # Buscar dados completos do usuário e pessoa física
-        usuario = db.query(UsuarioSistema).filter(UsuarioSistema.id == novo_usuario.id).first()
-        pessoa_fisica = db.query(PessoaFisica).filter(PessoaFisica.id == usuario.pessoa_fisica_id).first()
-
-        # Renderizar template HTML
-        from datetime import datetime
-        from app.core.jinja import templates as jinja_templates
-        html_content = jinja_templates.get_template("formularios_cadastro_usuarios/cadastro_usuario_template.html").render(
-            usuario=usuario,
-            pessoa_fisica=pessoa_fisica,
-            data_geracao=datetime.now(),
-            request=request
-        )
-
-        # Salvar HTML
-        import os
-        base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "formularios_cadastro")
-        os.makedirs(base_dir, exist_ok=True)
-        pasta_usuario = f"usuario_{usuario.id:04d}_{datetime.now().strftime('%Y%m%d')}"
-        caminho_pasta = os.path.join(base_dir, pasta_usuario)
-        os.makedirs(caminho_pasta, exist_ok=True)
-        nome_arquivo_html = f"cadastro_usuario_{usuario.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_v1.html"
-        caminho_html = os.path.join(caminho_pasta, nome_arquivo_html)
-        with open(caminho_html, "w", encoding="utf-8") as f:
-            f.write(html_content)        # Converter HTML para PDF
-        # Tenta primeiro com pdfkit (se wkhtmltopdf estiver instalado)
-        # Senão, usa reportlab como alternativa
-        import pdfkit
-        nome_arquivo_pdf = nome_arquivo_html.replace('.html', '.pdf')
-        caminho_pdf = os.path.join(caminho_pasta, nome_arquivo_pdf)
-        
-        pdf_gerado = False
-        
-        try:
-            # Tenta gerar PDF com pdfkit/wkhtmltopdf
-            pdfkit.from_file(caminho_html, caminho_pdf)
-            pdf_gerado = True
-            print(f"✅ PDF gerado com wkhtmltopdf: {caminho_pdf}")
-        except Exception as e:
-            print(f"⚠️  wkhtmltopdf falhou: {e}")
-            print("🔄 Tentando com reportlab...")
-            
-            # Fallback: usa reportlab
-            from app.services.email_service import gerar_comprovante_cadastro_pdf_reportlab
-            
-            dados_para_pdf = {
-                'nome': usuario.nome,
-                'cpf': usuario.cpf,
-                'tipo': usuario.tipo,
-                'email': usuario.email,
-                'email_institucional': usuario.email_institucional,
-                'telefone': usuario.telefone,
-                'telefone_institucional': usuario.telefone_institucional,
-                'instituicao': usuario.instituicao,
-                'ramal': usuario.ramal,
-                'tipo_lotacao': usuario.tipo_lotacao,
-                'status': 'Cadastrado - Aguardando Aprovação'
-            }
-            
-            # Adiciona dados específicos de sede/regional conforme o tipo
-            if usuario.tipo_lotacao == 'sede' and hasattr(usuario, 'sede_hierarquia'):
-                dados_para_pdf.update({
-                    'sede_hierarquia': usuario.sede_hierarquia,
-                    'sede_coordenadoria': usuario.sede_coordenadoria,
-                    'sede_setor': usuario.sede_setor
-                })
-            elif usuario.tipo_lotacao == 'regional' and hasattr(usuario, 'regional_nome'):
-                dados_para_pdf.update({
-                    'regional_nome': usuario.regional_nome,
-                    'regional_coordenadoria': usuario.regional_coordenadoria,
-                    'regional_setor': usuario.regional_setor
-                })
-            
-            pdf_gerado = gerar_comprovante_cadastro_pdf_reportlab(dados_para_pdf, caminho_pdf)
-            
-            if pdf_gerado:
-                print(f"✅ PDF gerado com reportlab: {caminho_pdf}")
-            else:
-                print("❌ Falha ao gerar PDF com reportlab")
-        
-        # Só continua se o PDF foi gerado com sucesso
-        if not pdf_gerado:
-            raise HTTPException(
-                status_code=500, 
-                detail="Erro ao gerar comprovante PDF. Entre em contato com o suporte."
-            )# Enviar e-mail com PDF em anexo usando o serviço configurado
-        from app.services.email_service import email_service
-        
-        # Prepara o email de confirmação
-        email_enviado = email_service.enviar_email_confirmacao_cadastro(
-            destinatario_email=usuario.email_institucional,
-            destinatario_nome=usuario.nome,
-            comprovante_pdf_path=caminho_pdf,
-            dados_cadastro={
-                'nome': usuario.nome,
-                'cpf': usuario.cpf,
-                'tipo': usuario.tipo,
-                'email_institucional': usuario.email_institucional,
-                'instituicao': usuario.instituicao,
-                'status': 'Cadastrado - Aguardando Aprovação'
-            },
-            ip_origem=request.client.host,
-            user_agent=request.headers.get("user-agent", "Desconhecido")
-        )
-          # Define data de envio baseada no sucesso
-        if email_enviado:
-            data_envio_email = datetime.now()
-        else:
-            data_envio_email = None
-            logging.warning("Falha no envio do email de confirmação de cadastro")
-
-        # Registrar na tabela de controle
-        db.execute(
-            """
-            INSERT INTO formularios_usuario (usuario_id, arquivo_nome, caminho_completo, data_geracao, versao, ativo, tamanho_arquivo, status, data_envio_email)
-            VALUES (:usuario_id, :arquivo_nome, :caminho_completo, :data_geracao, :versao, :ativo, :tamanho_arquivo, :status, :data_envio_email)
-            """,
-            {
-                'usuario_id': usuario.id,
-                'arquivo_nome': nome_arquivo_pdf,
-                'caminho_completo': caminho_pdf,
-                'data_geracao': datetime.now(),
-                'versao': 1,
-                'ativo': True,
-                'tamanho_arquivo': os.path.getsize(caminho_pdf),
-                'status': 'ativo',
-                'data_envio_email': data_envio_email
-            }
-        )
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        log_requisicao(request, "FIM", "Erro ao cadastrar usuário: CPF/tipo duplicado")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": "❌ Erro ao cadastrar: já existe um usuário com este CPF e tipo."
-        })
-    except Exception as e:
-        db.rollback()
-        log_requisicao(request, "FIM", f"Erro geral: {e}")
-        return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-            "request": request,
-            "pfs": pfs,
-            "mensagem_erro": f"❌ Erro ao gerar comprovante: {e}"
-        })
-
-    return templates.TemplateResponse("cd_cadastro_usuario_sistema.html", {
-        "request": request,
-        "pfs": pfs,
-        "mensagem_sucesso": "✅ Usuário cadastrado com sucesso. Comprovante enviado por e-mail.",
-        "mostrar_botao_voltar": True
-    })
-
-# ===============================
-# Edição de Usuário
-# ===============================
-@router.put("/{usuario_id}", response_class=JSONResponse)
-def editar_usuario(
-    usuario_id: int,
-    dados: UsuarioCreate,
-    db: Session = Depends(get_db)
-):
-    usuario = db.query(UsuarioSistema).filter(UsuarioSistema.id == usuario_id).first()
-    if not usuario:
-        return JSONResponse(status_code=404, content={"detail": "Usuário não encontrado."})
-
-    # Atualiza todos os campos recebidos
-    usuario.nome = dados.nome
-    usuario.cpf = re.sub(r"\D", "", dados.cpf)
-    usuario.email = dados.email
-    usuario.telefone = dados.telefone
-    usuario.tipo = dados.tipo
-    usuario.pessoa_fisica_id = dados.pessoa_fisica_id
-    usuario.instituicao = dados.instituicao
-    usuario.tipo_lotacao = dados.tipo_lotacao
-    usuario.email_institucional = dados.email_institucional
-    usuario.telefone_institucional = dados.telefone_institucional
-    usuario.ramal = dados.ramal
-    usuario.sede_hierarquia = dados.sede_hierarquia
-    usuario.sede_coordenadoria = dados.sede_coordenadoria
-    usuario.sede_setor = dados.sede_setor
-    usuario.sede_assistencia = dados.sede_assistencia
-    usuario.regional_nome = dados.regional_nome
-    usuario.regional_coordenadoria = dados.regional_coordenadoria
-    usuario.regional_setor = dados.regional_setor
-    # Atualiza senha se enviada
-    if dados.senha:
-        usuario.senha_hash = bcrypt.hash(dados.senha)
-    try:
-        db.commit()
-        db.refresh(usuario)
-    except IntegrityError:
-        db.rollback()
-        return JSONResponse(status_code=400, content={"detail": "Erro de integridade ao atualizar usuário (CPF/tipo duplicado?)"})
-    return {"msg": "Usuário atualizado com sucesso", "id": usuario.id}
-
-# ===============================
-# Verificação de Duplicidade de Perfil
-# ===============================
-@router.get("/verificar-duplicidade")
-def verificar_duplicidade_perfil(cpf: str, tipo: str, db: Session = Depends(get_db)):
-    cpf_limpo = re.sub(r"\D", "", cpf)
-    existe = db.query(UsuarioSistema).filter(
-        UsuarioSistema.cpf == cpf_limpo,
-        UsuarioSistema.tipo == tipo
-    ).first()
-    return {"duplicado": bool(existe)}
 
 # ===============================
 # Endpoint JSON para cadastro via JavaScript
@@ -428,10 +64,19 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
                 detail="O tipo de usuário 'master' só pode ser criado pela equipe técnica da FAD."
             )
         
-        # Normaliza o CPF
-        cpf_limpo = re.sub(r"\D", "", usuario_data.cpf)
+        # ✅ LIMPEZA DE FORMATAÇÃO - CPF e TELEFONES
+        cpf_limpo = limpar_formatacao_cpf(usuario_data.cpf)
+        telefone_pessoal_limpo = limpar_formatacao_telefone(usuario_data.telefone)
+        telefone_institucional_limpo = limpar_formatacao_telefone(usuario_data.telefone_institucional)
         
-        # Verifica duplicidade
+        # Log para debug
+        logging.info(f"🔍 Limpeza de dados:")
+        logging.info(f"  CPF original: '{usuario_data.cpf}' -> limpo: '{cpf_limpo}'")
+        logging.info(f"  Tel. pessoal original: '{usuario_data.telefone}' -> limpo: '{telefone_pessoal_limpo}'")
+        logging.info(f"  Tel. institucional original: '{usuario_data.telefone_institucional}' -> limpo: '{telefone_institucional_limpo}'")
+        
+        # ✅ VALIDAÇÃO DE UNICIDADE: CPF + TIPO
+        # Verifica se já existe um usuário com a mesma combinação de CPF e tipo
         usuario_existente = db.query(UsuarioSistema).filter(
             UsuarioSistema.cpf == cpf_limpo,
             UsuarioSistema.tipo == usuario_data.tipo
@@ -443,49 +88,64 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
                 detail=f"Já existe um usuário {usuario_data.tipo} cadastrado com este CPF."
             )
         
-        # Validações de formato
+        # ✅ VALIDAÇÃO DE LIMITE: Máximo 3 tipos por CPF (master, coordenador, analista)
+        usuarios_mesmo_cpf = db.query(UsuarioSistema).filter(UsuarioSistema.cpf == cpf_limpo).all()
+        if len(usuarios_mesmo_cpf) >= 3:
+            tipos_existentes = [u.tipo for u in usuarios_mesmo_cpf]
+            logging.info(f"🔍 CPF {cpf_limpo} já possui {len(usuarios_mesmo_cpf)} usuários: {tipos_existentes}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Este CPF já está cadastrado para os três tipos de usuário permitidos: {', '.join(tipos_existentes)}."
+            )
+        
+        # Validações de formato usando dados limpos
         email_regex = r"^[\w\.-]+@[\w\.-]+\.\w{2,}$"
-        telefone_regex = r"^\(\d{2}\) \d{4,5}-\d{4}$"
+        telefone_regex = r"^\d{10,11}$"
         cpf_regex = r"^\d{11}$"
         ramal_regex = r"^\d{4,}$"
         
+        # Validação obrigatória: email pessoal
         if not re.match(email_regex, usuario_data.email):
             raise HTTPException(status_code=400, detail="E-mail pessoal inválido.")
         
-        if not re.match(email_regex, usuario_data.email_institucional):
-            raise HTTPException(status_code=400, detail="E-mail institucional inválido.")
-            
-        if not re.match(telefone_regex, usuario_data.telefone):
-            raise HTTPException(status_code=400, detail="Telefone pessoal inválido.")
-            
-        if not re.match(telefone_regex, usuario_data.telefone_institucional):
-            raise HTTPException(status_code=400, detail="Telefone institucional inválido.")
-            
+        # Validação obrigatória: CPF (agora usando dados limpos)
         if not re.match(cpf_regex, cpf_limpo):
             raise HTTPException(status_code=400, detail="CPF inválido.")
+        
+        # Validações opcionais - apenas se campos estiverem preenchidos
+        if usuario_data.email_institucional and not re.match(email_regex, usuario_data.email_institucional):
+            raise HTTPException(status_code=400, detail="E-mail institucional inválido.")
+        
+        # ✅ Validação de telefones usando dados limpos    
+        if telefone_pessoal_limpo and not re.match(telefone_regex, telefone_pessoal_limpo):
+            raise HTTPException(status_code=400, detail="Telefone pessoal inválido. Deve conter 10 ou 11 dígitos.")
             
-        if not re.match(ramal_regex, usuario_data.ramal):
+        if telefone_institucional_limpo and not re.match(telefone_regex, telefone_institucional_limpo):
+            raise HTTPException(status_code=400, detail="Telefone institucional inválido. Deve conter 10 ou 11 dígitos.")
+            
+        if usuario_data.ramal and not re.match(ramal_regex, usuario_data.ramal):
             raise HTTPException(status_code=400, detail="Ramal inválido.")
         
-        # Criação do novo usuário
+        # ✅ Criação do novo usuário com dados limpos
         novo_usuario = UsuarioSistema(
             nome=usuario_data.nome,
-            cpf=cpf_limpo,
+            cpf=cpf_limpo,  # ✅ CPF sem formatação
             email=usuario_data.email,
-            telefone=usuario_data.telefone,
+            telefone=telefone_pessoal_limpo,  # ✅ Telefone sem formatação
             senha_hash=bcrypt.hash(usuario_data.senha),
             tipo=usuario_data.tipo,
             pessoa_fisica_id=getattr(usuario_data, 'pessoa_fisica_id', None),
-            status="aguardando_aprovacao",
+            status="aguardando aprovação",
             ativo=False,
             instituicao=usuario_data.instituicao,
             tipo_lotacao=usuario_data.tipo_lotacao,
             email_institucional=usuario_data.email_institucional,
-            telefone_institucional=usuario_data.telefone_institucional,
+            telefone_institucional=telefone_institucional_limpo,  # ✅ Telefone sem formatação
             ramal=usuario_data.ramal,
             sede_hierarquia=getattr(usuario_data, 'sede_hierarquia', None),
-            sede_coordenadoria=getattr(usuario_data, 'sede_coordenadoria', None),
-            sede_setor=getattr(usuario_data, 'sede_setor', None),
+            sede_assistencia_direta=getattr(usuario_data, 'sede_assistencia_direta', None),
+            sede_diretoria=usuario_data.sede_diretoria,
+            sede_coordenadoria_geral=usuario_data.sede_coordenadoria_geral,            sede_coordenadoria=getattr(usuario_data, 'sede_coordenadoria', None),
             sede_assistencia=getattr(usuario_data, 'sede_assistencia', None),
             regional_nome=getattr(usuario_data, 'regional_nome', None),
             regional_coordenadoria=getattr(usuario_data, 'regional_coordenadoria', None),
@@ -495,97 +155,183 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
         db.add(novo_usuario)
         db.commit()
         db.refresh(novo_usuario)
+        logging.info(f"✅ Usuário criado com ID {novo_usuario.id} - dados salvos no banco:")
+        logging.info(f"  CPF no banco: '{novo_usuario.cpf}'")
+        logging.info(f"  Tel. pessoal no banco: '{novo_usuario.telefone}'")
+        logging.info(f"  Tel. institucional no banco: '{novo_usuario.telefone_institucional}'")        # ✅ GERAÇÃO DO FORMULÁRIO HTML COM SISTEMA DE VERSIONAMENTO
+        from app.services.formulario_service import formulario_service
         
-        # Geração do comprovante HTML
-        pessoa_fisica = db.query(PessoaFisica).filter(PessoaFisica.id == novo_usuario.pessoa_fisica_id).first() if novo_usuario.pessoa_fisica_id else None
+        # Inicializa variáveis para garantir que estejam sempre disponíveis
+        formulario_html = None
+        caminho_html = None
         
-        html_content = f"""
-        <!DOCTYPE html>
-        <html>
-        <head><title>Comprovante de Cadastro</title></head>
-        <body>
-            <h1>FAD - Comprovante de Cadastro</h1>
-            <h2>Dados do Usuário</h2>
-            <p><strong>Nome:</strong> {novo_usuario.nome}</p>
-            <p><strong>CPF:</strong> {novo_usuario.cpf}</p>
-            <p><strong>Tipo:</strong> {novo_usuario.tipo}</p>
-            <p><strong>Email:</strong> {novo_usuario.email}</p>
-            <p><strong>Email Institucional:</strong> {novo_usuario.email_institucional}</p>
-            <p><strong>Telefone:</strong> {novo_usuario.telefone}</p>
-            <p><strong>Instituição:</strong> {novo_usuario.instituicao}</p>
-            <p><strong>Status:</strong> Aguardando Aprovação</p>
-            <p><strong>Data/Hora:</strong> {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
-        </body>
-        </html>
-        """
+        try:
+            logging.info(f"🔧 Iniciando geração de formulário HTML para usuário {novo_usuario.id} tipo {novo_usuario.tipo}")
+            logging.info(f"🔧 Dados do usuário para formulário:")
+            logging.info(f"   Nome: {novo_usuario.nome}")
+            logging.info(f"   Email: {novo_usuario.email}")
+            logging.info(f"   Tipo: {novo_usuario.tipo}")
+            logging.info(f"   Instituição: {novo_usuario.instituicao}")
+              # Gera formulário HTML baseado no template com dados do banco
+            # Nova implementação: retorna diretamente o caminho do arquivo salvo
+            formulario_html = formulario_service.gerar_formulario_html(db, novo_usuario.id)
+            
+            logging.info(f"🔧 Retorno do FormularioService: {formulario_html}")
+            logging.info(f"🔧 Tipo do retorno: {type(formulario_html)}")
+            
+            # Verificações de segurança
+            if formulario_html is None:
+                raise Exception("FormularioService retornou None - falha na geração")
+                
+            if not isinstance(formulario_html, str):
+                raise Exception(f"FormularioService retornou tipo inválido: {type(formulario_html)}")
+                
+            if not formulario_html.strip():
+                raise Exception("FormularioService retornou string vazia")
+                
+            # Converte para Path e verifica existência
+            from pathlib import Path
+            arquivo_formulario = Path(formulario_html)
+            
+            if not arquivo_formulario.exists():
+                raise Exception(f"Arquivo do formulário não foi criado: {formulario_html}")
+                
+            if not arquivo_formulario.is_file():
+                raise Exception(f"Caminho não é um arquivo válido: {formulario_html}")
+                
+            tamanho_arquivo = arquivo_formulario.stat().st_size
+            if tamanho_arquivo == 0:
+                raise Exception(f"Arquivo do formulário está vazio: {formulario_html}")
+                
+            logging.info(f"✅ Formulário HTML gerado com sucesso:")
+            logging.info(f"   📁 Caminho: {formulario_html}")
+            logging.info(f"   📄 Tamanho: {tamanho_arquivo} bytes")
+            logging.info(f"   ✓ Arquivo existe e é válido")
+            
+            # Usa o formulário HTML gerado como base para o PDF
+            caminho_html = formulario_html
+            
+        except Exception as e:
+            logging.error(f"❌ ERRO DETALHADO na geração do formulário HTML:")
+            logging.error(f"   Erro: {e}")
+            logging.error(f"   Tipo do erro: {type(e)}")
+            logging.error(f"   Usuário ID: {novo_usuario.id}")
+            logging.error(f"   formulario_html recebido: {formulario_html}")
+            
+            import traceback
+            logging.error(f"   Traceback completo:")
+            for linha in traceback.format_exc().split('\n'):
+                if linha.strip():
+                    logging.error(f"     {linha}")
+                      # Define formulario_html como None para evitar problemas downstream
+            formulario_html = None
+            
+            # NÃO FALHA O PROCESSO - continua sem o formulário HTML
+            logging.warning("⚠️ Continuando processo sem formulário HTML...")
+            
+            # Define caminho_html como None para evitar erro na geração do PDF
+            caminho_html = None
         
-        # Criação de diretórios
-        base_dir = os.path.join("downloads", "usuarios", "comprovantes_cadastro")
-        os.makedirs(base_dir, exist_ok=True)
-        pasta_usuario = f"usuario_{novo_usuario.id:04d}_{datetime.now().strftime('%Y%m%d')}"
-        caminho_pasta = os.path.join(base_dir, pasta_usuario)
-        os.makedirs(caminho_pasta, exist_ok=True)
-        
-        # Gera HTML temporário
-        nome_arquivo_html = f"cadastro_usuario_{novo_usuario.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_v1.html"
-        caminho_html = os.path.join(caminho_pasta, nome_arquivo_html)
-        with open(caminho_html, "w", encoding="utf-8") as f:
-            f.write(html_content)
-        
-        # Gera PDF
+        # Configuração do diretório de PDF: mesmo diretório do formulário HTML
+        dir_html = os.path.dirname(caminho_html) if caminho_html else os.getcwd()
+        os.makedirs(dir_html, exist_ok=True)
+        # Nome do arquivo PDF baseado no formulário HTML
+        nome_arquivo_html = os.path.basename(formulario_html) if formulario_html else f"cadastro_usuario_{novo_usuario.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_v1.html"
         nome_arquivo_pdf = nome_arquivo_html.replace('.html', '.pdf')
-        caminho_pdf = os.path.join(caminho_pasta, nome_arquivo_pdf)
+        # Gera PDF no mesmo diretório do HTML
+        caminho_pdf = os.path.join(dir_html, nome_arquivo_pdf)
         
         pdf_gerado = False
         
         try:
             # Tenta gerar PDF com pdfkit/wkhtmltopdf
             import pdfkit
-            pdfkit.from_file(caminho_html, caminho_pdf)
-            pdf_gerado = True
-            print(f"✅ PDF gerado com wkhtmltopdf: {caminho_pdf}")
-        except Exception as e:
-            print(f"⚠️  wkhtmltopdf falhou: {e}")
-            print("🔄 Tentando com reportlab...")
             
-            # Fallback: usa reportlab
-            from app.services.email_service import gerar_comprovante_cadastro_pdf_reportlab
+            # ========================================
+            # CONFIGURAÇÃO OTIMIZADA PARA FIDELIDADE VISUAL
+            # ========================================
             
-            dados_para_pdf = {
-                'nome': novo_usuario.nome,
-                'cpf': novo_usuario.cpf,
-                'tipo': novo_usuario.tipo,
-                'email': novo_usuario.email,
-                'email_institucional': novo_usuario.email_institucional,
-                'telefone': novo_usuario.telefone,
-                'telefone_institucional': novo_usuario.telefone_institucional,
-                'instituicao': novo_usuario.instituicao,
-                'ramal': novo_usuario.ramal,
-                'tipo_lotacao': novo_usuario.tipo_lotacao,
-                'status': 'Cadastrado - Aguardando Aprovação'
+            # Configuração específica do wkhtmltopdf (se disponível)
+            config = pdfkit.configuration()  # Pode especificar caminho se necessário
+            
+            # Opções avançadas para máxima fidelidade visual
+            options = {
+                # === CONFIGURAÇÕES DE PÁGINA ===
+                'page-size': 'A4',
+                'orientation': 'Portrait',
+                'margin-top': '10mm',
+                'margin-right': '10mm', 
+                'margin-bottom': '10mm',
+                'margin-left': '10mm',
+                
+                # === RENDERIZAÇÃO E QUALIDADE ===
+                'dpi': 300,  # Alta resolução para texto nítido
+                'image-dpi': 300,  # Resolução alta para imagens
+                'image-quality': 100,  # Qualidade máxima de imagem
+                'print-media-type': None,  # Usa media print CSS
+                'disable-smart-shrinking': None,  # Evita redimensionamento automático
+                'zoom': 1.0,  # Zoom 100% para fidelidade exata
+                
+                # === FONTS E TEXTO ===
+                'encoding': 'UTF-8',
+                'minimum-font-size': 8,  # Mínimo para legibilidade
+                
+                # === JAVASCRIPT E CSS ===
+                'enable-javascript': None,  # Habilita JS para renderização dinâmica
+                'javascript-delay': 1000,  # Aguarda 1s para JS executar
+                'no-stop-slow-scripts': None,  # Não para scripts lentos
+                'debug-javascript': None,  # Debug de JS se necessário
+                
+                # === RECURSOS EXTERNOS ===
+                'enable-local-file-access': None,  # Acesso a arquivos locais (CSS, imagens)
+                'load-error-handling': 'ignore',  # Ignora erros de carregamento
+                'load-media-error-handling': 'ignore',  # Ignora erros de mídia
+                
+                # === FORMATAÇÃO ===
+                'disable-external-links': None,  # Remove links externos no PDF
+                'no-outline': None,  # Remove outline/bookmark automático
+                'quiet': None,  # Execução silenciosa
+                
+                # === CACHE E PERFORMANCE ===
+                'cache-dir': None,  # Desabilita cache para consistência
+                'cookie-jar': None,  # Sem cookies
+                
+                # === RENDERIZAÇÃO AVANÇADA ===
+                'viewport-size': '1280x1024',  # Viewport consistente
+                'user-style-sheet': None,  # Sem CSS adicional
+                'custom-header': [
+                    ('Accept-Encoding', 'gzip')
+                ],
+                
+                # === DEBUGGING (remover em produção) ===
+                # 'debug': None,  # Comentado para produção
             }
             
-            # Adiciona dados específicos conforme o tipo de lotação
-            if novo_usuario.tipo_lotacao == 'sede':
-                dados_para_pdf.update({
-                    'sede_hierarquia': novo_usuario.sede_hierarquia,
-                    'sede_coordenadoria': novo_usuario.sede_coordenadoria,
-                    'sede_setor': novo_usuario.sede_setor
-                })
-            elif novo_usuario.tipo_lotacao == 'regional':
-                dados_para_pdf.update({
-                    'regional_nome': novo_usuario.regional_nome,
-                    'regional_coordenadoria': novo_usuario.regional_coordenadoria,
-                    'regional_setor': novo_usuario.regional_setor
-                })
+            # Geração do PDF com configuração otimizada
+            pdfkit.from_file(caminho_html, caminho_pdf, options=options, configuration=config)
+            pdf_gerado = True
+            logging.info(f"✅ PDF gerado com wkhtmltopdf (configuração otimizada): {caminho_pdf}")
             
-            pdf_gerado = gerar_comprovante_cadastro_pdf_reportlab(dados_para_pdf, caminho_pdf)
-            
-            if pdf_gerado:
-                print(f"✅ PDF gerado com reportlab: {caminho_pdf}")
+            # Verifica tamanho do arquivo gerado
+            if os.path.exists(caminho_pdf):
+                tamanho_pdf = os.path.getsize(caminho_pdf)
+                logging.info(f"📏 Tamanho do PDF: {tamanho_pdf:,} bytes")
             else:
-                print("❌ Falha ao gerar PDF com reportlab")
-        
+                raise Exception("PDF não foi criado pelo wkhtmltopdf")
+                
+        except Exception as e:
+            logging.warning(f"⚠️  wkhtmltopdf falhou (tentativa otimizada): {e}")
+            logging.info("🔄 Tentando com html2pdf...")
+            
+            # Fallback: usa html2pdf
+            from app.services.email_service import gerar_comprovante_cadastro_pdf_html2pdf
+            
+            # Gera PDF a partir do HTML já renderizado
+            pdf_gerado = gerar_comprovante_cadastro_pdf_html2pdf(caminho_html, caminho_pdf)
+            if pdf_gerado:
+                logging.info(f"✅ PDF gerado com html2pdf: {caminho_pdf}")
+            else:
+                logging.error("❌ Falha ao gerar PDF com html2pdf")
         if not pdf_gerado:
             raise HTTPException(
                 status_code=500, 
@@ -596,7 +342,7 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
         from app.services.email_service import email_service
         
         email_enviado = email_service.enviar_email_confirmacao_cadastro(
-            destinatario_email=novo_usuario.email_institucional,
+            destinatario_email=novo_usuario.email_institucional or novo_usuario.email,
             destinatario_nome=novo_usuario.nome,
             comprovante_pdf_path=caminho_pdf,
             dados_cadastro={
@@ -611,32 +357,79 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
             user_agent=request.headers.get("user-agent", "Desconhecido")
         )
         
-        # Registra na tabela de controle
-        data_envio_email = datetime.now() if email_enviado else None
+        # Registra o formulário HTML na tabela de controle
+        try:
+            # Registra o formulário HTML gerado
+            db.execute(
+                text("""
+                INSERT INTO formularios_usuario (
+                    usuario_id, arquivo_nome, caminho_completo, data_geracao, 
+                    versao, ativo, tamanho_arquivo, status, data_envio_email,
+                    hash_conteudo, observacoes
+                )
+                VALUES (
+                    :usuario_id, :arquivo_nome, :caminho_completo, :data_geracao, 
+                    :versao, :ativo, :tamanho_arquivo, :status, :data_envio_email,
+                    :hash_conteudo, :observacoes
+                )
+                """),                {
+                    'usuario_id': novo_usuario.id,
+                    'arquivo_nome': os.path.basename(formulario_html) if formulario_html else f"erro_geração_{novo_usuario.id}.html",
+                    'caminho_completo': formulario_html,
+                    'data_geracao': datetime.now(),
+                    'versao': 1,
+                    'ativo': True,
+                    'tamanho_arquivo': os.path.getsize(formulario_html) if formulario_html and os.path.exists(formulario_html) else 0,
+                    'status': 'ativo',
+                    'data_envio_email': datetime.now() if email_enviado else None,
+                    'hash_conteudo': f"html_{novo_usuario.id}_{novo_usuario.tipo}",
+                    'observacoes': f"Formulário HTML gerado automaticamente para usuário {novo_usuario.tipo}"
+                }
+            )
+            
+            # Registra também o PDF gerado
+            db.execute(
+                text("""
+                INSERT INTO formularios_usuario (
+                    usuario_id, arquivo_nome, caminho_completo, data_geracao, 
+                    versao, ativo, tamanho_arquivo, status, data_envio_email,
+                    hash_conteudo, observacoes
+                )
+                VALUES (
+                    :usuario_id, :arquivo_nome, :caminho_completo, :data_geracao, 
+                    :versao, :ativo, :tamanho_arquivo, :status, :data_envio_email,
+                    :hash_conteudo, :observacoes
+                )
+                """),
+                {                    'usuario_id': novo_usuario.id,
+                    'arquivo_nome': nome_arquivo_pdf,
+                    'caminho_completo': caminho_pdf,
+                    'data_geracao': datetime.now(),
+                    'versao': 1,
+                    'ativo': True,
+                    'tamanho_arquivo': os.path.getsize(caminho_pdf) if os.path.exists(caminho_pdf) else 0,
+                    'status': 'ativo',
+                    'data_envio_email': datetime.now() if email_enviado else None,
+                    'hash_conteudo': f"pdf_{novo_usuario.id}_{novo_usuario.tipo}",
+                    'observacoes': f"PDF gerado a partir do formulário HTML para usuário {novo_usuario.tipo}"
+                }
+            )
+            db.commit()
+            
+        except Exception as e:
+            logging.error(f"❌ Erro ao registrar formulários na tabela de controle: {e}")
+            # Não falha o processo se houver erro apenas no registro
+        
         if not email_enviado:
             logging.warning("Falha no envio do email de confirmação de cadastro")
         
-        db.execute(
-            """
-            INSERT INTO formularios_usuario (usuario_id, arquivo_nome, caminho_completo, data_geracao, versao, ativo, tamanho_arquivo, status, data_envio_email)
-            VALUES (:usuario_id, :arquivo_nome, :caminho_completo, :data_geracao, :versao, :ativo, :tamanho_arquivo, :status, :data_envio_email)
-            """,
-            {
-                'usuario_id': novo_usuario.id,
-                'arquivo_nome': nome_arquivo_pdf,
-                'caminho_completo': caminho_pdf,
-                'data_geracao': datetime.now(),
-                'versao': 1,
-                'ativo': True,
-                'tamanho_arquivo': os.path.getsize(caminho_pdf),
-                'status': 'ativo',
-                'data_envio_email': data_envio_email
-            }
-        )
-        db.commit()
-        
         log_requisicao(request, "FIM", f"Usuário {novo_usuario.id} cadastrado com sucesso")
-        
+          # Log final das variáveis importantes para debug
+        logging.info(f"🔍 VALORES FINAIS ANTES DA RESPOSTA:")
+        logging.info(f"   formulario_html: {formulario_html}")
+        logging.info(f"   caminho_pdf: {caminho_pdf}")
+        logging.info(f"   email_enviado: {email_enviado}")
+        logging.info(f"   pdf_gerado: {pdf_gerado}")
         return JSONResponse(
             status_code=201,
             content={
@@ -645,6 +438,7 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
                 "status": "Cadastrado com sucesso",
                 "email_enviado": email_enviado,
                 "comprovante_gerado": pdf_gerado,
+                "formulario_html": formulario_html if formulario_html else None,
                 "caminho_pdf": caminho_pdf
             }
         )
@@ -652,11 +446,13 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
     except HTTPException:
         db.rollback()
         raise
-    except IntegrityError:
+    except IntegrityError as e:
         db.rollback()
+        error_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
+        log_requisicao(request, "ERRO", f"IntegrityError: {error_msg}")
         raise HTTPException(
             status_code=400,
-            detail="Erro ao cadastrar: dados duplicados ou inválidos."
+            detail=f"Erro ao cadastrar: {error_msg}"
         )
     except Exception as e:
         db.rollback()
@@ -667,81 +463,16 @@ async def cadastrar_usuario_json(request: Request, usuario_data: UsuarioCreate, 
         )
 
 # ===============================
-# Endpoint temporário para teste - aceita dados raw
+# Endpoint GET para exibir página de cadastro
 # ===============================
-@router.post("/teste-cadastro-simples")
-async def teste_cadastro_simples(request: Request, db: Session = Depends(get_db)):
+@router.get("/cadastro-usuario-sistema", response_class=HTMLResponse)
+async def exibir_cadastro_usuario(request: Request):
     """
-    Endpoint temporário para testar cadastro sem validação Pydantic
+    Endpoint para exibir a página de cadastro de usuário
     """
-    try:
-        # Recebe dados como JSON raw
-        dados_raw = await request.json()
-        
-        log_requisicao(request, "INÍCIO", f"Teste cadastro simples: {dados_raw.get('nome', 'N/A')}")
-        
-        # Extrai e limpa CPF
-        cpf_original = dados_raw.get('cpf', '')
-        cpf_limpo = re.sub(r"\D", "", cpf_original)
-        
-        print(f"🔍 CPF original: '{cpf_original}'")
-        print(f"🔍 CPF limpo: '{cpf_limpo}'")
-        print(f"🔍 Comprimento: {len(cpf_limpo)}")
-        
-        # Validações básicas
-        if len(cpf_limpo) != 11:
-            raise HTTPException(status_code=400, detail=f"CPF inválido: deve ter 11 dígitos. Recebido: {len(cpf_limpo)} dígitos")
-        
-        # Verifica duplicidade
-        usuario_existente = db.query(UsuarioSistema).filter(
-            UsuarioSistema.cpf == cpf_limpo,
-            UsuarioSistema.tipo == dados_raw.get('tipo')
-        ).first()
-        
-        if usuario_existente:
-            raise HTTPException(status_code=400, detail="CPF já cadastrado para este tipo de usuário")
-        
-        # Cria usuário básico para teste
-        novo_usuario = UsuarioSistema(
-            nome=dados_raw.get('nome', 'Teste'),
-            cpf=cpf_limpo,
-            email=dados_raw.get('email', 'teste@test.com'),
-            telefone=dados_raw.get('telefone', '(11) 99999-9999'),
-            senha_hash=bcrypt.hash(dados_raw.get('senha', 'senha123')),
-            tipo=dados_raw.get('tipo', 'administrador'),
-            status="teste",
-            ativo=False,
-            instituicao=dados_raw.get('instituicao', 'Teste'),
-            email_institucional=dados_raw.get('email_institucional', 'teste@der.sp.gov.br'),
-            telefone_institucional=dados_raw.get('telefone_institucional', '(11) 3333-4444'),
-            ramal=dados_raw.get('ramal', '1234'),
-            tipo_lotacao=dados_raw.get('tipo_lotacao', 'sede')
-        )
-        
-        db.add(novo_usuario)
-        db.commit()
-        db.refresh(novo_usuario)
-        
-        log_requisicao(request, "FIM", f"Usuário teste {novo_usuario.id} criado com sucesso")
-        
-        return JSONResponse(
-            status_code=201,
-            content={
-                "id": novo_usuario.id,
-                "nome": novo_usuario.nome,
-                "cpf_original": cpf_original,
-                "cpf_limpo": cpf_limpo,
-                "status": "Teste criado com sucesso",
-                "comprimento_cpf": len(cpf_limpo)
-            }
-        )
-        
-    except HTTPException:
-        db.rollback()
-        raise
-    except Exception as e:
-        db.rollback()
-        log_requisicao(request, "ERRO", f"Erro no teste: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Erro: {str(e)}")
-
-
+    log_requisicao(request, "PÁGINA", "Exibindo formulário de cadastro")
+    
+    return templates.TemplateResponse(
+        "cd_cadastro_usuario.html",
+        {"request": request}
+    )

@@ -14,7 +14,7 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 # Página de cadastro de PJ (interface HTML)
-@router.get("/cadastro-interessado-pj")
+@router.get("/cadastrar-pessoa-juridica")
 def interessado_pj(request: Request, db: Session = Depends(get_db)):
     pfs = db.query(PessoaFisica).all()
     trechos = db.query(TrechoEstadualizacao).all()

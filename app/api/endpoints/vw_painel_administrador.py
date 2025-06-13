@@ -7,7 +7,7 @@ from app.database.session import get_db
 from app.models.painel_administrador import UsuarioAprovado, ProjetoRecebido
 
 router = APIRouter(
-    prefix='/painel/coordenador',
+    prefix='/painel-coordenador',
     tags=['Painel do Coordenador']
 )
 

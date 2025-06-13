@@ -775,7 +775,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("/painel/coordenador/projetos")
+  fetch("/painel-coordenador/projetos")
     .then(res => res.json())
     .then(projetos => {
       const tabela = document.getElementById("tabela-projetos");
@@ -832,7 +832,7 @@ function selecionarLinhaProjeto(linha, id) {
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // Carregar Analistas
-  fetch("/painel/analista/usuarios")
+  fetch("/painel-analista/usuarios")
     .then(res => res.json())
     .then(usuarios => {
       const tabela = document.getElementById("tabela-usuarios");
@@ -856,7 +856,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(err => console.error("Erro ao carregar analistas:", err));
 
   // Carregar Administradores
-  fetch("/painel/coordenador/usuarios")
+  fetch("/painel-coordenador/usuarios")
     .then(res => res.json())
     .then(admins => {
       const tabela = document.getElementById("tabela-admins");

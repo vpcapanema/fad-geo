@@ -6,11 +6,17 @@
 // Centralizar apenas a lógica de checagem de campos obrigatórios e liberação do botão
 
 window.checarTodosCamposValidos = function() {
-  const obrigatorios = document.querySelectorAll('.form-field input[required], .form-field select[required]');
+  // Considera apenas campos obrigatórios VISÍVEIS
+  const obrigatorios = Array.from(document.querySelectorAll('.form-field input[required], .form-field select[required]'))
+    .filter(el => el.offsetParent !== null && !el.closest('.hidden'));
   let todosValidos = true;
   obrigatorios.forEach(el => {
     if (!el.closest('.campo-validado')) todosValidos = false;
   });
+  // BOTÃO GRAVAR SEMPRE HABILITADO - LÓGICA REMOVIDA
+  // const btnGravar = document.getElementById('btnGravar');
+  // if (btnGravar) btnGravar.disabled = !todosValidos;
+  // Também mantém compatibilidade com botão submit, se houver
   const btn = document.querySelector('button[type="submit"]');
   if (btn) btn.disabled = !todosValidos;
 };
@@ -123,11 +129,15 @@ window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.form-field input[required], .form-field select[required]').forEach(el => {
     el.addEventListener('input', window.checarTodosCamposValidos);
     el.addEventListener('blur', window.checarTodosCamposValidos);
+    // Força disparo de input para garantir validação visual e checagem
+    el.dispatchEvent(new Event('input', { bubbles: true }));
   });
-  window.checarTodosCamposValidos();
+  // Checa todos os campos obrigatórios visíveis após inicialização
+  setTimeout(() => window.checarTodosCamposValidos(), 100);
 });
 
-// ENVIO DO FORMULÁRIO VIA FETCH (Usuário)
+// ENVIO DO FORMULÁRIO VIA FETCH (Usuário) - DESABILITADO: usando sistema do ES6 module
+/*
 const form = document.querySelector('form');
 if (form) {
   form.addEventListener('submit', async function(event) {
@@ -140,11 +150,17 @@ if (form) {
     if (okBtnContainer) okBtnContainer.style.display = 'none';
     // Se já existe um fetch, não faz nada
     if (btn && btn.disabled) return;
-    btn.disabled = true;
-    event.preventDefault();
+    btn.disabled = true;    event.preventDefault();
     const formData = new FormData(form);
     const dados = {};
-    formData.forEach((v, k) => dados[k] = v);
+    formData.forEach((v, k) => {
+      // Limpa telefones antes de enviar - remove formatação, mantém apenas dígitos
+      if (k === 'telefone' || k === 'telefone_institucional') {
+        dados[k] = v.replace(/\D/g, ''); // Remove tudo que não é dígito
+      } else {
+        dados[k] = v;
+      }
+    });
     try {
       const resp = await fetch('/usuario/cadastrar-usuario', {
         method: 'POST',
@@ -169,8 +185,7 @@ if (form) {
         erroBox.textContent = 'Erro de conexão.';
         erroBox.style.display = 'block';
       }
-    }
-    if (okBtnContainer) okBtnContainer.style.display = 'block';
+    }    if (okBtnContainer) okBtnContainer.style.display = 'block';
     btn.disabled = false;
   });
   // Botão OK recarrega a página
@@ -181,3 +196,28 @@ if (form) {
     });
   }
 }
+*/
+// Fim do comentário do sistema de envio antigo
+
+// Força disparo do evento 'input' nos campos de CPF, telefone e email ao preencher via JS
+window.dispararInputCamposUsuario = function() {
+  ['cpf', 'telefone', 'email'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+};
+
+// Função utilitária para ativar/desativar required e validação visual em campos dinâmicos
+window.atualizarObrigatoriedadeCampoDinamico = function(idCampo, obrigatorio) {
+  const campo = document.getElementById(idCampo);
+  if (!campo) return;
+  if (obrigatorio) {
+    campo.setAttribute('required', 'required');
+    campo.closest('.form-field').classList.remove('campo-oculto');
+  } else {
+    campo.removeAttribute('required');
+    campo.closest('.form-field').classList.remove('campo-validado');
+    campo.closest('.form-field').classList.add('campo-oculto');
+  }
+  window.checarTodosCamposValidos();
+};

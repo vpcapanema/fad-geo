@@ -5,7 +5,7 @@ from app.database.session import get_db
 
 router = APIRouter()
 
-@router.get("/painel/coordenador/projetos")
+@router.get("/painel-coordenador/projetos")
 def listar_projetos(db: Session = Depends(get_db)):
     try:
         query = text("""

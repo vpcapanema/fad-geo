@@ -18,8 +18,10 @@ class UsuarioCreate(BaseModel):
     telefone_institucional: Optional[str] = None
     ramal: Optional[str] = None
     sede_hierarquia: Optional[str] = None
+    sede_assistencia_direta: Optional[str] = None  # novo campo para Assistência Direta
+    sede_diretoria: Optional[str] = None  # novo campo para Diretoria
+    sede_coordenadoria_geral: Optional[str] = None  # novo campo para Coordenadoria Geral
     sede_coordenadoria: Optional[str] = None
-    sede_setor: Optional[str] = None
     sede_assistencia: Optional[str] = None
     regional_nome: Optional[str] = None
     regional_coordenadoria: Optional[str] = None
@@ -40,8 +42,10 @@ class UsuarioOut(BaseModel):
     telefone_institucional: Optional[str] = None
     ramal: Optional[str] = None
     sede_hierarquia: Optional[str] = None
+    sede_assistencia_direta: Optional[str] = None
+    sede_diretoria: Optional[str] = None
+    sede_coordenadoria_geral: Optional[str] = None
     sede_coordenadoria: Optional[str] = None
-    sede_setor: Optional[str] = None
     sede_assistencia: Optional[str] = None
     regional_nome: Optional[str] = None
     regional_coordenadoria: Optional[str] = None

@@ -98,61 +98,6 @@ if (telInputInst && telInstLabel) {
   telInputInst.dispatchEvent(new Event('input'));
 }
 
-// Formatação e validação dinâmica de telefone pessoal fixo
-const telInputPessoal = document.getElementById('telefone');
-if (telInputPessoal) {
-  const msg = document.createElement('div');
-  msg.className = 'msg-validacao-telefone';
-  msg.style.display = 'none';
-  msg.style.fontSize = '12px';
-  msg.style.color = '#dc3545';
-  msg.style.marginTop = '2px';
-  telInputPessoal.parentNode.appendChild(msg);
-
-  telInputPessoal.addEventListener('input', function (e) {
-    let v = e.target.value.replace(/\D/g, '');
-    if (v.length > 10) v = v.slice(0, 10);
-    if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-    else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,4})/, '($1) $2');
-    else v = v.replace(/(\d{0,2})/, '$1');
-    e.target.value = v;
-    if (!v) {
-      msg.style.display = 'none';
-      telInputPessoal.classList.remove('erro-campo');
-      atualizarValidacaoCampo(telInputPessoal, false);
-      return;
-    }
-    if (/^\(\d{2}\) \d{4}-\d{4}$/.test(v)) {
-      msg.style.display = 'none';
-      telInputPessoal.classList.remove('erro-campo');
-    } else {
-      msg.textContent = 'Telefone fixo inválido';
-      msg.style.display = 'block';
-      telInputPessoal.classList.add('erro-campo');
-    }
-    atualizarValidacaoCampo(telInputPessoal, /^\(\d{2}\) \d{4}-\d{4}$/.test(v));
-  });
-  telInputPessoal.dispatchEvent(new Event('input'));
-
-  // Garante que só exista UM asterisco e UM check por campo, removendo duplicados se houver
-  const label = telInputPessoal.closest('.form-field').querySelector('label');
-  if (label) {
-    const obrigatorios = label.querySelectorAll('.obrigatorio-icone');
-    const checks = label.querySelectorAll('.check-icone');
-    obrigatorios.forEach((el, i) => { if (i > 0) el.remove(); });
-    checks.forEach((el, i) => { if (i > 0) el.remove(); });
-  }
-}
-
-// formatacao_telefone_fixo.js como módulo ES6
-export function formatarTelefoneFixo(valor) {
-  let v = valor.replace(/\D/g, '');
-  if (v.length > 10) v = v.slice(0, 10);
-  if (v.length === 10) {
-    v = v.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
-  }
-  return v;
-}
-export function validarTelefoneFixo(valor) {
-  return /^\(\d{2}\) \d{4}-\d{4}$/.test(valor);
-}
+// Removido export para uso direto em <script>
+// export function formatarTelefoneFixo(valor) { ... }
+// export function validarTelefoneFixo(valor) { ... }

@@ -14,191 +14,57 @@ from datetime import datetime
 
 # Importações para geração de PDF alternativa
 try:
-    from reportlab.lib.pagesizes import A4
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.colors import black, blue, green
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-    from reportlab.lib.units import inch
-    REPORTLAB_DISPONIVEL = True
+
+    import pdfkit
+    PDFKIT_DISPONIVEL = True
 except ImportError:
-    REPORTLAB_DISPONIVEL = False
+    PDFKIT_DISPONIVEL = False
 
 # Configuração do logger
 logger = logging.getLogger(__name__)
 
-def gerar_comprovante_cadastro_pdf_reportlab(usuario_dados, caminho_arquivo):
+def gerar_comprovante_cadastro_pdf_html2pdf(caminho_html, caminho_pdf):
     """
-    Gera comprovante de cadastro em PDF usando reportlab como alternativa ao wkhtmltopdf
+    Gera comprovante de cadastro em PDF a partir do HTML usando pdfkit/wkhtmltopdf
     
     Args:
-        usuario_dados: Dados do usuário do cadastro
-        caminho_arquivo: Caminho onde salvar o PDF
+        caminho_html: Caminho do arquivo HTML de origem
+        caminho_pdf: Caminho onde salvar o PDF
     
     Returns:
         bool: True se gerado com sucesso, False caso contrário
     """
-    if not REPORTLAB_DISPONIVEL:
-        logger.error("reportlab não está disponível para geração de PDF")
+    if not PDFKIT_DISPONIVEL:
+        logger.error("pdfkit/wkhtmltopdf não está disponível para geração de PDF")
         return False
-        
     try:
-        # Cria documento
-        doc = SimpleDocTemplate(
-            caminho_arquivo,
-            pagesize=A4,
-            rightMargin=72,
-            leftMargin=72,
-            topMargin=72,
-            bottomMargin=18
-        )
-        
-        # Estilos
-        styles = getSampleStyleSheet()
-        title_style = ParagraphStyle(
-            'CustomTitle',
-            parent=styles['Heading1'],
-            fontSize=18,
-            textColor=blue,
-            spaceAfter=30,
-            alignment=1  # Center
-        )
-        
-        heading_style = ParagraphStyle(
-            'CustomHeading',
-            parent=styles['Heading2'],
-            fontSize=14,
-            textColor=black,
-            spaceAfter=12
-        )
-        
-        normal_style = styles['Normal']
-        
-        # Conteúdo do documento
-        story = []
-        
-        # Cabeçalho
-        story.append(Paragraph("FAD - FERRAMENTA DE ANÁLISE DINAMIZADA", title_style))
-        story.append(Paragraph("COMPROVANTE DE CADASTRO DE USUÁRIO", title_style))
-        story.append(Spacer(1, 20))
-        
-        # Informações do usuário
-        story.append(Paragraph("DADOS DO USUÁRIO", heading_style))
-        
-        dados_usuario = [
-            ["Nome Completo:", usuario_dados.get('nome', 'N/A')],
-            ["CPF:", usuario_dados.get('cpf', 'N/A')],
-            ["Tipo de Usuário:", usuario_dados.get('tipo', 'N/A').title()],
-            ["Email Pessoal:", usuario_dados.get('email', 'N/A')],
-            ["Email Institucional:", usuario_dados.get('email_institucional', 'N/A')],
-            ["Telefone:", usuario_dados.get('telefone', 'N/A')],
-            ["Status:", usuario_dados.get('status', 'Aguardando Aprovação')],
-        ]
-        
-        table_usuario = Table(dados_usuario, colWidths=[2*inch, 3.5*inch])
-        table_usuario.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (0, -1), '#f0f0f0'),
-            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-            ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('GRID', (0, 0), (-1, -1), 1, black),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('LEFTPADDING', (0, 0), (-1, -1), 6),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        ]))
-        
-        story.append(table_usuario)
-        story.append(Spacer(1, 20))
-        
-        # Informações institucionais
-        if usuario_dados.get('instituicao'):
-            story.append(Paragraph("DADOS INSTITUCIONAIS", heading_style))
-            
-            dados_institucionais = [
-                ["Instituição:", usuario_dados.get('instituicao', 'N/A')],
-                ["Telefone Institucional:", usuario_dados.get('telefone_institucional', 'N/A')],
-                ["Ramal:", usuario_dados.get('ramal', 'N/A')],
-                ["Tipo de Lotação:", usuario_dados.get('tipo_lotacao', 'N/A')],
-            ]
-            
-            # Adiciona dados de sede se disponível
-            if usuario_dados.get('sede_hierarquia'):
-                dados_institucionais.extend([
-                    ["Sede - Hierarquia:", usuario_dados.get('sede_hierarquia', 'N/A')],
-                    ["Sede - Coordenadoria:", usuario_dados.get('sede_coordenadoria', 'N/A')],
-                    ["Sede - Setor:", usuario_dados.get('sede_setor', 'N/A')],
-                ])
-            
-            # Adiciona dados regionais se disponível
-            if usuario_dados.get('regional_nome'):
-                dados_institucionais.extend([
-                    ["Regional - Nome:", usuario_dados.get('regional_nome', 'N/A')],
-                    ["Regional - Coordenadoria:", usuario_dados.get('regional_coordenadoria', 'N/A')],
-                    ["Regional - Setor:", usuario_dados.get('regional_setor', 'N/A')],
-                ])
-            
-            table_institucional = Table(dados_institucionais, colWidths=[2*inch, 3.5*inch])
-            table_institucional.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (0, -1), '#f0f0f0'),
-                ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-                ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
-                ('FONTSIZE', (0, 0), (-1, -1), 10),
-                ('GRID', (0, 0), (-1, -1), 1, black),
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('LEFTPADDING', (0, 0), (-1, -1), 6),
-                ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-                ('TOPPADDING', (0, 0), (-1, -1), 6),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ]))
-            
-            story.append(table_institucional)
-            story.append(Spacer(1, 20))
-        
-        # Rodapé com informações do sistema
-        story.append(Spacer(1, 30))
-        story.append(Paragraph("INFORMAÇÕES DO CADASTRO", heading_style))
-        
-        info_cadastro = [
-            ["Data/Hora do Cadastro:", datetime.now().strftime("%d/%m/%Y às %H:%M:%S")],
-            ["Sistema:", "FAD - Ferramenta de Análise Dinamizada"],
-            ["Versão:", "1.0"],
-            ["Status:", "Cadastro realizado com sucesso"],
-        ]
-        
-        table_info = Table(info_cadastro, colWidths=[2*inch, 3.5*inch])
-        table_info.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (0, -1), '#e8f5e8'),
-            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-            ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('GRID', (0, 0), (-1, -1), 1, green),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('LEFTPADDING', (0, 0), (-1, -1), 6),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        ]))
-        
-        story.append(table_info)
-        story.append(Spacer(1, 20))
-        
-        # Nota final
-        story.append(Paragraph(
-            "<i>Este documento comprova o cadastro realizado no sistema FAD. "
-            "Guarde-o para suas consultas futuras.</i>", 
-            normal_style
-        ))
-        
-        # Gera o PDF
-        doc.build(story)
-        
-        logger.info(f"PDF gerado com sucesso usando reportlab: {caminho_arquivo}")
+        options = {
+            'page-size': 'A4',
+            'orientation': 'Portrait',
+            'margin-top': '10mm',
+            'margin-right': '10mm',
+            'margin-bottom': '10mm',
+            'margin-left': '10mm',
+            'dpi': 300,
+            'image-dpi': 300,
+            'image-quality': 100,
+            'print-media-type': None,
+            'disable-smart-shrinking': None,
+            'zoom': 1.0,
+            'encoding': 'UTF-8',
+            'minimum-font-size': 8,
+            'enable-javascript': None,
+            'javascript-delay': 1000,
+            'no-stop-slow-scripts': None,
+            'enable-local-file-access': None,
+            'quiet': None,
+        }
+        config = pdfkit.configuration()
+        pdfkit.from_file(caminho_html, caminho_pdf, options=options, configuration=config)
+        logger.info(f"PDF gerado com sucesso usando pdfkit/wkhtmltopdf: {caminho_pdf}")
         return True
-        
     except Exception as e:
-        logger.error(f"Erro ao gerar PDF com reportlab: {e}")
+        logger.error(f"Erro ao gerar PDF com pdfkit/wkhtmltopdf: {e}")
         return False
 
 class EmailService:
@@ -401,7 +267,7 @@ class EmailService:
                                         ip_origem=None, user_agent=None):
         """Envia email de confirmação de cadastro com PDF anexo"""
         inicio_tempo = time.time()
-        assunto = "FAD - Confirmação de Cadastro"
+        assunto = "FAD - Confirmação de Cadastro de Usuário"
         
         try:
             environment = os.getenv("ENVIRONMENT", "development")
@@ -508,36 +374,45 @@ class EmailService:
         """Template HTML para email de confirmação de cadastro"""
         template = """
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang=\"pt-br\">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Confirmado - FAD</title>
+    <meta charset=\"UTF-8\">\
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\
+    <title>Solicitação de Cadastro de Usuário Confirmada - FAD</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f9; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; }
-        .header { background: #28a745; color: white; padding: 30px; text-align: center; }
+        .header { background: linear-gradient(90deg, #003366 60%, #006699 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { color: #fff; font-weight: 700; letter-spacing: 0.5px; }
+        .header p { color: #e0eaf6; margin-top: 8px; }
         .content { padding: 30px; }
-        .success-box { background: #d4edda; padding: 20px; border-radius: 5px; margin: 20px 0; }
-        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; }
+        .success-box { background: #e3f2fd; color: #003366; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 5px solid #006699; }
+        .success-box h3 { color: #006699; margin-top: 0; }
+        .footer { background: #f4f7fb; padding: 20px; text-align: center; font-size: 12px; color: #003366; border-top: 1px solid #e0eaf6; }
+        ul { color: #003366; }
+        strong { color: #006699; }
+        @media (max-width: 700px) {
+            .container { max-width: 100% !important; }
+            .content { padding: 16px; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Cadastro Confirmado</h1>
+    <div class=\"container\">
+        <div class=\"header\">
+            <h1>Solicitação de Cadastro de Usuário Confirmada</h1>
             <p>FAD - Ferramenta de Análise Dinamizada</p>
         </div>
         
-        <div class="content">
+        <div class=\"content\">
             <h2>Parabéns, """ + nome_usuario + """!</h2>
             
-            <div class="success-box">
-                <h3>Seu cadastro foi realizado com sucesso!</h3>
+            <div class=\"success-box\">
+                <h3>Sua solicitação de cadastro de usuário foi realizada com sucesso!</h3>
                 <p>Bem-vindo à Plataforma FAD de Análise Dinamizada</p>
             </div>
             
-            <p>Seu cadastro no sistema FAD foi processado e confirmado. Em anexo, você encontrará o comprovante oficial do seu registro.</p>
+            <p>Sua solicitação de cadastro de usuário foi processada e confirmada no sistema FAD e está em análise pela nossa equipe. Nós avisaremos assim que seu cadastro for aprovado e ativado. Por enquanto, pedimos que aguarde e teste suas credenciais na página de login.<br>Você deverá receber a mensagem <strong>\"Aguardando aprovação\"</strong>.<br>Em anexo, você encontrará o comprovante oficial do seu registro.</p>
             
             <p><strong>Próximos passos:</strong></p>
             <ul>
@@ -547,7 +422,7 @@ class EmailService:
             </ul>
         </div>
         
-        <div class="footer">
+        <div class=\"footer\">
             <p>FAD - Ferramenta de Análise Dinamizada</p>
             <p>Este é um email automático, não responda.</p>
         </div>
@@ -583,3 +458,30 @@ class EmailService:
 
 # Instância global do serviço de email
 email_service = EmailService()
+
+# Verifica se o comando wkhtmltopdf está disponível
+def verificar_wkhtmltopdf():
+    """Verifica se o comando wkhtmltopdf está disponível no sistema"""
+    try:
+        import subprocess
+        
+        # Executa o comando wkhtmltopdf --version
+        resultado = subprocess.run(
+            ["wkhtmltopdf", "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        
+        if resultado.returncode == 0:
+            logger.info(f"wkhtmltopdf está disponível: {resultado.stdout.strip()}")
+            return True
+        else:
+            logger.error(f"Erro ao verificar wkhtmltopdf: {resultado.stderr.strip()}")
+            return False
+    except Exception as e:
+        logger.error(f"Erro ao verificar wkhtmltopdf: {e}")
+        return False
+
+# Verifica disponibilidade do wkhtmltopdf na inicialização
+verificar_wkhtmltopdf()

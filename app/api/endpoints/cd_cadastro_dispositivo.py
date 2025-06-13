@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException, Body, Depends
+from fastapi import APIRouter, HTTPException, Body, Depends, Request
 from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.models.cd_dispositivo_estadualizacao import DispositivoEstadualizacao
 from datetime import datetime
 import re
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter(tags=['Cadastro de Dispositivo'])
+templates = Jinja2Templates(directory="app/templates")
 
 def capitalizar_nome(s):
     """Capitaliza nomes próprios, mantendo preposições em minúsculo"""
@@ -169,3 +171,7 @@ def obter_dispositivo_por_id(dispositivo_id: int, db: Session = Depends(get_db))
             status_code=500,
             detail=f"Erro ao obter dispositivo: {str(e)}"
         )
+
+@router.get("/cadastrar-dispositivo")
+def cadastrar_dispositivo_html(request: Request):
+    return templates.TemplateResponse("cd_interessado_dispositivo.html", {"request": request})

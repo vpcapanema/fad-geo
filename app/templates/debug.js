@@ -37,13 +37,13 @@ document.addEventListener("DOMContentLoaded", function() {
   };
   
   // Testar chamadas de API
-  fetch("/painel/usuarios")
+  fetch("/painel-analista/usuarios")
     .then(res => {
-      console.log("Status da resposta /painel/usuarios:", res.status);
+      console.log("Status da resposta /painel-analista/usuarios:", res.status);
       return res.json();
     })
     .then(data => {
-      console.log("Dados recebidos de /painel/usuarios:", data);
+      console.log("Dados recebidos de /painel-analista/usuarios:", data);
       if (data && data.length > 0) {
         console.log("Primeiro usuário:", data[0]);
       } else {
@@ -52,13 +52,13 @@ document.addEventListener("DOMContentLoaded", function() {
     })
     .catch(error => console.error("Erro ao buscar usuários:", error));
     
-  fetch("/painel/coordenador/usuarios")
+  fetch("/painel-coordenador/usuarios")
     .then(res => {
-      console.log("Status da resposta /painel/coordenador/usuarios:", res.status);
+      console.log("Status da resposta /painel-coordenador/usuarios:", res.status);
       return res.json();
     })
     .then(data => {
-      console.log("Dados recebidos de /painel/coordenador/usuarios:", data);
+      console.log("Dados recebidos de /painel-coordenador/usuarios:", data);
       if (data && data.length > 0) {
         console.log("Primeiro admin:", data[0]);
       } else {

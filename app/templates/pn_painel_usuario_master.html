@@ -78,7 +78,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       // Carregar Usuários Comuns
-      fetch("/painel/analista/usuarios")
+      fetch("/painel-analista/usuarios")
         .then(res => res.json())
         .then(usuarios => {
           const tabelaUsuarios = document.getElementById("tabela-usuarios");
@@ -121,7 +121,7 @@
         .catch(error => console.error("Erro ao carregar usuários:", error));
 
       // Carregar Coordenadores
-      fetch("/painel/coordenador/usuarios")
+      fetch("/painel-coordenador/usuarios")
         .then(res => res.json())
         .then(admins => {
           const tabelaAdmins = document.getElementById("tabela-admins");
@@ -161,9 +161,7 @@
             tabelaAdmins.appendChild(linha);
           });
         })
-        .catch(error => console.error("Erro ao carregar coordenadores:", error));
-
-      // Carregar Projetos do Painel Master
+        .catch(error => console.error("Erro ao carregar coordenadores:", error));      // Carregar Projetos do Painel Master
       fetch("/painel/projetos")
         .then(res => res.json())
         .then(projetos => {
@@ -248,7 +246,7 @@
     }
 
     function aprovarUsuario(id) {
-      fetch(`/painel/coordenador/usuarios/aprovar/${id}`, { method: "POST" })
+      fetch(`/painel-coordenador/usuarios/aprovar/${id}`, { method: "POST" })
         .then(res => res.json())
         .then(() => {
           alert("Coordenador aprovado com sucesso!");
@@ -258,7 +256,7 @@
     }
 
     function reprovarUsuario(id) {
-      fetch(`/painel/coordenador/usuarios/reprovar/${id}`, { method: "POST" })
+      fetch(`/painel-coordenador/usuarios/reprovar/${id}`, { method: "POST" })
         .then(res => res.json())
         .then(() => {
           alert("Coordenador reprovado com sucesso!");
@@ -268,7 +266,7 @@
     }
 
     function ativarUsuario(id) {
-      fetch(`/painel-usuario/ativar/${id}`, { method: "POST" })
+      fetch(`/painel-master/ativar/${id}`, { method: "POST" })
         .then(res => res.json())
         .then(() => {
           alert("Usuário ativado com sucesso!");

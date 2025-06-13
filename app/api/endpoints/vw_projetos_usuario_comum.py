@@ -9,7 +9,7 @@ from typing import List
 from fastapi import APIRouter
 
 router = APIRouter(
-    prefix='/painel/analista',
+    prefix='/painel-analista',
     tags=['Painel do Analista']
 )
 from app.database.session import get_db

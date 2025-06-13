@@ -5,7 +5,7 @@ from sqlalchemy import text
 from app.database.session import get_db
 
 router = APIRouter(
-    prefix='/painel/coordenador',
+    prefix='/painel-coordenador',
     tags=['Painel do Coordenador']
 )
 

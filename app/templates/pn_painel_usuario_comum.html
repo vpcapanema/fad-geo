@@ -243,7 +243,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    fetch("/painel/analista/usuarios")
+    fetch("/painel-analista/usuarios")
       .then(res => res.json())
       .then(usuarios => {
         const tabelaUsuarios = document.getElementById("tabela-usuarios");

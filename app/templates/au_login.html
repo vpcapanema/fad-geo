@@ -141,6 +141,27 @@
     .hidden {
       display: none;
     }
+
+    .feedback-erro {
+      background: #ffeaea;
+      color: #b30000;
+      border: 1px solid #ffb3b3;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      font-weight: bold;
+      font-size: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(255,0,0,0.05);
+      animation: shake 0.2s 1;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
   </style>
 </head>
 <body>
@@ -163,10 +184,10 @@
     <span style="color: #fff; display: block;">Não tem cadastro?</span>
     <a href="/cadastro-usuario" style="color: #fff; font-weight: bold; text-decoration: underline; display: inline-block; margin-top: 2px;">Cadastre-se aqui</a>
   </div>
-
   <div class="login-container">
     <h2>Acesso à FAD</h2>
     <form id="loginForm">
+      <div id="feedbackErro" class="feedback-erro hidden"></div>
       <input type="email" name="email" placeholder="E-mail institucional" required>
       <div style="position: relative;">
         <input type="password" name="senha" id="senhaInput" placeholder="Senha" required>
@@ -174,12 +195,16 @@
       </div>
 
       <label for="tipo">Tipo de Acesso:</label>
-      <select id="tipo" name="tipo" required>        <option value="analista">Analista</option>
+      <select id="tipo" name="tipo" required>
+        <option value="analista">Analista</option>
         <option value="coordenador">Coordenador</option>
         <option value="master">Master</option>
       </select>
 
-      <button type="submit">Entrar</button>    <div class="link-extra">
+      <button type="submit">Entrar</button>
+    </form>
+    
+    <div class="link-extra">
       <a href="/recuperacao/solicitar">Esqueci minha senha</a>
     </div>
   </div>
@@ -187,10 +212,10 @@
   <div id="erroLogin" class="dialog hidden">
     <div class="dialog-header">
       <span id="erroLoginTexto">Erro</span>
-      <button class="close-button" onclick="document.getElementById('erroLogin').style.display='none'; location.reload();">&times;</button>
+      <button class="close-button" onclick="document.getElementById('erroLogin').style.display='none';">&times;</button>
     </div>
     <div class="dialog-body">
-      <button class="ok-button" onclick="document.getElementById('erroLogin').style.display='none'; location.reload();">OK</button>
+      <button class="ok-button" onclick="document.getElementById('erroLogin').style.display='none';">OK</button>
     </div>
   </div>
 
@@ -208,10 +233,12 @@
     const erroBox = document.getElementById("erroLogin");
     const erroTexto = document.getElementById("erroLoginTexto");
     const carregandoBox = document.getElementById("caixaCarregando");
+    const feedbackErro = document.getElementById("feedbackErro");
 
     form.addEventListener("submit", async function(event) {
       event.preventDefault();
       erroBox.classList.add("hidden");
+      feedbackErro.classList.add("hidden");
       carregandoBox.classList.remove("hidden");
 
       const formData = new FormData(form);
@@ -228,43 +255,48 @@
           },
           body: encodedData
         });
-
         carregandoBox.classList.add("hidden");
-
         if (response.ok) {
           // Espera JSON com redirect
           const data = await response.json();
           if (data.redirect) {
             window.location.href = data.redirect;
           } else {
-            erroTexto.textContent = "Login realizado, mas sem redirecionamento.";
-            erroBox.classList.remove("hidden");
-          }
-        } else {
+            feedbackErro.textContent = "Login realizado, mas sem redirecionamento.";
+            feedbackErro.classList.remove("hidden");
+          }        } else {
           const errorData = await response.json().catch(() => ({}));
+          let msg = "";
           if (response.status === 401) {
             if (errorData.detail === "email") {
-              erroTexto.textContent = "E-mail não cadastrado.";
+              msg = "E-mail não cadastrado.";
             } else if (errorData.detail === "senha") {
-              erroTexto.textContent = "Senha incorreta.";
+              msg = "Senha incorreta.";
             } else if (errorData.detail === "tipo") {
-              erroTexto.textContent = "Tipo de acesso incorreto.";
+              msg = "Tipo de acesso incorreto.";
             } else {
-              erroTexto.textContent = "Credenciais inválidas.";
+              msg = "Credenciais inválidas.";
             }
           } else if (response.status === 403) {
-            erroTexto.textContent = "Aguardando aprovação do coordenador.";
+            if (errorData.detail === "status") {
+              msg = "Acesso negado: status do usuário = " + (errorData.motivo || "desconhecido") + ".";
+            } else if (errorData.detail === "ativo") {
+              msg = "Acesso negado: usuário inativo.";
+            } else {
+              msg = "Acesso negado por motivo desconhecido.";
+            }
           } else if (errorData.detail === "SessionMiddleware não configurado") {
-            erroTexto.textContent = "Erro interno: SessionMiddleware não configurado.";
+            msg = "Erro interno: SessionMiddleware não configurado.";
           } else {
-            erroTexto.textContent = "Erro inesperado. Código: " + response.status;
+            msg = "Erro inesperado. Código: " + response.status;
           }
-          erroBox.classList.remove("hidden");
+          feedbackErro.textContent = msg;
+          feedbackErro.classList.remove("hidden");
         }
-      } catch (error) {
+      } catch (e) {
         carregandoBox.classList.add("hidden");
-        erroTexto.textContent = "Erro de conexão com o servidor.";
-        erroBox.classList.remove("hidden");
+        feedbackErro.textContent = "Erro de conexão com o servidor.";
+        feedbackErro.classList.remove("hidden");
       }
     });
 

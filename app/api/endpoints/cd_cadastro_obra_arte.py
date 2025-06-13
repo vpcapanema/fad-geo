@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException, Body, Depends
+from fastapi import APIRouter, HTTPException, Body, Depends, Request
 from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.models.cd_obra_arte_estadualizacao import ObraArteEstadualizacao
 from datetime import datetime
 import re
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter(tags=['Cadastro de Obra de Arte'])
+templates = Jinja2Templates(directory="app/templates")
 
 def capitalizar_nome(s):
     """Capitaliza nomes próprios, mantendo preposições em minúsculo"""
@@ -169,3 +171,7 @@ def obter_obra_arte_por_id(obra_id: int, db: Session = Depends(get_db)):
             status_code=500,
             detail=f"Erro ao obter obra de arte: {str(e)}"
         )
+
+@router.get("/cadastrar-obra-arte")
+def cadastrar_obra_arte_html(request: Request):
+    return templates.TemplateResponse("cd_interessado_obra_arte.html", {"request": request})

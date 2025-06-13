@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Email de Recuperação de Senha FAD</title>
+    <style>
+        /* Estilos para demonstração */
+        .demo-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f2f5;
+            border-radius: 8px;
+        }
+        .demo-title {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 30px;
+        }
+        .email-preview {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        /* Template original do email de recuperação */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f9; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; }
+        .header { background: #003366; color: white; padding: 30px; text-align: center; }
+        .content { padding: 30px; }
+        .button { background: #006699; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; display: inline-block; }
+        .warning { background: #fff3cd; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; }
+        
+        /* Estilos específicos para demo */
+        .comparison-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .comparison-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #006699;
+        }
+        .feature-list {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin-top: 20px;
+        }
+        .security-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #bbdefb;
+            margin-top: 20px;
+        }
+        .flow-steps {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .step-number {
+            background: #006699;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body style="background: #f0f2f5; padding: 20px;">
+    <div class="demo-container">
+        <h1 class="demo-title">🔐 Preview do Email de Recuperação de Senha</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Este é o template de email que é enviado quando um usuário solicita recuperação de senha no sistema FAD
+        </p>
+        
+        <div class="email-preview">
+            <!-- EMAIL TEMPLATE COMEÇA AQUI -->
+            <div class="container">
+                <div class="header">
+                    <h1>Recuperação de Senha</h1>
+                    <p>FAD - Ferramenta de Análise Dinamizada</p>
+                </div>
+                
+                <div class="content">
+                    <h2>Olá, Vinicius do Prado Capanema!</h2>
+                    
+                    <p>Você solicitou a recuperação de senha para sua conta na plataforma FAD.</p>
+                    
+                    <p>Para redefinir sua senha, clique no botão abaixo:</p>
+                    
+                    <p style="text-align: center; margin: 30px 0;">
+                        <a href="#" class="button" onclick="alert('Link de recuperação seria direcionado para a página de redefinição de senha'); return false;">Redefinir Minha Senha</a>
+                    </p>
+                    
+                    <div class="warning">
+                        <strong>Importante:</strong> Este link expira em 15 minutos por motivos de segurança.
+                    </div>
+                    
+                    <p>Se você não solicitou esta recuperação, ignore este email.</p>
+                </div>
+                
+                <div class="footer">
+                    <p>FAD - Ferramenta de Análise Dinamizada</p>
+                    <p>Este é um email automático, não responda a esta mensagem.</p>
+                </div>
+            </div>
+            <!-- EMAIL TEMPLATE TERMINA AQUI -->
+        </div>
+
+        <div class="feature-list">
+            <h3>📧 Características do Email de Recuperação</h3>
+            <ul>
+                <li><strong>Assunto:</strong> "FAD - Recuperação de Senha"</li>
+                <li><strong>Personalização:</strong> Nome do usuário inserido dinamicamente</li>
+                <li><strong>Link Seguro:</strong> Token único e temporário</li>
+                <li><strong>Expiração:</strong> 15 minutos por segurança</li>
+                <li><strong>Cores FAD:</strong> Azul institucional #003366 e #006699</li>
+                <li><strong>Design Responsivo:</strong> Compatível com todos os dispositivos</li>
+                <li><strong>Call-to-Action:</strong> Botão destacado para ação principal</li>
+            </ul>
+        </div>
+
+        <div class="flow-steps">
+            <h3>🔄 Fluxo Completo de Recuperação</h3>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <strong>Solicitação:</strong> Usuário acessa "/recuperar-senha" e informa email + tipo de acesso
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <strong>Validação:</strong> Sistema verifica se email existe e gera token seguro
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <strong>Envio:</strong> Email com link seguro é enviado automaticamente
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div>
+                    <strong>Redefinição:</strong> Usuário clica no link e é direcionado para página de nova senha
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <div>
+                    <strong>Confirmação:</strong> Nova senha é definida e usuário pode fazer login
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <div class="comparison-card">
+                <h3>🛡️ Medidas de Segurança</h3>
+                <ul>
+                    <li>Token único por solicitação</li>
+                    <li>Expiração em 15 minutos</li>
+                    <li>Link válido apenas uma vez</li>
+                    <li>Limitação de tentativas</li>
+                    <li>Verificação de email/tipo</li>
+                    <li>Log de todas as tentativas</li>
+                </ul>
+            </div>
+            
+            <div class="comparison-card">
+                <h3>⚙️ Configurações Técnicas</h3>
+                <ul>
+                    <li>SMTP configurado (Gmail)</li>
+                    <li>Template HTML responsivo</li>
+                    <li>Encoding UTF-8</li>
+                    <li>Fallback para texto simples</li>
+                    <li>Headers de segurança</li>
+                    <li>Modo desenvolvimento/produção</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="security-info">
+            <h3>🔐 Integração com Interface Web</h3>
+            <p><strong>Página de Solicitação:</strong> <code>/recuperar-senha</code></p>
+            <p><strong>Página de Redefinição:</strong> <code>/redefinir-senha?token=...</code></p>
+            <p><strong>Confirmação:</strong> <code>/email-enviado</code></p>
+            
+            <h4>Endpoints da API:</h4>
+            <ul>
+                <li><code>POST /recuperacao/solicitar</code> - Solicita recuperação</li>
+                <li><code>GET /recuperacao/redefinir</code> - Valida token</li>
+                <li><code>POST /redefinir-senha</code> - Define nova senha</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px;">
+            <h3>✅ Status do Sistema</h3>
+            <p>O sistema de recuperação de senha está <strong>totalmente funcional</strong> e integrado:</p>
+            <ul>
+                <li>✅ Formulário web responsivo</li>
+                <li>✅ Validação de dados completa</li>
+                <li>✅ Geração de tokens seguros</li>
+                <li>✅ Envio de emails automático</li>
+                <li>✅ Interface de redefinição</li>
+                <li>✅ Logging e auditoria</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

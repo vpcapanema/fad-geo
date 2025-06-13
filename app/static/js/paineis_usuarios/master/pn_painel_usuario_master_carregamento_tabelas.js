@@ -3,7 +3,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   // Coordenadores
-  fetch("/painel/master/es")
+  fetch("/painel-master/es")
     .then(res => res.json())
     .then(admins => {
       const tabela = document.getElementById("tabela-admins");
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(() => mostrarMensagem('erro', 'Erro ao carregar coordenadores.'));
 
   // Usuários comuns
-  fetch("/painel/master/usuarios")
+  fetch("/painel-master/usuarios")
     .then(res => res.json())
     .then(usuarios => {
       const tabela = document.getElementById("tabela-usuarios");
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(() => mostrarMensagem('erro', 'Erro ao carregar pessoas jurídicas.'));
 
   // Projetos
-  fetch("/painel/projetos")
+  fetch("/painel-master/projetos")
     .then(res => res.json())
     .then(projetos => {
       const tabela = document.getElementById("tabela-projetos");

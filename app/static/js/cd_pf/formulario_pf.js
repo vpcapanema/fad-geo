@@ -57,33 +57,32 @@ document.addEventListener('DOMContentLoaded', function() {  // Função para atu
   // Função inteligente para telefone - detecta se é móvel ou fixo
   function mascaraTelefoneInteligente(valor) {
     let digitos = valor.replace(/\D/g, '');
-    
-    // Se tem 11 dígitos, é celular
-    if (digitos.length === 11) {
-      return formatarTelefone(valor);
+    if (digitos.length >= 10) {
+      if (digitos[2] === '9') {
+        // Móvel
+        return formatarTelefone(valor);
+      } else {
+        // Fixo
+        return formatarTelefoneFixo(valor);
+      }
     }
-    // Se tem 10 dígitos ou menos, é fixo
-    else {
-      return formatarTelefoneFixo(valor);
-    }
+    // Se não tem DDD + número suficiente, retorna valor sem formatação
+    return valor;
   }
   
   // Função inteligente para validar telefone - detecta se é móvel ou fixo
   function validarTelefoneInteligente(valor) {
     let digitos = valor.replace(/\D/g, '');
-    
-    // Se tem 11 dígitos, valida como celular
-    if (digitos.length === 11) {
-      return validarTelefone(valor);
+    if (digitos.length >= 10) {
+      if (digitos[2] === '9') {
+        // Móvel
+        return validarTelefone(valor);
+      } else {
+        // Fixo
+        return validarTelefoneFixo(valor);
+      }
     }
-    // Se tem 10 dígitos, valida como fixo
-    else if (digitos.length === 10) {
-      return validarTelefoneFixo(valor);
-    }
-    // Se não tem 10 nem 11 dígitos, é inválido
-    else {
-      return false;
-    }
+    return false;
   }
   
   function capitalizarNome(str) {

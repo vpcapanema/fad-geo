@@ -9,7 +9,7 @@ from app.models.cd_usuario_sistema import UsuarioSistema
 from fastapi import APIRouter
 
 router = APIRouter(
-    prefix='/painel/analista',
+    prefix='/painel-analista',
     tags=['Painel do Analista']
 )
 router = APIRouter()
