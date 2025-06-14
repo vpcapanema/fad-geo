@@ -53,6 +53,10 @@ from app.api.endpoints.vw_projetos_usuario_comum import router as vw_projetos_us
 from app.api.endpoints.pr_fluxo_modular import router as fluxo_modular_router
 from app.api.endpoints.pr_modulos_pages import router as modulos_pages_router
 from app.api.endpoints.au_recuperacao_senha import router as recuperacao_senha_router
+from app.api.endpoints.pr_modulos_management import router as modulos_management_router
+from app.api.endpoints.mapa_rotas import router as mapa_rotas_router
+from app.api.endpoints.pr_mock_projeto import router as mock_projeto_router
+from app.api.endpoints.mock_shapes import router as mock_shapes_router
 
 # ============================ 🚀 Instância principal da API ============================
 app = FastAPI(
@@ -214,7 +218,11 @@ app.include_router(vw_painel_administrador_router)
 app.include_router(vw_projetos_usuario_comum_router)
 app.include_router(fluxo_modular_router)
 app.include_router(modulos_pages_router)
+app.include_router(modulos_management_router)
 app.include_router(recuperacao_senha_router)
+app.include_router(mapa_rotas_router)
+app.include_router(mock_projeto_router)
+app.include_router(mock_shapes_router)
 
 # ======================== 🌐 Rotas HTML diretas ========================
 @app.get("/cadastrar-usuario", response_class=HTMLResponse)
@@ -394,3 +402,11 @@ def proxy_receitaws_cnpj(cnpj: str):
         return JSONResponse(status_code=resp.status_code, content=resp.json())
     except Exception as e:
         return JSONResponse(status_code=500, content={"erro": str(e)})
+
+@app.get("/projetos/{projeto_id}/modulos", response_class=HTMLResponse)
+async def dashboard_modulos_projeto(request: Request, projeto_id: int):
+    """Dashboard para gerenciar os módulos de um projeto"""
+    return templates.TemplateResponse("pr_dashboard_modulos.html", {
+        "request": request,
+        "projeto_id": projeto_id
+    })

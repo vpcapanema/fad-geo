@@ -458,30 +458,3 @@ class EmailService:
 
 # Instância global do serviço de email
 email_service = EmailService()
-
-# Verifica se o comando wkhtmltopdf está disponível
-def verificar_wkhtmltopdf():
-    """Verifica se o comando wkhtmltopdf está disponível no sistema"""
-    try:
-        import subprocess
-        
-        # Executa o comando wkhtmltopdf --version
-        resultado = subprocess.run(
-            ["wkhtmltopdf", "--version"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        
-        if resultado.returncode == 0:
-            logger.info(f"wkhtmltopdf está disponível: {resultado.stdout.strip()}")
-            return True
-        else:
-            logger.error(f"Erro ao verificar wkhtmltopdf: {resultado.stderr.strip()}")
-            return False
-    except Exception as e:
-        logger.error(f"Erro ao verificar wkhtmltopdf: {e}")
-        return False
-
-# Verifica disponibilidade do wkhtmltopdf na inicialização
-verificar_wkhtmltopdf()

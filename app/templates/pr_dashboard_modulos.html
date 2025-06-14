@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAD-GEO - Gerenciamento de Projetos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .status-em-cadastramento { background-color: #ffc107; }
+        .status-finalizado { background-color: #28a745; }
+        .status-enviado { background-color: #17a2b8; }
+        .status-em-analise { background-color: #fd7e14; }
+        .status-reprovado { background-color: #dc3545; }
+        .status-aprovado { background-color: #198754; }
+        .status-arquivado { background-color: #6c757d; }
+        
+        .modulos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .modulo-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .modulo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .modulo-card.ativo {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        
+        .modulo-card.validado {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        
+        .modulo-card.bloqueado {
+            opacity: 0.6;
+            background-color: #f8f9fa;
+        }
+        
+        .modulo-numero {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background-color: #007bff;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .modulo-numero.validado {
+            background-color: #28a745;
+        }
+        
+        .modulo-numero.bloqueado {
+            background-color: #6c757d;
+        }
+        
+        .modulo-titulo {
+            margin: 10px 0;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .modulo-descricao {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .modulo-progresso {
+            background-color: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .modulo-progresso-bar {
+            height: 100%;
+            background-color: #007bff;
+            transition: width 0.3s ease;
+        }
+        
+        .modulo-progresso-bar.validado {
+            background-color: #28a745;
+        }
+        
+        .modulo-acoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .projeto-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .projeto-info h2 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .projeto-acoes {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .progresso-geral {
+            background-color: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progresso-geral-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #28a745);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progresso-texto {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FAD - Ferramenta de Análise Dinamizada</h1>
+            <h2>Gerenciamento de Projetos</h2>
+        </div>
+
+        <div class="projeto-info">
+            <h2 id="projeto-nome">Carregando projeto...</h2>
+            <div>
+                <span>Status: </span>
+                <span id="projeto-status" class="status-badge">...</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <strong>Progresso Geral:</strong>
+                <div class="progresso-geral">
+                    <div id="progresso-geral-bar" class="progresso-geral-bar" style="width: 0%">
+                        <div class="progresso-texto">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modulos-grid" id="modulos-container">
+            <!-- Módulos serão carregados dinamicamente -->
+        </div>
+
+        <div class="projeto-acoes">
+            <button id="btn-finalizar" class="btn btn-success" style="display: none;">
+                Finalizar Projeto
+            </button>
+            <button id="btn-enviar" class="btn btn-primary" style="display: none;">
+                Enviar para Análise
+            </button>
+            <button id="btn-editar" class="btn btn-warning" style="display: none;">
+                Voltar para Edição
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simulação de dados - em produção virá da API
+        const projetoId = new URLSearchParams(window.location.search).get('id') || 1;
+        
+        const modulosConfig = {
+            1: {
+                nome: "Cadastro do Projeto",
+                descricao: "Informações básicas, responsáveis e dados gerais do projeto",
+                icone: "📋"
+            },
+            2: {
+                nome: "Conformidade Ambiental",
+                descricao: "Análise de impactos ambientais e licenças necessárias",
+                icone: "🌱"
+            },
+            3: {
+                nome: "Favorabilidade Multicritério",
+                descricao: "Análise multicritério dos fatores relevantes para o projeto",
+                icone: "📊"
+            },
+            4: {
+                nome: "Favorabilidade Socioeconômica",
+                descricao: "Análise dos impactos e benefícios socioeconômicos",
+                icone: "👥"
+            },
+            5: {
+                nome: "Favorabilidade Infraestrutural",
+                descricao: "Análise da infraestrutura existente e necessária",
+                icone: "🏗️"
+            }
+        };
+
+        async function carregarStatusProjeto() {
+            try {
+                // Simulação - substituir pela chamada real da API
+                const response = await fetch(`/api/projetos/modulos/status/${projetoId}`);
+                const data = await response.json();
+                
+                if (data.data) {
+                    atualizarInterface(data.data);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar status do projeto:', error);
+                // Dados simulados para teste
+                const dadosSimulados = {
+                    projeto_id: projetoId,
+                    modulos: [
+                        { numero: 1, nome: "Cadastro", status: "validado", pode_executar: true, progresso: 100 },
+                        { numero: 2, nome: "Ambiental", status: "em_preenchimento", pode_executar: true, progresso: 50 },
+                        { numero: 3, nome: "Multicritério", status: "pendente", pode_executar: false, progresso: 0 },
+                        { numero: 4, nome: "Socioeconômico", status: "pendente", pode_executar: false, progresso: 0 },
+                        { numero: 5, nome: "Infraestrutural", status: "pendente", pode_executar: false, progresso: 0 }
+                    ],
+                    modulos_validados: 1,
+                    progresso_geral: 20,
+                    todos_concluidos: false
+                };
+                atualizarInterface(dadosSimulados);
+            }
+        }
+
+        function atualizarInterface(dados) {
+            // Atualizar informações do projeto
+            document.getElementById('projeto-nome').textContent = `Projeto #${dados.projeto_id}`;
+            
+            // Atualizar progresso geral
+            const progressoBar = document.getElementById('progresso-geral-bar');
+            progressoBar.style.width = `${dados.progresso_geral}%`;
+            progressoBar.querySelector('.progresso-texto').textContent = `${dados.progresso_geral}%`;
+            
+            // Gerar cards dos módulos
+            const container = document.getElementById('modulos-container');
+            container.innerHTML = '';
+            
+            dados.modulos.forEach(modulo => {
+                const config = modulosConfig[modulo.numero];
+                const card = criarCardModulo(modulo, config);
+                container.appendChild(card);
+            });
+            
+            // Mostrar botões de ação apropriados
+            atualizarBotoesAcao(dados);
+        }
+
+        function criarCardModulo(modulo, config) {
+            const card = document.createElement('div');
+            let classe = 'modulo-card';
+            
+            if (modulo.status === 'validado') {
+                classe += ' validado';
+            } else if (modulo.pode_executar) {
+                classe += ' ativo';
+            } else {
+                classe += ' bloqueado';
+            }
+            
+            card.className = classe;
+            
+            const numeroClasse = modulo.status === 'validado' ? 'validado' : 
+                                modulo.pode_executar ? '' : 'bloqueado';
+            
+            card.innerHTML = `
+                <div class="modulo-numero ${numeroClasse}">${modulo.numero}</div>
+                <div class="modulo-titulo">
+                    ${config.icone} ${config.nome}
+                </div>
+                <div class="modulo-descricao">${config.descricao}</div>
+                <div class="modulo-progresso">
+                    <div class="modulo-progresso-bar ${modulo.status === 'validado' ? 'validado' : ''}" 
+                         style="width: ${modulo.progresso}%"></div>
+                </div>
+                <div class="modulo-acoes">
+                    ${gerarBotoesModulo(modulo)}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function gerarBotoesModulo(modulo) {
+            let botoes = '';
+            
+            if (modulo.status === 'validado') {
+                botoes += `<button class="btn btn-secondary" onclick="visualizarModulo(${modulo.numero})">Visualizar</button>`;
+                botoes += `<button class="btn btn-primary" onclick="gerarPDF(${modulo.numero})">PDF</button>`;
+            } else if (modulo.pode_executar) {
+                if (modulo.status === 'em_preenchimento') {
+                    botoes += `<button class="btn btn-warning" onclick="editarModulo(${modulo.numero})">Continuar</button>`;
+                    botoes += `<button class="btn btn-success" onclick="validarModulo(${modulo.numero})">Validar</button>`;
+                } else {
+                    botoes += `<button class="btn btn-primary" onclick="iniciarModulo(${modulo.numero})">Iniciar</button>`;
+                }
+            } else {
+                botoes += `<button class="btn btn-secondary" disabled>Bloqueado</button>`;
+            }
+            
+            return botoes;
+        }
+
+        function atualizarBotoesAcao(dados) {
+            const btnFinalizar = document.getElementById('btn-finalizar');
+            const btnEnviar = document.getElementById('btn-enviar');
+            const btnEditar = document.getElementById('btn-editar');
+            
+            // Esconder todos primeiro
+            [btnFinalizar, btnEnviar, btnEditar].forEach(btn => btn.style.display = 'none');
+            
+            if (dados.todos_concluidos) {
+                btnFinalizar.style.display = 'inline-block';
+            }
+            
+            // Lógica para outros botões baseada no status do projeto
+        }
+
+        // Funções de ação dos módulos
+        function iniciarModulo(numero) {
+            window.location.href = `/modulos/${numero}?projeto=${projetoId}`;
+        }
+
+        function editarModulo(numero) {
+            window.location.href = `/modulos/${numero}?projeto=${projetoId}&modo=editar`;
+        }
+
+        function visualizarModulo(numero) {
+            window.location.href = `/modulos/${numero}?projeto=${projetoId}&modo=visualizar`;
+        }
+
+        function validarModulo(numero) {
+            if (confirm(`Confirma a validação do módulo ${numero}? Esta ação não pode ser desfeita.`)) {
+                // Chamada para API
+                fetch(`/api/projetos/modulos/validar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        projeto_id: projetoId,
+                        modulo_numero: numero
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        carregarStatusProjeto(); // Recarregar interface
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao validar módulo');
+                });
+            }
+        }
+
+        function gerarPDF(numero) {
+            window.open(`/api/projetos/modulos/html/${projetoId}/${numero}`, '_blank');
+        }
+
+        // Carregar dados ao inicializar a página
+        document.addEventListener('DOMContentLoaded', carregarStatusProjeto);
+    </script>
+</body>
+</html>

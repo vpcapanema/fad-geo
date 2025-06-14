@@ -23,18 +23,37 @@ async def upload_zip(
     arquivo: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    if not arquivo.filename.lower().endswith(".zip"):
-        return JSONResponse(status_code=400, content={"sucesso": False, "erros": ["Arquivo deve ser .zip."]})
+    extensoes_permitidas = [".zip", ".rar", ".7z"]
+    max_mb = 50
+    erros = []
 
+    # 1. Extensão
+    if not any(arquivo.filename.lower().endswith(ext) for ext in extensoes_permitidas):
+        erros.append("Extensão não permitida. Envie um arquivo .zip, .rar ou .7z.")
+    # 2. Tamanho e vazio
+    conteudo = await arquivo.read()
+    if len(conteudo) == 0:
+        erros.append("Arquivo está vazio.")
+    if len(conteudo) > max_mb * 1024 * 1024:
+        erros.append("Arquivo maior que 50MB.")
+
+    if erros:
+        # Aqui você pode gerar o relatório PDF de erro (mock)
+        return JSONResponse(status_code=400, content={
+            "sucesso": False,
+            "mensagem": "Erro no upload.",
+            "erros": erros,
+            "relatorio": "/static/relatorios/relatorio_erro_upload.pdf"
+        })
+
+    # Salvar arquivo e registrar no banco
     nome_base = re.sub(r"[^a-zA-Z0-9_-]", "_", arquivo.filename.replace(".zip", ""))
     temp_dir = Path("temp") / nome_base
     temp_dir.mkdir(parents=True, exist_ok=True)
-
     zip_path = temp_dir / arquivo.filename
     with open(zip_path, "wb") as f:
-        f.write(await arquivo.read())
+        f.write(conteudo)
 
-    # Registro do upload (padrão: usuário 1, projeto 1 - alterar para pegar da sessão)
     novo = ZipUpload(
         arquivo=arquivo.filename,
         tipo_arquivo=arquivo.content_type,
@@ -43,8 +62,11 @@ async def upload_zip(
         projeto_id=1,
         data_upload=datetime.utcnow()
     )
-
     db.add(novo)
     db.commit()
 
-    return {"sucesso": True, "mensagem": "Upload salvo com sucesso."}
+    return JSONResponse(status_code=200, content={
+        "sucesso": True,
+        "mensagem": "Upload salvo com sucesso. Deseja validar a geometria?",
+        "id_upload": novo.id
+    })
